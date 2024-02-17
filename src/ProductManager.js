@@ -1,5 +1,4 @@
 const fs = require("fs");
-const path = require("path");
 
 class ProductManager {
   constructor(filepath) {
@@ -31,7 +30,7 @@ class ProductManager {
 
     const exists = this.products.find((p) => p.code === product.code);
     if (exists) {
-      console.error(`El codigo de producto ${p.code} ya existe`);
+      console.error(`El codigo de producto ${product.code} ya existe`);
       return;
     }
 
@@ -41,7 +40,7 @@ class ProductManager {
     }
     product.id = id;
     this.products.push(product);
-    fs.writeFileSync(this.path, JSON.stringify(this.products));
+    fs.writeFileSync(this.path, JSON.stringify(this.products, null, 4));
     console.log(`Producto agregado id: ${id}`)
   }
 
@@ -68,7 +67,7 @@ class ProductManager {
     console.log(`Actualizando producto id: ${id}`)
     const index = this.products.indexOf(oldProduct);
     this.products[index] = { ...this.products[index], ...product };
-    fs.writeFileSync(this.path, JSON.stringify(this.products));
+    fs.writeFileSync(this.path, JSON.stringify(this.products, null, 4));
   }
 
   deleteProduct(id) {
@@ -80,53 +79,8 @@ class ProductManager {
     console.log(`Borrando id: ${id}`);
     const index = this.products.indexOf(product);
     this.products.splice(index, 1);
-    fs.writeFileSync(this.path, JSON.stringify(this.products));
+    fs.writeFileSync(this.path, JSON.stringify(this.products, null, 4));
   }
 }
 
-file = path.join(__dirname, "products.json");
-const manager = new ProductManager(file);
-
-const product = {
-  title: "producto prueba",
-  description: "Este es un producto prueba",
-  price: 200,
-  thumbnail: "Sin imagen",
-  code: "abc123",
-  stock: 25,
-};
-
-const product2 = {
-  title: "producto prueba 2",
-  description: "Este es un producto prueba 2",
-  price: 250,
-  thumbnail: "Sin ninguna imagen",
-  code: "abc123456",
-  stock: 2,
-};
-
-const productupdate = {
-  title: "producto actualizado",
-  description: "Este es un producto actualizado",
-  stock: 1,
-};
-
-console.log(manager.getProducts());
-
-manager.addProduct(product);
-manager.addProduct(product);
-manager.addProduct(product2);
-
-console.log(manager.getProducts())
-
-manager.updateProduct(1, productupdate);
-manager.updateProduct(2, productupdate);
-manager.updateProduct(3, productupdate);
-
-console.log(manager.getProducts())
-
-manager.deleteProduct(2)
-manager.deleteProduct(1)
-manager.deleteProduct(2)
-
-console.log(manager.getProducts())
+module.exports=ProductManager
