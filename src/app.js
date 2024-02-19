@@ -1,9 +1,11 @@
-const ProductsManager=require('./ProductManager')
-const path = require("path");
-const file = path.join(path.resolve(__dirname, '..'), "data/products.json");
-const pman = new ProductsManager(file);
+import * as path from 'path';
+import { __dirname } from './utils.js'
+import ProductManager from './ProductManager.js'
+import express from 'express'
 
-const express=require("express")
+
+const file = path.join(path.resolve(__dirname, '..'), "data/products.json");
+const pman = new ProductManager(file);
 const PORT=8080
 const app=express()
 

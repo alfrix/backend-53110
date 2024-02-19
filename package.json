@@ -1,4 +1,12 @@
 {
+  "name": "proyecto-backend",
+  "version": "1.0.0",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/app.js",
+    "server": "nodemon src/app.js"
+  },
   "devDependencies": {
     "@types/node": "^20.11.16"
   },
