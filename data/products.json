@@ -81,12 +81,30 @@
     "id": 9
   },
   {
-    "title": "producto prueba 2",
-    "description": "Este es un producto prueba 2",
+    "title": "producto prueba 9",
+    "description": "Este es un producto prueba 9",
     "price": 250,
     "thumbnail": "Sin ninguna imagen",
     "code": "a9",
     "stock": 2,
     "id": 10
+  },
+  {
+    "title": "producto prueba 10",
+    "description": "actualizado",
+    "price": 250,
+    "thumbnail": "Sin ninguna imagen",
+    "code": "a10",
+    "stock": 2,
+    "id": 11
+  },
+  {
+    "title": "producto prueba 11",
+    "description": "producto prueba 11",
+    "price": 250,
+    "thumbnail": "Sin ninguna imagen",
+    "code": "a11",
+    "stock": 2,
+    "id": 12
   }
 ]

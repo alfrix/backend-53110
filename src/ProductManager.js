@@ -23,15 +23,17 @@ class ProductManager {
 
     for (let field of requiredFields) {
       if (!product[field]) {
-        console.error(`Falta el campo: ${field}`);
-        return;
+        let msg = `Falta el campo: ${field}`
+        console.error(msg);
+        return {status: 400, message: msg}
       }
     }
 
     const exists = this.products.find((p) => p.code === product.code);
     if (exists) {
-      console.error(`El codigo de producto ${product.code} ya existe`);
-      return;
+      let msg = `El codigo de producto ${product.code} ya existe`
+      console.error(msg);
+      return {status: 400, message: msg}
     }
 
     let id = 1;
@@ -40,8 +42,10 @@ class ProductManager {
     }
     product.id = id;
     this.products.push(product);
-    fs.writeFileSync(this.path, JSON.stringify(this.products, null, 4));
-    console.log(`Producto agregado id: ${id}`)
+    fs.writeFileSync(this.path, JSON.stringify(this.products, null, 2));
+    let msg = `Producto agregado id: ${id}`
+    console.log(msg)
+    return {status: 200, message: msg}
   }
 
   getProducts() {
@@ -60,26 +64,33 @@ class ProductManager {
 
   updateProduct(id, product) {
     let oldProduct = this.getProductById(id);
+    console.log(oldProduct)
     if (!oldProduct || !product || product.id) {
-      console.error(`No se puede actualizar id: ${id}`);
-      return;
+      let msg = `No se puede actualizar id: ${id}`;
+      console.error(msg);
+      return {status: 400, message: msg}
     }
-    console.log(`Actualizando producto id: ${id}`)
     const index = this.products.indexOf(oldProduct);
     this.products[index] = { ...this.products[index], ...product };
     fs.writeFileSync(this.path, JSON.stringify(this.products, null, 4));
+    let msg = `Actualizado producto id: ${id}`;
+    console.error(msg);
+    return {status: 200, message: msg}
   }
 
   deleteProduct(id) {
     let product = this.getProductById(id);
     if (!product) {
-      console.error(`No se puede borrar id: ${id} no encontrado`);
-      return;
+      let msg = `No se puede borrar id: ${id} no encontrado`
+      console.error(msg);
+      return {status: 404, message: msg}
     }
-    console.log(`Borrando id: ${id}`);
     const index = this.products.indexOf(product);
     this.products.splice(index, 1);
     fs.writeFileSync(this.path, JSON.stringify(this.products, null, 4));
+    let msg = `Borrado id: ${id}`
+    console.log(msg);
+    return {status: 200, message: msg}
   }
 }
 

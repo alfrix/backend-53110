@@ -8,6 +8,19 @@ const file = path.join(path.resolve(__dirname, '..'), "data/products.json");
 const pman = new ProductManager(file);
 const PORT=8080
 const app=express()
+app.use(express.json())
+app.use(express.urlencoded({extended: true}))
+
+function validarId(id) {
+    id = Number(id)
+    if (isNaN(id)) {
+        return {status: 400, message: `Error: ID debe ser un numero`}
+    }
+    if (!pman.getProductById(id)) {
+        return {status: 404, message: `Error: ID ${id} no encontrado`}
+    }
+    return {status: 200}
+}
 
 app.get("/", (req, res)=>{
     res.send("<center><h1>Server básico con Express</h1></center>")
@@ -25,19 +38,41 @@ app.get("/products", (req, res) => {
 
 app.get("/products/:id", (req, res) => {
     let {id} = req.params
-    id = Number(id)
-    if (isNaN(id)) {
-        return res.send(`Error: ID debe ser un numero`)
-    }
-    let product = pman.getProductById(id)
-    if (!product) {
-        return res.send(`Error: ID ${id} no encontrado`)
+    let response = validarId(id)
+    if (response.status != 200) {
+        return res.status(response.status).send(response.message)
     }
     return res.json(product);
 })
 
 app.get("*", (req, res) => {
-    res.send("<center><h1>404 - Not Found</h1></center>")
+    res.status(404).send("<center><h1>404 - Not Found</h1></center>")
+})
+
+app.post("/products", (req, res) => {
+    console.log(req.body)
+    let response = pman.addProduct(req.body)
+    return res.status(response.status).send(response.message)
+})
+
+app.put("/products/:id", (req, res) => {
+    let {id} = req.params
+    console.log(req.body)
+    let response = validarId(id)
+    if (response.status == 200) {
+        response = pman.updateProduct(Number(id), req.body)
+    }
+    return res.status(response.status).send(response.message)
+})
+
+app.delete("/products/:id", (req, res) => {
+    let {id} = req.params
+    let response = validarId(id)
+    if (response.status == 200) {
+        response = pman.deleteProduct(Number(id))
+    }
+    return res.status(response.status).send(response.message)
+
 })
 
 app.listen(PORT, ()=>{console.log(`Server OK en puerto ${PORT}`)})
