@@ -14,12 +14,13 @@ app.use(express.urlencoded({extended: true}))
 function validarId(id) {
     id = Number(id)
     if (isNaN(id)) {
-        return {status: 400, message: `Error: ID debe ser un numero`}
+        return {status: 400, json: [{error: 'ID debe ser un numero'}]}
     }
-    if (!pman.getProductById(id)) {
-        return {status: 404, message: `Error: ID ${id} no encontrado`}
+    let product = pman.getProductById(id)
+    if (!product) {
+        return {status: 404, json: [{error: `ID ${id} no encontrado`}]}
     }
-    return {status: 200}
+    return {status: 200, json: product}
 }
 
 app.get("/", (req, res)=>{
@@ -29,20 +30,18 @@ app.get("/", (req, res)=>{
 app.get("/products", (req, res) => {
     let {limit} = req.query
     console.log("query:", req.query)
-    products = pman.getProducts()
+    let products = pman.getProducts()
+    console.log(products)
     if (limit && limit > 0) {
         products = products.slice(0, limit)
     }
-    return res.send(products)
+    return res.json(products)
 })
 
 app.get("/products/:id", (req, res) => {
     let {id} = req.params
     let response = validarId(id)
-    if (response.status != 200) {
-        return res.status(response.status).send(response.message)
-    }
-    return res.json(product);
+    return res.status(response.status).json(response.json)
 })
 
 app.get("*", (req, res) => {
@@ -52,7 +51,7 @@ app.get("*", (req, res) => {
 app.post("/products", (req, res) => {
     console.log(req.body)
     let response = pman.addProduct(req.body)
-    return res.status(response.status).send(response.message)
+    return res.status(response.status).json(response.json)
 })
 
 app.put("/products/:id", (req, res) => {
@@ -62,7 +61,7 @@ app.put("/products/:id", (req, res) => {
     if (response.status == 200) {
         response = pman.updateProduct(Number(id), req.body)
     }
-    return res.status(response.status).send(response.message)
+    return res.status(response.status).json(response.json)
 })
 
 app.delete("/products/:id", (req, res) => {
@@ -71,7 +70,7 @@ app.delete("/products/:id", (req, res) => {
     if (response.status == 200) {
         response = pman.deleteProduct(Number(id))
     }
-    return res.status(response.status).send(response.message)
+    return res.status(response.status).json(response.json)
 
 })
 

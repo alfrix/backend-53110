@@ -25,7 +25,7 @@ class ProductManager {
       if (!product[field]) {
         let msg = `Falta el campo: ${field}`
         console.error(msg);
-        return {status: 400, message: msg}
+        return {status: 400, json: [{error: msg}]}
       }
     }
 
@@ -33,7 +33,7 @@ class ProductManager {
     if (exists) {
       let msg = `El codigo de producto ${product.code} ya existe`
       console.error(msg);
-      return {status: 400, message: msg}
+      return {status: 400, json: [{error: msg}]}
     }
 
     let id = 1;
@@ -45,7 +45,7 @@ class ProductManager {
     fs.writeFileSync(this.path, JSON.stringify(this.products, null, 2));
     let msg = `Producto agregado id: ${id}`
     console.log(msg)
-    return {status: 200, message: msg}
+    return {status: 200, json: product}
   }
 
   getProducts() {
@@ -68,14 +68,14 @@ class ProductManager {
     if (!oldProduct || !product || product.id) {
       let msg = `No se puede actualizar id: ${id}`;
       console.error(msg);
-      return {status: 400, message: msg}
+      return {status: 400, json: [{error: msg}]}
     }
     const index = this.products.indexOf(oldProduct);
     this.products[index] = { ...this.products[index], ...product };
     fs.writeFileSync(this.path, JSON.stringify(this.products, null, 4));
     let msg = `Actualizado producto id: ${id}`;
     console.error(msg);
-    return {status: 200, message: msg}
+    return {status: 200, json: [{error: msg}]}
   }
 
   deleteProduct(id) {
@@ -83,14 +83,14 @@ class ProductManager {
     if (!product) {
       let msg = `No se puede borrar id: ${id} no encontrado`
       console.error(msg);
-      return {status: 404, message: msg}
+      return {status: 404, json: [{error: msg}]}
     }
     const index = this.products.indexOf(product);
     this.products.splice(index, 1);
     fs.writeFileSync(this.path, JSON.stringify(this.products, null, 4));
     let msg = `Borrado id: ${id}`
     console.log(msg);
-    return {status: 200, message: msg}
+    return {status: 200, json: [{error: msg}]}
   }
 }
 
