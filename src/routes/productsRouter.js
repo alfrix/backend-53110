@@ -1,7 +1,7 @@
 import { Router } from "express"
 import * as path from 'path';
 import { __dirname } from '../utils.js'
-import ProductManager from '../ProductManager.js'
+import ProductManager from '../managers/ProductManager.js'
 
 const router = Router()
 const file = path.join(path.resolve(__dirname, '..'), "data/products.json");
