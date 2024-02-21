@@ -38,7 +38,7 @@ class ProductManager {
 
     let id = 1;
     if (this.products.length > 0) {
-      id = this.products[this.products.length - 1].id + 1;
+      id = Math.max(...this.products.map(d=>d.id)) + 1
     }
     product.id = id;
     this.products.push(product);
@@ -75,7 +75,7 @@ class ProductManager {
     fs.writeFileSync(this.path, JSON.stringify(this.products, null, 4));
     let msg = `Actualizado producto id: ${id}`;
     console.error(msg);
-    return {status: 200, json: [{error: msg}]}
+    return {status: 200, json: this.products[index]}
   }
 
   deleteProduct(id) {
@@ -90,7 +90,7 @@ class ProductManager {
     fs.writeFileSync(this.path, JSON.stringify(this.products, null, 4));
     let msg = `Borrado id: ${id}`
     console.log(msg);
-    return {status: 200, json: [{error: msg}]}
+    return {status: 200, json: product}
   }
 }
 
