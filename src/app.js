@@ -7,6 +7,8 @@ const app=express()
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 app.use("/products", productsRouter)
+app.use("/cart", cartRouter)
+
 
 app.get("/", (req, res)=>{
     res.send("<center><h1>Server básico con Express</h1></center>")
