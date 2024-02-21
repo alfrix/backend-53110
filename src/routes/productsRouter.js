@@ -36,9 +36,9 @@ router.get("/", (req, res) => {
     return res.json(products)
 })
 
-router.get("/:id", (req, res) => {
-    let {id} = req.params
-    let response = validarId(id)
+router.get("/:pid", (req, res) => {
+    let {pid} = req.params
+    let response = validarId(pid)
     return res.status(response.status).json(response.json)
 })
 
@@ -48,21 +48,21 @@ router.post("/", (req, res) => {
     return res.status(response.status).json(response.json)
 })
 
-router.put("/:id", (req, res) => {
-    let {id} = req.params
+router.put("/:pid", (req, res) => {
+    let {pid} = req.params
     console.log(req.body)
-    let response = validarId(id)
+    let response = validarId(pid)
     if (response.status == 200) {
-        response = pman.updateProduct(Number(id), req.body)
+        response = pman.updateProduct(Number(pid), req.body)
     }
     return res.status(response.status).json(response.json)
 })
 
 router.delete("/:id", (req, res) => {
-    let {id} = req.params
-    let response = validarId(id)
+    let {pid} = req.params
+    let response = validarId(pid)
     if (response.status == 200) {
-        response = pman.deleteProduct(Number(id))
+        response = pman.deleteProduct(Number(pid))
     }
     return res.status(response.status).json(response.json)
 

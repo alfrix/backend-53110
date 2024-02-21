@@ -16,10 +16,15 @@ class ProductManager {
       "title",
       "description",
       "price",
-      "thumbnail",
       "code",
       "stock",
+      "category",
+      "status",
     ];
+
+    if (!product['status']){
+      this.status = true
+    }
 
     for (let field of requiredFields) {
       if (!product[field]) {
