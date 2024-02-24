@@ -10,7 +10,7 @@ const pman = new ProductManager(file);
 function validarId(id) {
     id = Number(id)
     if (isNaN(id)) {
-        return {status: 400, json: [{error: 'ID debe ser un numero'}]}
+        return {status: 400, json: [{error: `ID debe ser un numero, ingreso: ${id}`}]}
     }
     let product = pman.getProductById(id)
     if (!product) {
@@ -58,7 +58,7 @@ router.put("/:pid", (req, res) => {
     return res.status(response.status).json(response.json)
 })
 
-router.delete("/:id", (req, res) => {
+router.delete("/:pid", (req, res) => {
     let {pid} = req.params
     let response = validarId(pid)
     if (response.status == 200) {

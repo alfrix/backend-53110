@@ -19,11 +19,14 @@ class ProductManager {
       "code",
       "stock",
       "category",
-      "status",
     ];
 
     if (!product['status']){
-      this.status = true
+      product.status = true
+    }
+
+    if (!product['thumbnails']){
+      product.thumbnails = []
     }
 
     for (let field of requiredFields) {
@@ -36,7 +39,7 @@ class ProductManager {
 
     const exists = this.products.find((p) => p.code === product.code);
     if (exists) {
-      let msg = `El codigo de producto ${product.code} ya existe`
+      let msg = `El codigo de producto ${product.code} ya existe id: ${exists.id}`
       console.error(msg);
       return {status: 400, json: [{error: msg}]}
     }
@@ -50,7 +53,7 @@ class ProductManager {
     fs.writeFileSync(this.path, JSON.stringify(this.products, null, 2));
     let msg = `Producto agregado id: ${id}`
     console.log(msg)
-    return {status: 200, json: product}
+    return {status: 200, json: [{error: ''}, product]}
   }
 
   getProducts() {
@@ -80,7 +83,7 @@ class ProductManager {
     fs.writeFileSync(this.path, JSON.stringify(this.products, null, 4));
     let msg = `Actualizado producto id: ${id}`;
     console.error(msg);
-    return {status: 200, json: this.products[index]}
+    return {status: 200, json: [{error: ''}, this.products[index]]}
   }
 
   deleteProduct(id) {
@@ -95,7 +98,7 @@ class ProductManager {
     fs.writeFileSync(this.path, JSON.stringify(this.products, null, 4));
     let msg = `Borrado id: ${id}`
     console.log(msg);
-    return {status: 200, json: product}
+    return {status: 200, json: [{error: ''}, product]}
   }
 }
 
