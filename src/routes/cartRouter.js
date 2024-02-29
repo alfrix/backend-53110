@@ -1,11 +1,9 @@
 import { Router } from "express"
-import * as path from 'path';
-import { __dirname } from '../utils.js'
+import { __dirname, rutacarts } from '../utils.js'
 import CartManager from '../managers/CartManager.js'
 
 const router = Router()
-const file = path.join(path.resolve(__dirname, '..'), "data/carts.json");
-const cman = new CartManager(file);
+const cman = new CartManager(rutacarts);
 
 function validarId(id) {
     id = Number(id)
@@ -22,6 +20,12 @@ function validarId(id) {
 router.use((req, res, next) => {
     let timestamp = new Date().toUTCString();
     console.log(`Acceso a cart: ${timestamp}`)
+    if (req.query) {
+        console.log(`cart query: ${JSON.stringify(req.query)}`)
+    }
+    if (req.body) {
+        console.log(`cart body: ${JSON.stringify(req.body)}`)
+    }
     next()
   })
 

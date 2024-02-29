@@ -1,11 +1,9 @@
 import { Router } from "express"
-import * as path from 'path';
-import { __dirname } from '../utils.js'
+import { __dirname, rutaproducts } from '../utils.js'
 import ProductManager from '../managers/ProductManager.js'
 
 const router = Router()
-const file = path.join(path.resolve(__dirname, '..'), "data/products.json");
-const pman = new ProductManager(file);
+const pman = new ProductManager(rutaproducts);
 
 function validarId(id) {
     id = Number(id)
@@ -22,14 +20,18 @@ function validarId(id) {
 router.use((req, res, next) => {
     let timestamp = new Date().toUTCString();
     console.log(`Acceso a products: ${timestamp}`)
+    if (req.query) {
+        console.log(`products query: ${JSON.stringify(req.query)}`)
+    }
+    if (req.body) {
+        console.log(`products body: ${JSON.stringify(req.body)}`)
+    }
     next()
   })
 
 router.get("/", (req, res) => {
     let {limit} = req.query
-    console.log("query:", req.query)
     let products = pman.getProducts()
-    console.log(products)
     if (limit && limit > 0) {
         products = products.slice(0, limit)
     }
@@ -43,14 +45,12 @@ router.get("/:pid", (req, res) => {
 })
 
 router.post("/", (req, res) => {
-    console.log(req.body)
     let response = pman.addProduct(req.body)
     return res.status(response.status).json(response.json)
 })
 
 router.put("/:pid", (req, res) => {
     let {pid} = req.params
-    console.log(req.body)
     let response = validarId(pid)
     if (response.status == 200) {
         response = pman.updateProduct(Number(pid), req.body)

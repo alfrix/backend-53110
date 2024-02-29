@@ -1,24 +1,31 @@
 import express from 'express'
+import { engine } from 'express-handlebars';
+import path from "node:path";
+import { __dirname } from './utils.js';
 import { router as productsRouter } from './routes/productsRouter.js';
 import { router as cartRouter } from './routes/cartRouter.js';
-
+import { router as viewsRouter } from './routes/viewsRouter.js';
 
 const PORT=8080
 const app=express()
+
+app.engine('handlebars', engine())
+app.set('view engine', 'handlebars')
+app.set('views', path.join(__dirname, 'views'))
 
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 app.use("/api/products", productsRouter)
 app.use("/api/carts", cartRouter)
+app.use(express.static(path.join(__dirname, '/public')))
+app.use("/", viewsRouter)
 
 
-app.get("/", (req, res)=>{
-    res.send("<center><h1>Server básico con Express</h1></center>")
-})
-
-
-app.get("*", (req, res) => {
-    res.status(404).send("<center><h1>404 - Not Found</h1></center>")
+app.use((error, req, res, next) => {
+    if(error) {
+        console.log(`error: ${error}`)
+    }
+    next()
 })
 
 app.listen(PORT, ()=>{console.log(`Server OK en puerto ${PORT}`)})

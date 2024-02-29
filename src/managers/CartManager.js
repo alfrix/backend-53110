@@ -1,9 +1,7 @@
 import fs from 'fs'
 import ProductManager from './ProductManager.js'
-import path from 'path';
-import { __dirname } from '../utils.js'
+import { __dirname, rutaproducts } from '../utils.js'
 
-const file = path.join(path.resolve(__dirname, '..'), "data/products.json");
 
 class CartManager {
     constructor(filepath) {
@@ -64,7 +62,7 @@ class CartManager {
     }
 
     validateProductById(id){
-        const pman = new ProductManager(file);
+        const pman = new ProductManager(rutaproducts);
         return pman.getProductById(id)
     }
 

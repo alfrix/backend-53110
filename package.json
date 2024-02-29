@@ -8,9 +8,11 @@
     "server": "nodemon src/app.js"
   },
   "devDependencies": {
+    "@types/express-handlebars": "^6.0.0",
     "@types/node": "^20.11.16"
   },
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "express-handlebars": "^7.1.2"
   }
 }
