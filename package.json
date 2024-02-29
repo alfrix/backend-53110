@@ -9,10 +9,12 @@
   },
   "devDependencies": {
     "@types/express-handlebars": "^6.0.0",
-    "@types/node": "^20.11.16"
+    "@types/node": "^20.11.16",
+    "@types/socket.io": "^3.0.2"
   },
   "dependencies": {
     "express": "^4.18.2",
-    "express-handlebars": "^7.1.2"
+    "express-handlebars": "^7.1.2",
+    "socket.io": "^4.7.4"
   }
 }
