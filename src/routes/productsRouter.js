@@ -46,6 +46,7 @@ router.get("/:pid", (req, res) => {
 
 router.post("/", (req, res) => {
     let response = pman.addProduct(req.body)
+    req.io.emit("newProduct", response.json)
     return res.status(response.status).json(response.json)
 })
 
@@ -54,6 +55,7 @@ router.put("/:pid", (req, res) => {
     let response = validarId(pid)
     if (response.status == 200) {
         response = pman.updateProduct(Number(pid), req.body)
+        req.io.emit("updateProduct", response.json)
     }
     return res.status(response.status).json(response.json)
 })
@@ -63,6 +65,7 @@ router.delete("/:pid", (req, res) => {
     let response = validarId(pid)
     if (response.status == 200) {
         response = pman.deleteProduct(Number(pid))
+        req.io.emit("deleteProduct", response.json)
     }
     return res.status(response.status).json(response.json)
 

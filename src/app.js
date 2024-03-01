@@ -18,11 +18,17 @@ app.set('views', path.join(__dirname, 'views'))
 
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
-app.use("/api/products", productsRouter)
-app.use("/api/carts", cartRouter)
 app.use(express.static(path.join(__dirname, '/public')))
-app.use("/", viewsRouter)
 
+app.use("/api/products", (req, res, next) => {
+    req.io = io
+    next()
+}, productsRouter)
+app.use("/api/carts", cartRouter)
+app.use("/", (req, res, next) => {
+    req.io = io
+    next()
+}, viewsRouter)
 
 app.use((error, req, res, next) => {
     if(error) {

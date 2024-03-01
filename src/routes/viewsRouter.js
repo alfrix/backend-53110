@@ -12,10 +12,15 @@ router.use((req, res, next) => {
 })
 
 router.get("/realTimeProducts", (req, res) => {
+    let products = pman.getProducts()
     let pageTitle = "realTimeProducts"
     res.status(200).render('realTimeProducts', {
         pageTitle
     })
+    req.io.on("connection", socket => {
+        console.log(`Cliente conectado id: ${socket.id}`)
+        req.io.emit("showProducts", products)
+    })  
 })
 
 router.get("/", (req, res) => {
