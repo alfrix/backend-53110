@@ -1,21 +1,9 @@
 import { Router } from "express"
-import { __dirname, rutacarts } from '../utils.js'
+import { __dirname, rutacarts, validarId } from '../utils.js'
 import CartManager from '../managers/CartManager.js'
 
 const router = Router()
 const cman = new CartManager(rutacarts);
-
-function validarId(id) {
-    id = Number(id)
-    if (isNaN(id)) {
-        return {status: 400, json: [{error: 'ID debe ser un numero'}]}
-    }
-    let cart = cman.getCartById(id)
-    if (!cart) {
-        return {status: 404, json: [{error: `ID ${id} no encontrado`}]}
-    }
-    return {status: 200, json: cart}
-}
 
 router.use((req, res, next) => {
     let timestamp = new Date().toUTCString();
@@ -37,7 +25,7 @@ router.post("/", (req, res) => {
 
 router.get("/:cid", (req, res) => {
     let {cid} = req.params
-    let response = validarId(cid)
+    let response = validarId(cid, cman.getCartById(Number(cid)))
     return res.status(response.status).json(response.json)
 })
 

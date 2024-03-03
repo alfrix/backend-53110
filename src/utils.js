@@ -21,3 +21,16 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 export { upload }
+
+function validarId(id, element) {
+  id = Number(id)
+  if (isNaN(id)) {
+      return {status: 400, json: [{error: 'ID debe ser un numero'}]}
+  }
+  if (!element) {
+      return {status: 404, json: [{error: `ID ${id} no encontrado`}]}
+  }
+  return {status: 200, json: element}
+}
+
+export { validarId }

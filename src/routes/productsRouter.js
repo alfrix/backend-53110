@@ -1,21 +1,10 @@
 import { Router } from "express"
-import { __dirname, rutaproducts } from '../utils.js'
+import { __dirname, rutaproducts, validarId } from '../utils.js'
 import ProductManager from '../managers/ProductManager.js'
 
 const router = Router()
 const pman = new ProductManager(rutaproducts);
 
-function validarId(id) {
-    id = Number(id)
-    if (isNaN(id)) {
-        return {status: 400, json: [{error: `ID debe ser un numero, ingreso: ${id}`}]}
-    }
-    let product = pman.getProductById(id)
-    if (!product) {
-        return {status: 404, json: [{error: `ID ${id} no encontrado`}]}
-    }
-    return {status: 200, json: product}
-}
 
 router.use((req, res, next) => {
     let timestamp = new Date().toUTCString();
@@ -40,7 +29,7 @@ router.get("/", (req, res) => {
 
 router.get("/:pid", (req, res) => {
     let {pid} = req.params
-    let response = validarId(pid)
+    let response = validarId(pid, pman.getProductById(Number(pid)))
     return res.status(response.status).json(response.json)
 })
 
@@ -52,7 +41,7 @@ router.post("/", (req, res) => {
 
 router.put("/:pid", (req, res) => {
     let {pid} = req.params
-    let response = validarId(pid)
+    let response = validarId(pid, pman.getProductById(Number(pid)))
     if (response.status == 200) {
         response = pman.updateProduct(Number(pid), req.body)
         req.io.emit("updateProduct", response.json)
@@ -62,7 +51,7 @@ router.put("/:pid", (req, res) => {
 
 router.delete("/:pid", (req, res) => {
     let {pid} = req.params
-    let response = validarId(pid)
+    let response = validarId(pid, pman.getProductById(Number(pid)))
     if (response.status == 200) {
         response = pman.deleteProduct(Number(pid))
         req.io.emit("deleteProduct", response.json)
