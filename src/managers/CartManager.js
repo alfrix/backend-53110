@@ -24,7 +24,7 @@ class CartManager {
         fs.writeFileSync(this.path, JSON.stringify(this.carts, null, 2));
         let msg = `Carrito agregado id: ${id}`
         console.log(msg)
-        return {status: 200, json: [{error: ''}, cart]}
+        return {status: 201, json: [{error: ''}, cart]}
     }
 
     addProduct(cid, pid) {
@@ -58,7 +58,7 @@ class CartManager {
         this.carts[index] = { ...this.carts[index], ...cart };
         fs.writeFileSync(this.path, JSON.stringify(this.carts, null, 2));
         console.log(msg)
-        return {status: 200, json: [{error: ''}, cart]}
+        return {status: 201, json: [{error: ''}, cart]}
     }
 
     validateProductById(id){

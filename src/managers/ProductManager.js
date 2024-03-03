@@ -41,7 +41,7 @@ class ProductManager {
     if (exists) {
       let msg = `El codigo de producto ${product.code} ya existe id: ${exists.id}`
       console.error(msg);
-      return {status: 400, json: [{error: msg}]}
+      return {status: 409, json: [{error: msg}]}
     }
 
     let id = 1;
@@ -53,7 +53,7 @@ class ProductManager {
     fs.writeFileSync(this.path, JSON.stringify(this.products, null, 2));
     let msg = `Producto agregado id: ${id}`
     console.log(msg)
-    return {status: 200, json: [{error: ''}, product]}
+    return {status: 201, json: [{error: ''}, product]}
   }
 
   getProducts() {
