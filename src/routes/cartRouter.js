@@ -1,6 +1,6 @@
 import { Router } from "express"
 import { __dirname, rutacarts, validarId } from '../utils.js'
-import CartManager from '../managers/CartManager.js'
+import CartManager from '../dao/CartManagerFS.js'
 
 const router = Router()
 const cman = new CartManager(rutacarts);

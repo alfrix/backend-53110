@@ -1,5 +1,5 @@
 import fs from 'fs'
-import ProductManager from './ProductManager.js'
+import ProductManager from './ProductManagerFS.js'
 import { __dirname, rutaproducts } from '../utils.js'
 
 

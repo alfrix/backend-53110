@@ -1,6 +1,6 @@
 import { Router } from "express"
 import { __dirname, rutaproducts, validarId } from '../utils.js'
-import ProductManager from '../managers/ProductManager.js'
+import ProductManager from '../dao/ProductManagerFS.js'
 
 const router = Router()
 const pman = new ProductManager(rutaproducts);
