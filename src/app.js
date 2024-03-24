@@ -6,6 +6,7 @@ import { __dirname } from './utils.js';
 import { router as productsRouter } from './routes/productsRouter.js';
 import { router as cartRouter } from './routes/cartRouter.js';
 import { router as viewsRouter } from './routes/viewsRouter.js';
+import mongoose from 'mongoose';
 
 const PORT=8080
 const app=express()
@@ -36,3 +37,14 @@ app.use((error, req, res, next) => {
     }
     next()
 })
+
+const connectDB=async()=>{
+    try{
+        await mongoose.connect("mongodb+srv://Coder53110:CoderCoder@cluster0.8967ybh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&dbName=ecommerce")
+        console.log("DB Conectada")
+    } catch (error) {
+        console.log("ERROR al conectar:", error.message)
+    }
+}
+
+connectDB()
