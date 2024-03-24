@@ -1,6 +1,6 @@
 import { Router } from "express"
 import { rutaproducts } from "../utils.js";
-import ProductManager from "../dao/ProductManagerFS.js";
+import ProductManager from "../dao/ProductManagerDB.js";
 
 const router = Router()
 const pman = new ProductManager(rutaproducts)
@@ -11,8 +11,8 @@ router.use((req, res, next) => {
     next()
 })
 
-router.get("/realTimeProducts", (req, res) => {
-    let products = pman.getProducts()
+router.get("/realTimeProducts", async(req, res) => {
+    let products = await pman.getProducts()
     let pageTitle = "realTimeProducts"
     res.status(200).render('realTimeProducts', {
         pageTitle
@@ -23,8 +23,8 @@ router.get("/realTimeProducts", (req, res) => {
     })  
 })
 
-router.get("/", (req, res) => {
-    let products = pman.getProducts()
+router.get("/", async(req, res) => {
+    let products = await pman.getProducts()
     let pageTitle = "Home"
     res.status(200).render('home', {
         pageTitle, products

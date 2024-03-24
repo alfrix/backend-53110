@@ -18,20 +18,20 @@ router.use((req, res, next) => {
   })
 
 
-router.post("/", (req, res) => {
-    let response = cman.addCart()
+router.post("/", async(req, res) => {
+    let response = await cman.addCart()
     return res.status(response.status).json(response.json)
 })
 
-router.get("/:cid", (req, res) => {
+router.get("/:cid", async(req, res) => {
     let {cid} = req.params
-    let response = validarId(cid, cman.getCartById(Number(cid)))
+    let response = validarId(cid, await cman.getCartById(Number(cid)))
     return res.status(response.status).json(response.json)
 })
 
-router.post("/:cid/product/:pid", (req, res) => {
+router.post("/:cid/product/:pid", async(req, res) => {
     let {cid, pid} = req.params
-    let response = cman.addProduct(cid, pid)
+    let response = await cman.addProduct(cid, pid)
     return res.status(response.status).json(response.json)
 })
 

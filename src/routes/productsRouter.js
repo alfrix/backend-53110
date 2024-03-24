@@ -1,6 +1,6 @@
 import { Router } from "express"
 import { __dirname, rutaproducts, validarId } from '../utils.js'
-import ProductManager from '../dao/ProductManagerFS.js'
+import ProductManager from '../dao/ProductManagerDB.js'
 
 const router = Router()
 const pman = new ProductManager(rutaproducts);
@@ -18,42 +18,45 @@ router.use((req, res, next) => {
     next()
   })
 
-router.get("/", (req, res) => {
+router.get("/", async(req, res) => {
     let {limit} = req.query
-    let products = pman.getProducts()
+    let products = await pman.getProducts()
+    console.log(products)
     if (limit && limit > 0) {
         products = products.slice(0, limit)
     }
     return res.json(products)
 })
 
-router.get("/:pid", (req, res) => {
+router.get("/:pid", async(req, res) => {
     let {pid} = req.params
-    let response = validarId(pid, pman.getProductById(Number(pid)))
+    let response = validarId(pid, await pman.getProductById(Number(pid)))
     return res.status(response.status).json(response.json)
 })
 
-router.post("/", (req, res) => {
-    let response = pman.addProduct(req.body)
+router.post("/", async(req, res) => {
+    let response = await pman.addProduct(req.body)
     req.io.emit("newProduct", response.json)
     return res.status(response.status).json(response.json)
 })
 
-router.put("/:pid", (req, res) => {
+router.put("/:pid", async(req, res) => {
     let {pid} = req.params
-    let response = validarId(pid, pman.getProductById(Number(pid)))
+    const product = await pman.getProductById(Number(pid))
+    let response = validarId(pid, product)
     if (response.status == 200) {
-        response = pman.updateProduct(Number(pid), req.body)
+        response = await pman.updateProduct(Number(pid), req.body)
         req.io.emit("updateProduct", response.json)
     }
+    console.log(response)
     return res.status(response.status).json(response.json)
 })
 
-router.delete("/:pid", (req, res) => {
+router.delete("/:pid", async(req, res) => {
     let {pid} = req.params
-    let response = validarId(pid, pman.getProductById(Number(pid)))
+    let response = validarId(pid, await pman.getProductById(Number(pid)))
     if (response.status == 200) {
-        response = pman.deleteProduct(Number(pid))
+        response = await pman.deleteProduct(Number(pid))
         req.io.emit("deleteProduct", response.json)
     }
     return res.status(response.status).json(response.json)
