@@ -7,6 +7,7 @@ import { router as productsRouter } from './routes/productsRouter.js';
 import { router as cartRouter } from './routes/cartRouter.js';
 import { router as viewsRouter } from './routes/viewsRouter.js';
 import mongoose from 'mongoose';
+import ProductManager from "./dao/ProductManagerDB.js";
 
 const PORT=8080
 const app=express()
@@ -48,3 +49,44 @@ const connectDB=async()=>{
 }
 
 connectDB()
+
+let messages = [];
+let users = [];
+
+io.on("connection", (socket) => {
+    console.log(`Conectado id: ${socket.id}`);
+
+    socket.on("getProducts", async() => {
+        const pman = new ProductManager();
+        try {
+            const products = await pman.getProducts();
+            io.emit('showProducts', products);
+        } catch (error) {
+            console.error('Error getting products:', error);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    });
+
+    socket.on("welcome", (name) => {
+      users.push({ id: socket.id, name });
+      socket.emit("history", messages);
+      socket.broadcast.emit("newUser", name);
+    });
+
+    socket.on("message", (name, msg) => {
+      const timestamp = new Date().toUTCString()
+      messages.push({ name, msg, timestamp });
+      io.emit("newMessage", name, msg, timestamp);
+    });
+
+    socket.on("disconnect", () => {
+      console.log(`Desconectado id: ${socket.id}`);
+      const user = users.find((u) => u.id === socket.id);
+      if (user) {
+        const timestamp = new Date().toUTCString()
+        socket.broadcast.emit("userDisconnect", user.name, timestamp);
+        const index = users.indexOf(user);
+        users.splice(index, 1)
+      }
+    });
+  });

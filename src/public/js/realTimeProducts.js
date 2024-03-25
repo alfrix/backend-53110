@@ -1,5 +1,6 @@
 const socket = io();
-
+console.log("Script start");
+socket.emit("getProducts");
 
 function createCard(product) {
   let cardBody = document.createElement("div");
@@ -54,6 +55,7 @@ socket.on("updateProduct", (product) => {
 });
 
 socket.on("showProducts", (products) => {
+    console.log("showingProducts")
     let productsContainer = document.getElementById("productsContainer");
     productsContainer.innerHTML = ""
     products.forEach(product => {
