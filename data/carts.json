@@ -41,5 +41,18 @@
         "quantity": 2
       }
     ]
+  },
+  {
+    "id": 5,
+    "products": [
+      {
+        "pid": 6,
+        "quantity": 3
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "products": []
   }
 ]

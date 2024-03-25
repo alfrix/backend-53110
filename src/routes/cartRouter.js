@@ -1,9 +1,9 @@
 import { Router } from "express"
-import { __dirname, rutacarts, validarId } from '../utils.js'
-import CartManager from '../dao/CartManagerFS.js'
+import { __dirname, validarId } from '../utils.js'
+import CartManager from '../dao/CartManagerDB.js'
 
 const router = Router()
-const cman = new CartManager(rutacarts);
+const cman = new CartManager();
 
 router.use((req, res, next) => {
     let timestamp = new Date().toUTCString();
