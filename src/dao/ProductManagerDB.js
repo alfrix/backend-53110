@@ -6,14 +6,13 @@ class ProductManager {
         if (product._id) {
             delete product._id
         }
-        product.id = await productsModel.countDocuments()
-        product.id += 1
-        let msg = `Agregando id: ${product.id}`
-        console.log(msg)
+        console.log("Agregando producto")
         let response = [{error:''}];
         try {
             const mongores = await productsModel.create(product)
-            response.push(await this.getProductById(product.id))
+            if (mongores.insertedId) {
+                response.push(await this.getProductById(product._id))
+            }
             response.push(mongores)
         } catch (error) {
             return {status: 500, json: [{error: error}]}
@@ -26,7 +25,7 @@ class ProductManager {
     }
 
     async getProductById(pid) {
-        let p = await productsModel.findOne({id: pid}).lean()
+        let p = await productsModel.findOne({_id: pid}).lean()
         console.log("getProductById", p)
         return p
     }
@@ -35,12 +34,9 @@ class ProductManager {
         if (product._id) {
             delete product._id
         }
-        if (product.id) {
-            delete product.id
-        }
         const oldProduct = await this.getProductById(pid);
-        if (!oldProduct || !product || product.id) {
-          let msg = `No se puede actualizar id: ${pid} datos: ${oldProduct} ${product} ${product.id}`;
+        if (!oldProduct || !product) {
+          let msg = `No se puede actualizar id: ${pid} datos: ${oldProduct} ${product}`;
           console.error(msg);
           return {status: 400, json: [{error: msg}]}
         }
@@ -48,7 +44,7 @@ class ProductManager {
         console.error(msg);
         let response = [{error:''}];
         try {
-            const mongores = await productsModel.updateOne({id: pid}, product)
+            const mongores = await productsModel.updateOne({_id: pid}, product)
             response.push(await this.getProductById(pid))
             response.push(mongores)
         } catch (error) {
@@ -63,7 +59,7 @@ class ProductManager {
         let response = [{error:''}];
         try {
             response.push(await this.getProductById(pid))
-            response.push(await productsModel.deleteOne({id: pid}))
+            response.push(await productsModel.deleteOne({_id: pid}))
         } catch (error) {
             return {status: 500, json: error}
         }
