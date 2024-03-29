@@ -6,7 +6,7 @@
             <h2 class="">Productos:</h2>
         </div>
         <div class="row">
-            {{#each products}}
+            {{#each products.payload}}
             <div class="card p-1 m-3 col-sm-12 col-md-4 col-lg-4 col-xl-3 col-xxl-2">
                 <div class="card-thumbnail">
                     {{!-- <img src="..." class="card-img-top" alt="imagen de {{title}}"> --}}
@@ -18,6 +18,31 @@
                 </div>
             </div>
             {{/each}}
+        </div>
+        <div class="d-flex justify-content-center align-items-center">
+            {{#if products.hasPrevPage}}
+                <a href="/?page=1">
+                    <button type="button" class="btn btn-primary mx-4">Primera</button>
+                </a>
+                <a href="/?page={{products.prevPage}}">
+                    <button type="button" class="btn btn-primary mx-4"> << </button>
+                </a>
+            {{else}}
+                <button type="button" class="btn btn-secondary mx-4">Primera</button>
+                <button type="button" class="btn btn-secondary mx-4"> << </button>
+            {{/if}}
+            {{products.page}}
+            {{#if products.hasNextPage}}
+                <a href="/?page={{products.nextPage}}">
+                    <button type="button" class="btn btn-primary mx-4"> >> </button>
+                </a>
+                <a href="/?page={{products.totalPages}}">
+                    <button type="button" class="btn btn-primary mx-4">Ultima</button>
+                </a>
+            {{else}}
+                <button type="button" class="btn btn-secondary mx-4"> >> </button>
+                <button type="button" class="btn btn-secondary mx-4">Ultima</button>
+            {{/if}}
         </div>
     </div>
 </section>

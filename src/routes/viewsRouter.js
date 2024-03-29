@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { rutaproducts } from "../utils.js";
 import ProductManager from "../dao/ProductManagerDB.js";
+import { transcode } from "node:buffer";
 
 const router = Router();
 const pman = new ProductManager();
@@ -20,7 +21,16 @@ router.get("/realTimeProducts", async (req, res) => {
 
 router.get("/", async (req, res) => {
   let {limit, page} = req.query
-  let products = await pman.getProducts(limit, page);
+  let products;
+  try {
+    products = await pman.getProducts(limit, page);
+    if (products.status == "error") {
+      throw products.error
+    }
+  } catch (error) {
+    res.status(500).render(("500"), {error})
+    return
+  }
   let pageTitle = "Home";
   res.status(200).render("home", {
     pageTitle,

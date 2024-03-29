@@ -1,3 +1,4 @@
+import { isObject } from "node:util";
 import { productsModel } from "./models/products.model.js";
 
 class ProductManager {
@@ -20,37 +21,35 @@ class ProductManager {
         return {status: 201, json: response}
     }
 
-    async getProducts(limit, page) {
+    async getProducts(limit, page, query, sort) {
         // return await productsModel.find().lean()
-        if (!limit || isNaN(limit) || limit < 1)
-            { limit = 10 }
-        else
-            { limit = Math.floor(limit)}
-        if (!page || isNaN(page) || page < 1)
-            { page = 1 }
-        else
-            { page = Math.floor(page)}
-        let {
-            docs:products,
-            totalPages,
-            prevPage, nextPage,
-            hasPrevPage, hasNextPage
-        } = await productsModel.paginate({}, {page: page, limit:limit, lean:true})
-        //     TODO: query y sort
-        return products
-        // {
-        //     status:success/error
-        //     payload: Resultado de los productos solicitados
-        //     totalPages: Total de páginas
-        //     prevPage: Página anterior
-        //     nextPage: Página siguiente
-        //     page: Página actual
-        //     hasPrevPage: Indicador para saber si la página previa existe
-        //     hasNextPage: Indicador para saber si la página siguiente existe.
-        //     prevLink: Link directo a la página previa (null si
-        //     hasPrevPage=false)
-        //     nextLink: Link directo a la página siguiente (null si hasNextPage=false)
-        // }
+        if (!query) { query = {} }
+        (!limit || isNaN(limit) || limit < 1)? limit = 10 : limit = Math.floor(limit);
+        (!page || isNaN(page) || page < 1)? page = 1 : page = Math.floor(page);
+        console.log(`limit ${limit} page ${page} query ${JSON.stringify(query)}`)
+        try {
+            let {
+                docs:products,
+                totalPages,
+                prevPage, nextPage,
+                hasPrevPage, hasNextPage
+            } = await productsModel.paginate({}, {page: page, limit:limit, lean:true})
+            return {
+                status: "success",
+                payload: products,
+                totalPages: totalPages,
+                prevPage: prevPage,
+                nextPage: nextPage,
+                page: page,
+                hasPrevPage: hasPrevPage,
+                hasNextPage: hasNextPage
+            }
+        } catch (error) {
+            return {
+                status: "error",
+                error: error
+            }
+        }
     }
 
     async getProductById(pid) {
