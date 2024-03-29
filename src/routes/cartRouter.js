@@ -26,6 +26,7 @@ router.post("/", async(req, res) => {
 router.get("/:cid", async(req, res) => {
     let {cid} = req.params
     let response = validarId(cid, await cman.getCartById(Number(cid)))
+    // populate
     return res.status(response.status).json(response.json)
 })
 
@@ -35,4 +36,20 @@ router.post("/:cid/product/:pid", async(req, res) => {
     return res.status(response.status).json(response.json)
 })
 
+// TODO:
+router.delete("/:cid/product/:pid"), async(req, res) => {
+    // eliminar del carrito elproducto seleccionado.
+}
+
+router.delete("/:cid"), async(req, res) => {
+    // eliminar todos los productos del carrito
+}
+
+router.put("/:cid/product/:pid"), async(req, res) => {
+    // actualizar el carrito con un arreglo de productos
+}
+
+router.put("/:cid"  ), async(req, res) => {
+    // actualizar SÓLO la cantidad de ejemplares del producto por cualquier cantidad pasada
+}
 export { router }

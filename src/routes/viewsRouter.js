@@ -19,7 +19,8 @@ router.get("/realTimeProducts", async (req, res) => {
 });
 
 router.get("/", async (req, res) => {
-  let products = await pman.getProducts();
+  let {limit, page} = req.query
+  let products = await pman.getProducts(limit, page);
   let pageTitle = "Home";
   res.status(200).render("home", {
     pageTitle,
@@ -29,6 +30,10 @@ router.get("/", async (req, res) => {
 
 router.get("/chat", (req, res) => {
   res.status(200).render("chat");
+});
+
+router.get("/cart/:cid", (req, res) => {
+  // TODO: listar productos
 });
 
 router.get("*", (req, res) => {

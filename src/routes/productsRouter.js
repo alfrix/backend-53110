@@ -19,12 +19,9 @@ router.use((req, res, next) => {
   })
 
 router.get("/", async(req, res) => {
-    let {limit} = req.query
-    let products = await pman.getProducts()
+    let {limit, page} = req.query
+    let products = await pman.getProducts(limit, page);
     console.log(products)
-    if (limit && limit > 0) {
-        products = products.slice(0, limit)
-    }
     return res.json(products)
 })
 
