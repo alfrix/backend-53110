@@ -1,4 +1,3 @@
-import { isObject } from "node:util";
 import { productsModel } from "./models/products.model.js";
 
 class ProductManager {
@@ -23,17 +22,39 @@ class ProductManager {
 
     async getProducts(limit, page, query, sort) {
         // return await productsModel.find().lean()
-        if (!query) { query = {} }
+        if (!query) { 
+            query = {}
+        } else {
+            try {
+                query = JSON.parse(query)
+            } catch (error) {
+                return {
+                    "status": "error",
+                    "error": `Unable to parse JSON query ${query}: ${error}`
+                }
+            }
+        }
+        if (!sort || !(["asc", "desc"].includes(sort))) {
+            console.log(`sort not valid ${sort}`)
+            sort = 'asc'
+        }
         (!limit || isNaN(limit) || limit < 1)? limit = 10 : limit = Math.floor(limit);
         (!page || isNaN(page) || page < 1)? page = 1 : page = Math.floor(page);
-        console.log(`limit ${limit} page ${page} query ${JSON.stringify(query)}`)
+        console.log(`limit ${limit} page ${page} query ${JSON.stringify(query)} sort ${JSON.stringify(sort)}`)
         try {
+            let options = {
+                page: page,
+                limit:limit,
+                lean: true,
+                sort: { price: sort }
+            }
+
             let {
                 docs:products,
                 totalPages,
                 prevPage, nextPage,
                 hasPrevPage, hasNextPage
-            } = await productsModel.paginate({}, {page: page, limit:limit, lean:true})
+            } = await productsModel.paginate(query, options)
             return {
                 status: "success",
                 payload: products,

@@ -1,0 +1,42 @@
+<h1>Carrito</h1>
+<hr>
+<section class="py-4">
+    <div class="container p-0">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <td>Productos</td>
+                    <td>Cantidad</td>
+                    <td></td>
+                    <td>Precio</td>
+                    <td>Subtotal</td>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each cart.products}}
+                <tr>
+                    <td>{{product.title}}</td>
+                    <td>{{quantity}}</td>
+                    <td>
+                        <form class="ajax-form" method="delete" action="/api/carts/1/product/{{product._id}}">
+                            <button type="submit" class="btn btn-danger mx-4">
+                                <i class="bi bi-trash-fill mx-2"></i>
+                            </button>
+                        </form>
+                    </td>
+                    <td>{{product.price}}</td>
+                    <td>{{productPriceTotal}}</td>
+                </tr>
+                {{/each}}
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>Total:</td>
+                    <td>{{cart.totalPrice}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+<script src="/js/forms.js"></script>

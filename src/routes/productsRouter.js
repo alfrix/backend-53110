@@ -1,9 +1,9 @@
 import { Router } from "express"
-import { __dirname, rutaproducts, validarId } from '../utils.js'
+import { __dirname, validarId } from '../utils.js'
 import ProductManager from '../dao/ProductManagerDB.js'
 
 const router = Router()
-const pman = new ProductManager(rutaproducts);
+const pman = new ProductManager();
 
 
 router.use((req, res, next) => {
@@ -19,8 +19,8 @@ router.use((req, res, next) => {
   })
 
 router.get("/", async(req, res) => {
-    let {limit, page} = req.query
-    let products = await pman.getProducts(limit, page);
+    let {limit, page, query, sort} = req.query
+    let products = await pman.getProducts(limit, page, query, sort);
     console.log(products)
     return res.json(products)
 })

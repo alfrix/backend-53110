@@ -21,6 +21,16 @@ function createCard(product) {
   price.innerHTML = " $ " + product.price;
   cardBody.appendChild(price);
 
+  let button = document.createElement("div")
+  button.classList.add("my-2")
+  let form = document.createElement("form")
+  form.classList.add("ajax-form")
+  form.action = `/api/carts/1/product/${product._id}`
+  form.method = "post"
+  form.innerHTML = '<button type="submit" class="btn btn-primary mx-4">Agregar al Carrito</button>'
+  button.appendChild(form);
+  cardBody.appendChild(button);
+
   let card = document.createElement("div");
   let classes = ["card", "p-1", "m-3", "col-sm-12", "col-md-4", "col-lg-4", "col-xl-3", "col-xxl-2"]
   classes.forEach((cls) => {card.classList.add(cls)})
@@ -56,6 +66,7 @@ socket.on("updateProduct", (product) => {
 
 socket.on("showProducts", (products) => {
     console.log("showingProducts")
+    products = products.payload
     let productsContainer = document.getElementById("productsContainer");
     productsContainer.innerHTML = ""
     products.forEach(product => {
