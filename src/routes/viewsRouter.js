@@ -31,10 +31,10 @@ router.get("/realTimeProducts", async (req, res) => {
 });
 
 router.get("/", async (req, res) => {
-  let {limit, page} = req.query
+  let {limit, page, query, sort} = req.query
   let products;
   try {
-    products = await pman.getProducts(limit, page);
+    products = await pman.getProducts(limit, page, query, sort);
     if (products.status == "error") {
       throw products.error
     }
