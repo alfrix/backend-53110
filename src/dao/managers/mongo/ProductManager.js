@@ -1,4 +1,4 @@
-import { productsModel } from "./models/products.model.js";
+import { productsModel } from "../../models/products.model.js";
 
 class ProductManager {
 
@@ -7,17 +7,17 @@ class ProductManager {
             delete product._id
         }
         console.log("Agregando producto")
-        let response = [{error:''}];
         try {
+            let response = [];
             const mongores = await productsModel.create(product)
             if (mongores.insertedId) {
                 response.push(await this.getProductById(product._id))
             }
             response.push(mongores)
+            return {status: 201, json: {...response}}
         } catch (error) {
-            return {status: 500, json: [{error: error}]}
+            return {status: 500, json: {error}}
         }
-        return {status: 201, json: response}
     }
 
     async getProducts(limit, page, query, sort) {
@@ -74,45 +74,49 @@ class ProductManager {
     }
 
     async getProductById(pid) {
-        let p = await productsModel.findOne({_id: pid}).lean()
-        console.log("getProductById", p)
-        return p
+        try {
+            return await productsModel.findOne({_id: pid}).lean()
+        } catch (error) {
+            return {status: 500, json: {error}}
+        }
     }
 
     async updateProduct(pid, product) {
         if (product._id) {
             delete product._id
         }
-        const oldProduct = await this.getProductById(pid);
-        if (!oldProduct || !product) {
-          let msg = `No se puede actualizar id: ${pid} datos: ${oldProduct} ${product}`;
-          console.error(msg);
-          return {status: 400, json: [{error: msg}]}
-        }
-        let msg = `Actualizando producto id: ${pid}`;
-        console.error(msg);
-        let response = [{error:''}];
         try {
+            const oldProduct = await this.getProductById(pid);
+            if (!oldProduct || !product) {
+                let msg = `No se puede actualizar id: ${pid} datos: ${oldProduct} ${product}`;
+                console.error(msg);
+                return {status: 400, json: {error: msg}}
+            }
+        } catch (error) {
+            return {status: 500, json: {error}}
+        }
+        console.log(`Actualizando producto id: ${pid}`);
+        try {
+            let response = [];
             const mongores = await productsModel.updateOne({_id: pid}, product)
             response.push(await this.getProductById(pid))
             response.push(mongores)
+            return {status: 200, json: {...response}}
         } catch (error) {
-            return {status: 500, json: [{error: error}]}
+            return {status: 500, json: {error}}
         }
-        return {status: 200, json: response}
     }
 
     async deleteProduct(pid) {
-        let msg = `Borrando id: ${pid}`;
-        console.log(msg)
-        let response = [{error:''}];
+        console.log(`Borrando id: ${pid}`)
         try {
+            let response = [];
             response.push(await this.getProductById(pid))
             response.push(await productsModel.deleteOne({_id: pid}))
+            return {status: 200, json: {...response}}
         } catch (error) {
             return {status: 500, json: error}
         }
-        return {status: 200, json: response}
     }
 }
 

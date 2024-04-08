@@ -9,7 +9,7 @@ import { router as cartRouter } from './routes/cartRouter.js';
 import { router as viewsRouter } from './routes/viewsRouter.js';
 import { router as sessionRouter } from './routes/sessionRouter.js';
 import mongoose from 'mongoose';
-import ProductManager from "./dao/ProductManagerDB.js";
+import ProductManager from "./dao/managers/mongo/ProductManager.js";
 import MongoStore from 'connect-mongo'
 
 const PORT=8080

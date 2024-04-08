@@ -1,6 +1,6 @@
 import { Router } from "express"
 import { __dirname, validarId } from '../utils.js'
-import CartManager from '../dao/CartManagerDB.js'
+import CartManager from '../dao/managers/mongo/CartManager.js'
 
 const router = Router()
 const cman = new CartManager();
@@ -19,49 +19,83 @@ router.use((req, res, next) => {
 
 
 router.post("/", async(req, res) => {
-    let response = await cman.addCart()
-    return res.status(response.status).json(response.json)
+    try {
+        let response = await cman.addCart()
+        return res.status(response.status).json(response.json)
+    } catch (error) {
+        console.error(error)
+        return {status: 500, json: {error: "error inesperado"}}
+    }
 })
 
 router.get("/:cid", async(req, res) => {
     let {cid} = req.params
-    let response = validarId(cid, await cman.getCartById(Number(cid)))
-    return res.status(response.status).json(response.json)
+    try {
+        let response = validarId(cid, await cman.getCartById(Number(cid)))
+        return res.status(response.status).json(response.json)
+    } catch (error) {
+        console.error(error)
+        return {status: 500, json: {error: "error inesperado"}}
+    }
 })
 
 router.post("/:cid/product/:pid", async(req, res) => {
     let {cid, pid} = req.params
-    let response = await cman.addProduct(cid, pid)
-    return res.status(response.status).json(response.json)
+    try {
+        let response = await cman.addProduct(cid, pid)
+        return res.status(response.status).json(response.json)
+    } catch (error) {
+        console.error(error)
+        return {status: 500, json: {error: "error inesperado"}}
+    }
 })
 
 router.delete("/:cid/product/:pid", async(req, res) => {
     console.log("router delete pid from cart")
     let {cid, pid} = req.params
-    let response = await cman.removeProductfromCart(cid, pid)
-    return res.status(response.status).json(response.json)
+    try {
+        let response = await cman.removeProductfromCart(cid, pid)
+        return res.status(response.status).json(response.json)
+    } catch (error) {
+        console.error(error)
+        return {status: 500, json: {error: "error inesperado"}}
+    }
 })
 
 router.delete("/:cid", async(req, res) => {
     console.log("router delete cart")
     let {cid} = req.params
-    let response = await cman.emptyCart(cid)
-    return res.status(response.status).json(response.json)
+    try {
+        let response = await cman.emptyCart(cid)
+        return res.status(response.status).json(response.json)
+    } catch (error) {
+        console.error(error)
+        return {status: 500, json: {error: "error inesperado"}}
+    }
 })
 
 router.put("/:cid/product/:pid", async(req, res) => {
     console.log("update cantidad productos de un cart")
     let {cid, pid} = req.params
-    let response = await cman.updateCartProduct(cid, pid, req.body)
-    return res.status(response.status).json(response.json)
-    // actualizar SÓLO la cantidad de ejemplares del producto por cualquier cantidad pasada
+    try {
+        let response = await cman.updateCartProduct(cid, pid, req.body)
+        return res.status(response.status).json(response.json)
+    } catch (error) {
+        console.error(error)
+        return {status: 500, json: {error: "error inesperado"}}
+    }
 })
 
 router.put("/:cid", async(req, res) => {
     console.log("update productos de un cart")
     let {cid} = req.params
-    let response = await cman.updateCart(cid, req.body)
-    return res.status(response.status).json(response.json)
-    // actualizar el carrito con un arreglo de productos
+    try {
+        let response = await cman.updateCart(cid, req.body)
+        return res.status(response.status).json(response.json)
+    } catch (error) {
+        console.error(error)
+        return {status: 500, json: {error: "error inesperado"}}
+    }
 })
+
 export { router }

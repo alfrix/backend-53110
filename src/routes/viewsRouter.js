@@ -1,6 +1,6 @@
 import { Router } from "express";
-import ProductManager from "../dao/ProductManagerDB.js";
-import CartManager from '../dao/CartManagerDB.js'
+import ProductManager from "../dao/managers/mongo/ProductManager.js";
+import CartManager from '../dao/managers/mongo/CartManager.js'
 import { auth } from "../middlewares/auth.js";
 
 const router = Router();
@@ -19,8 +19,9 @@ router.use(async(req, res, next) => {
   } else {
     user = undefined
   }
+  let cart;
   try {
-    let cart = await cman.getCartById(1);
+    cart = await cman.getCartById(1);
     cart.products.forEach((product) => {cartItemCount += product.quantity});
   } catch (error) {
     res.status(500).render(("500"), {error})
@@ -71,7 +72,16 @@ router.get("/chat", (req, res) => {
 
 router.get("/cart/:cid", async(req, res) => {
   let {cid} = req.params
-  let cart = await cman.getCartById(cid);
+  let cart;
+  try {
+    cart = await cman.getCartById(cid);
+  } catch (error) {
+    let pageTitle = "500";
+    res.status(500).render("500", {
+      pageTitle,
+      user,
+    });
+  }
   let pageTitle = "Carrito";
   res.status(200).render("cart", {
     pageTitle,
