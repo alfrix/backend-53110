@@ -1,4 +1,5 @@
-import express from 'express'
+import express from 'express';
+import session from 'express-session';
 import { engine } from 'express-handlebars';
 import { Server } from 'socket.io';
 import path from "node:path";
@@ -6,15 +7,17 @@ import { __dirname } from './utils.js';
 import { router as productsRouter } from './routes/productsRouter.js';
 import { router as cartRouter } from './routes/cartRouter.js';
 import { router as viewsRouter } from './routes/viewsRouter.js';
+import { router as sessionRouter } from './routes/sessionRouter.js';
 import mongoose from 'mongoose';
 import ProductManager from "./dao/ProductManagerDB.js";
+import MongoStore from 'connect-mongo'
 
 const PORT=8080
 const app=express()
 const server = app.listen(PORT, ()=>{console.log(`Server OK en puerto ${PORT}`)})
 const io = new Server(server)
 // const mongoURL = "mongodb://127.0.0.1:27017/test"
-const mongoURL = "mongodb+srv://Coder53110:CoderCoder@cluster0.8967ybh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&dbName=ecommerce"
+const mongoUrl = "mongodb+srv://Coder53110:CoderCoder@cluster0.8967ybh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&dbName=ecommerce"
 
 app.engine('handlebars', engine())
 app.set('view engine', 'handlebars')
@@ -23,12 +26,23 @@ app.set('views', path.join(__dirname, 'views'))
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 app.use(express.static(path.join(__dirname, '/public')))
+app.use(session(
+    {
+        secret: "CoderCoder",
+        resave: true,
+        saveUninitialized: true,
+        store: MongoStore.create({ mongoUrl, ttl: 60 })
+    }
+))
 
 app.use("/api/products", (req, res, next) => {
     req.io = io
     next()
 }, productsRouter)
+
 app.use("/api/carts", cartRouter)
+app.use("/api/session", sessionRouter)
+
 app.use("/", (req, res, next) => {
     req.io = io
     next()
@@ -43,7 +57,7 @@ app.use((error, req, res, next) => {
 
 const connectDB=async()=>{
     try{
-        await mongoose.connect(mongoURL)
+        await mongoose.connect(mongoUrl)
         console.log("DB Conectada")
     } catch (error) {
         console.log("ERROR al conectar:", error.message)
