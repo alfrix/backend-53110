@@ -1,5 +1,13 @@
 import { usersModel } from "../../models/users.model.js";
 
+const admin = {
+    _id: 0,
+    first_name: "Admin",
+    last_name: "Coder",
+    email: "adminCoder@coder.com",
+    password: "$2b$10$3RczyzSqgKpRgjebXDtcoeYCsQzgD3O.vdeALJ5HGZAkQx988OA1y",
+    rol: "admin",
+}
 
 class usersManager {
     async create(user){
@@ -22,6 +30,9 @@ class usersManager {
     }
 
     async getUserById(uid) {
+        if (uid === 0) {
+            return admin
+        }
         try {
             return await usersModel.findById(uid).lean()
         } catch (error) {
@@ -32,13 +43,7 @@ class usersManager {
     async getUserByEmail(email) {
         console.log("getUserByEmail", email)
         if (email === "adminCoder@coder.com") {
-            return {
-                first_name: "Admin",
-                last_name: "Coder",
-                email: "adminCoder@coder.com",
-                password: "$2b$10$3RczyzSqgKpRgjebXDtcoeYCsQzgD3O.vdeALJ5HGZAkQx988OA1y",
-                rol: "admin",
-            }
+            return admin
         }
         try {
             return await usersModel.findOne({email}).lean()

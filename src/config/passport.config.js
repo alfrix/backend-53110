@@ -55,7 +55,7 @@ export const initPassport = () => {
                     }
                     return done(null, user)
                 } catch (error) {
-                    console.error(error)
+                    console.error("local-login", error)
                     return done(error)
                 }
             }
@@ -72,15 +72,22 @@ export const initPassport = () => {
             },
             async (accessToken, refreshToken, profile, done) => {
                 try {
-                    const name = profile._json.name;
-                    const email = profile._json.email;
+                    const first_name = profile._json.name;
+                    const last_name = profile._json.login;
+
+                    let email = profile._json.email;
+                    if (!email) {
+                        email = `${profile._json.id}+${profile._json.login}@users.noreply.github.com`
+                    }
+                    // console.log(profile)
                     let user = await usersModel.findOne({email})
                     if (!user) {
-                        user = await usersModel.create({first_name: name, email})
+                        console.log(`Nuevo usuario ${email}`)
+                        user = await usersModel.create({first_name, last_name, email})
                     }
-                    return done(user)
+                    return done(null, user)
                 } catch (error) {
-                    console.error(error)
+                    console.error("github", error)
                     return done(error)
                 }
             }
@@ -88,10 +95,13 @@ export const initPassport = () => {
     )
     
     passport.serializeUser((user, done) => {
-        return done(null, user)
+        return done(null, user._id)
     })
 
     passport.deserializeUser((user, done) => {
+        if (user === 0) {
+            user = userMan.getUserById(0)
+        }
         return done(null, user)
     })
 }

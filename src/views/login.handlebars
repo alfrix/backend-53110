@@ -18,9 +18,22 @@
                 <input type="password" class="form-control" id="InputPassword1" name="password">
             </div>
         </div>
-        <div class="d-flex justify-content-between">
-            <a href="/signup"><button type="button" class="btn btn-success">Nuevo usuario</button></a>
-            <button type="submit" class="btn btn-primary">Ingresar</button>
+        <div class="d-flex justify-content-between mb-3">
+            <a href="/signup">
+                <button type="button" class="btn btn-success py-3 px-4">
+                    Nuevo usuario
+                </button>
+            </a>
+            <button type="submit" class="btn btn-primary py-3 px-4">
+                Ingresar <i class="bi bi-box-arrow-in-right ms-2 h5"></i>
+            </button>
+        </div>
+        <div class="row mb-3 text-center">
+            <a href="/api/session/github">
+                <button type="button" class="btn btn-secondary py-4 w-100">
+                    Ingreso con GitHub <i class="bi bi-github ms-2 h5"></i>
+                </button>
+            </a>
         </div>
     </form>
 </div>
