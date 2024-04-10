@@ -30,6 +30,7 @@ class usersManager {
     }
 
     async getUserByEmail(email) {
+        console.log("getUserByEmail", email)
         if (email === "adminCoder@coder.com") {
             return {
                 first_name: "Admin",

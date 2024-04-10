@@ -1,65 +1,81 @@
-import { Router } from "express"
-import usersManager from '../dao/managers/mongo/UsersManager.js'
-import { createHash, validatePass } from "../utils.js"
+import { Router } from "express";
+import passport from "passport";
 
-const router = Router()
-const userMan = new usersManager()
+const router = Router();
 
-router.post("/login", async(req, res) => {
-    let {email, password} = req.body
-    if (!email || !password) {
-        return res.redirect("/login?error=Complete todos los campos")
+router.get("/errorSignup", (req, res) => {
+  console.error("errorSignup", req.session.messages);
+  return res.redirect(`/signup?error=Error al registrarse\n${req.session.messages}`);
+});
+
+router.get("/errorLogin", (req, res) => {
+  console.error("errorLogin", req.session.messages);
+  return res.redirect(
+    `/login?error=Error al iniciar sesion\n${req.session.messages}`
+  );
+});
+
+router.get(
+  "/github",
+  passport.authenticate("github", {}, (req, res) => {})
+);
+router.get(
+  "/callbackGithub",
+  passport.authenticate(
+    "github",
+    {
+      failureRedirect: "/login?message=Fallo al autenticar con Github",
+      failureMessage: true,
+    },
+    (req, res) => {
+      req.session.user = req.user;
+      return res.status(200).json();
     }
-    try {
-        let user = await userMan.getUserByEmail(email)
-        if (!user) {
-            return res.redirect("/login?error=Usuario desconocido")
-        }
-        if (!validatePass(user, password)) {
-            return res.redirect("/login?error=Datos no validos")
-        }
-        user = {...user}
-        delete user.password
-        console.log(user.email, "conectado")
-        req.session.user = user
-        return res.redirect(`/?message=Bienvenido ${user.first_name}`)
-    } catch (error) {
-        console.log(error)
-        return res.redirect('/login?error=Error inesperado')
-    }
+  )
+);
 
-})
+router.post(
+  "/login",
+  passport.authenticate("login", {
+    failureRedirect: "/api/session/errorLogin",
+    failureMessage: true,
+  }),
+  async (req, res) => {
+    let user = req.user;
+    user = { ...user };
+    delete user.password;
+    console.log(user.email, "conectado");
+    req.session.user = user;
+    return res.redirect(`/?message=Bienvenido ${user.first_name}`);
+  }
+);
 
 router.get("/logout", (req, res) => {
-    console.log("logout")
-    req.session.destroy(error => {
-        if (error) {
-            console.log(error)
-            return res.redirect('/signup?error=Error inesperado')
-        }
-    })
-    return res.redirect('/login?message=Sesión cerrada correctamente')
-})
-
-router.post("/signup", async(req, res) => {
-    console.log(`body: ${JSON.stringify(req.body)}`)
-
-    let {firstName, lastName, email, password} = req.body
-    if (!firstName || !lastName || !email || !password) {
-        return res.redirect('/signup?error=Faltan Datos')
+  console.log("logout");
+  req.session.destroy((error) => {
+    if (error) {
+      console.log(error);
+      return res.redirect("/signup?error=Error inesperado");
     }
-    try {
-        const exists = await userMan.getUserByEmail(email)
-        if (exists) {
-            return res.redirect('/signup?error=Email ya registrado')
-        }
-        password = createHash(password)
-        const newUser = await userMan.create({first_name: firstName, last_name: lastName, email, password})
-        return res.redirect(`/login?message=Registrado: ${email}&email=${email}`)
-    } catch (error) {
-        console.log(error)
-        return res.redirect('/signup?error=Error inesperado')
-    }
-})
+  });
+  return res.redirect("/login?message=Sesión cerrada correctamente");
+});
+
+router.post(
+  "/signup",
+  passport.authenticate("signup", {
+    failureRedirect: "/api/session/errorSignup",
+    failureMessage: true,
+  }),
+  async (req, res) => {
+    console.log("##################");
+    console.log(req);
+    console.log("##################");
+    console.log(res);
+    console.log("##################");
+    let { email } = req.body;
+    return res.redirect(`/login?message=Registrado: ${email}&email=${email}`);
+  }
+);
 
 export { router };

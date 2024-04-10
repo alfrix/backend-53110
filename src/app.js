@@ -11,6 +11,8 @@ import { router as sessionRouter } from './routes/sessionRouter.js';
 import mongoose from 'mongoose';
 import ProductManager from "./dao/managers/mongo/ProductManager.js";
 import MongoStore from 'connect-mongo'
+import passport from 'passport';
+import { initPassport } from './config/passport.config.js';
 
 const PORT=8080
 const app=express()
@@ -42,6 +44,10 @@ app.use("/api/products", (req, res, next) => {
 
 app.use("/api/carts", cartRouter)
 app.use("/api/session", sessionRouter)
+
+initPassport()
+app.use(passport.initialize())
+app.use(passport.session())
 
 app.use("/", (req, res, next) => {
     req.io = io
