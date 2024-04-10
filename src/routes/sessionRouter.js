@@ -4,14 +4,18 @@ import passport from "passport";
 const router = Router();
 
 router.get("/errorSignup", (req, res) => {
-  console.error("errorSignup", req.session.messages);
-  return res.redirect(`/signup?error=Error al registrarse\n${req.session.messages}`);
+console.error("errorSignup", req.session.messages);
+  const messages = req.session.messages.join('\n');
+  req.session.messages = []
+  return res.redirect(`/signup?error=Error al registrarse\n${messages}`);
 });
 
 router.get("/errorLogin", (req, res) => {
   console.error("errorLogin", req.session.messages);
+  const messages = req.session.messages.join('\n');
+  req.session.messages = []
   return res.redirect(
-    `/login?error=Error al iniciar sesion\n${req.session.messages}`
+    `/login?error=Error al iniciar sesion\n${messages}`
   );
 });
 
@@ -24,7 +28,7 @@ router.get(
   passport.authenticate(
     "github",
     {
-      failureRedirect: "/login?message=Fallo al autenticar con Github",
+      failureRedirect: "/login?error=Fallo al autenticar con Github",
       failureMessage: true,
     },
     (req, res) => {
@@ -58,7 +62,7 @@ router.get("/logout", (req, res) => {
       return res.redirect("/signup?error=Error inesperado");
     }
   });
-  return res.redirect("/login?message=Sesión cerrada correctamente");
+  return res.redirect("/login?success=Sesión cerrada correctamente");
 });
 
 router.post(
@@ -68,13 +72,8 @@ router.post(
     failureMessage: true,
   }),
   async (req, res) => {
-    console.log("##################");
-    console.log(req);
-    console.log("##################");
-    console.log(res);
-    console.log("##################");
     let { email } = req.body;
-    return res.redirect(`/login?message=Registrado: ${email}&email=${email}`);
+    return res.redirect(`/login?success=Registrado: ${email}&email=${email}`);
   }
 );
 

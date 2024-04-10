@@ -16,3 +16,7 @@ body {
     max-height: 250px;
     overflow: hidden;
 }
+
+.swal2-toast {
+    margin-top: 5em;
+}
