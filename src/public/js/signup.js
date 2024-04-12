@@ -16,7 +16,6 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log(`datos validos ${redirect}`)
         if (!redirect){
             event.preventDefault();
-            location.replace(`?error=Error en los datos`)
             return
         }
     })

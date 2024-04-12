@@ -1,7 +1,6 @@
 import passport from "passport"
 import local from "passport-local"
 import github from "passport-github2"
-import { usersModel } from "../dao/models/users.model.js";
 import { createHash, validatePass } from "../utils.js"
 import usersManager from '../dao/managers/mongo/UsersManager.js'
 
@@ -79,11 +78,10 @@ export const initPassport = () => {
                     if (!email) {
                         email = `${profile._json.id}+${profile._json.login}@users.noreply.github.com`
                     }
-                    // console.log(profile)
-                    let user = await usersModel.findOne({email})
+                    let user = await userMan.getUserByEmail(email)
                     if (!user) {
                         console.log(`Nuevo usuario ${email}`)
-                        user = await usersModel.create({first_name, last_name, email})
+                        user = await userMan.create({first_name, last_name, email})
                     }
                     return done(null, user)
                 } catch (error) {

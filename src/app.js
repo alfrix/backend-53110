@@ -37,6 +37,10 @@ app.use(session(
     }
 ))
 
+initPassport()
+app.use(passport.initialize())
+app.use(passport.session())
+
 app.use("/api/products", (req, res, next) => {
     req.io = io
     next()
@@ -44,10 +48,6 @@ app.use("/api/products", (req, res, next) => {
 
 app.use("/api/carts", cartRouter)
 app.use("/api/session", sessionRouter)
-
-initPassport()
-app.use(passport.initialize())
-app.use(passport.session())
 
 app.use("/", (req, res, next) => {
     req.io = io
