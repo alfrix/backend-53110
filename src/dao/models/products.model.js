@@ -13,7 +13,6 @@ const productsSchema = new mongoose.Schema(
         category: { type:String, required: true},
         status: { type:Boolean},
         thumbnails: { type:Array, required: false},
-        id: { type:Number, required: true},
     },
     {
         timestamps: true

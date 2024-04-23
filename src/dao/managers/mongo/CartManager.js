@@ -1,7 +1,6 @@
 import ProductManager from './ProductManager.js'
 import { cartsModel } from '../../models/carts.model.js'
 import { ObjectId } from 'mongodb';
-import { response } from 'express';
 
 class CartManager {
 
