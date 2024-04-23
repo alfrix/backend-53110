@@ -18,8 +18,8 @@ const PORT=8080
 const app=express()
 const server = app.listen(PORT, ()=>{console.log(`Server OK en puerto ${PORT}`)})
 const io = new Server(server)
-// const mongoURL = "mongodb://127.0.0.1:27017/test"
-const mongoUrl = "mongodb+srv://Coder53110:CoderCoder@cluster0.8967ybh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&dbName=ecommerce"
+const mongoUrl = "mongodb://127.0.0.1:27017/test"
+// const mongoUrl = "mongodb+srv://Coder53110:CoderCoder@cluster0.8967ybh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&dbName=ecommerce"
 
 app.engine('handlebars', engine())
 app.set('view engine', 'handlebars')

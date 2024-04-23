@@ -75,7 +75,7 @@ class ProductManager {
 
     async getProductById(pid) {
         try {
-            return await productsModel.findOne({_id: pid}).lean()
+            return await productsModel.findById(pid).lean()
         } catch (error) {
             return {status: 500, json: {error}}
         }

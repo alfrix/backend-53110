@@ -38,13 +38,12 @@ class CartManager {
             }
             console.log(`Producto es ${JSON.stringify(product)}`)
             let exists = undefined
-            const pidObjectId = new ObjectId(pid);
             if (cart.products.length > 0) {
-                exists = cart.products.find(product => product.product._id.equals(pidObjectId));
+                exists = cart.products.find(product => product.product._id.equals(pid));
             }
             let qty = 1
             if (exists) {
-                const index = cart.products.findIndex(product => product.product._id.equals(pidObjectId));
+                const index = cart.products.findIndex(product => product.product._id.equals(pid));
                 msg = `Producto ${pid} existe en el carrito: ${cid} sumando 1 unidad`
                 console.log(cart.products[index])
                 cart.products[index].quantity += qty
@@ -117,12 +116,11 @@ class CartManager {
             }
             let exists = undefined
             let qty = 1
-            const pidObjectId = new ObjectId(pid);
             if (cart.products.length > 0) {
-                exists = cart.products.find(product => product.product._id.equals(pidObjectId));
+                exists = cart.products.find(product => product.product._id.equals(pid));
             }
             if (exists) {
-                const index = cart.products.findIndex(product => product.product._id.equals(pidObjectId));
+                const index = cart.products.findIndex(product => product.product._id.equals(pid));
                 msg = `Producto ${pid} existe en el carrito: ${cid} restando 1 unidad`
                 console.log(cart.products[index])
                 if (cart.products[index].quantity == 1){
@@ -162,12 +160,11 @@ class CartManager {
                 return {status: 400, json: [{error: msg}]}
             }
             let exists = undefined
-            const pidObjectId = new ObjectId(pid);
             if (cart.products.length > 0) {
-                exists = cart.products.find(product => product.product._id.equals(pidObjectId));
+                exists = cart.products.find(product => product.product._id.equals(pid));
             }
             if (exists) {
-                const index = cart.products.findIndex(product => product.product._id.equals(pidObjectId));
+                const index = cart.products.findIndex(product => product.product._id.equals(pid));
                 if (!updatedProduct.quantity || isNaN(updatedProduct.quantity)) {
                     return {status: 400, json: {error: 'Product quantity not provided, send {"quantity": Number}'}}    
                 }

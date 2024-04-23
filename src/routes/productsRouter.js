@@ -1,5 +1,5 @@
 import { Router } from "express"
-import { __dirname, validarId } from '../utils.js'
+import { __dirname } from '../utils.js'
 import ProductManager from '../dao/managers/mongo/ProductManager.js'
 
 const router = Router()
@@ -33,12 +33,15 @@ router.get("/", async(req, res) => {
 router.get("/:pid", async(req, res) => {
     let {pid} = req.params
     try {
-        let response = validarId(pid, await pman.getProductById(Number(pid)))
+        const product = await pman.getProductById(pid)
+        if (!product) {
+            return {status: 404, json: {error: `No encontrado ${pid}`}}
+        }
+        return res.json(product)
     } catch (error) {
         console.error(error)
         return {status: 500, json: {error: "error inesperado"}}
     }
-    return res.status(response.status).json(response.json)
 })
 
 router.post("/", async(req, res) => {
@@ -55,12 +58,12 @@ router.post("/", async(req, res) => {
 router.put("/:pid", async(req, res) => {
     let {pid} = req.params
     try {
-        const product = await pman.getProductById(Number(pid))
-        let response = validarId(pid, product)
-        if (response.status == 200) {
-            response = await pman.updateProduct(Number(pid), req.body)
-            req.io.emit("updateProduct", response.json)
+        const product = await pman.getProductById(pid)
+        if (!product) {
+            return {status: 404, json: {error: `No encontrado ${pid}`}}
         }
+        let response = await pman.updateProduct(pid, req.body)
+        req.io.emit("updateProduct", response.json)
         console.log(response)
         return res.status(response.status).json(response.json)
     } catch (error) {
@@ -72,12 +75,13 @@ router.put("/:pid", async(req, res) => {
 router.delete("/:pid", async(req, res) => {
     let {pid} = req.params
     try {
-        let response = validarId(pid, await pman.getProductById(Number(pid)))
-        if (response.status == 200) {
-            response = await pman.deleteProduct(Number(pid))
-            req.io.emit("deleteProduct", response.json)
-            return res.status(response.status).json(response.json)
+        const product = await pman.getProductById(pid)
+        if (!product) {
+            return {status: 404, json: {error: `No encontrado ${pid}`}}
         }
+        let response = await pman.deleteProduct(pid)
+        req.io.emit("deleteProduct", response.json)
+        return res.status(response.status).json(response.json)
     } catch (error) {
         console.error(error)
         return {status: 500, json: {error: "error inesperado"}}
