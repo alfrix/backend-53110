@@ -34,6 +34,20 @@ router.get(
   }
 );
 
+router.get(
+  "/current",
+  (req, res) => {
+    try{
+      console.log(`Current User: ${req.session.user}`)
+      const user = req.session.user
+      return res.status(200).json({user})
+    } catch (error) {
+      console.error(error)
+      return res.status(500).json({error: "error inesperado"})
+    }
+  }
+);
+
 router.post(
   "/login",
   passport.authenticate("login", {
