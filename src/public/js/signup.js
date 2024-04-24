@@ -7,6 +7,8 @@ document.addEventListener('DOMContentLoaded', function () {
         firstName.value.length > 2? is_valid(firstName, true) : is_valid(firstName, false)
         lastName = document.getElementById('InputLastName');
         lastName.value.length > 2? is_valid(lastName, true) : is_valid(lastName, false)
+        age = document.getElementById('InputAge');
+        age.value.length > 1 && !isNaN(age.value)? is_valid(age, true) : is_valid(age, false)
         email = document.getElementById('InputEmail1');
         email.value.length > 6? is_valid(email, true) : is_valid(email, false)
         pass1 = document.getElementById('InputPassword1');

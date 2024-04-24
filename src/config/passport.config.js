@@ -16,7 +16,7 @@ export const initPassport = () => {
             },
             async (req, username, password, done) => {
                 try {
-                    let {firstName, lastName, email, password} = req.body
+                    let {firstName, lastName, email, password, age} = req.body
                     if (!firstName || !lastName || !email || !password) {
                         return done(null, false, { message: 'Faltan Datos' })
                     }
@@ -25,7 +25,7 @@ export const initPassport = () => {
                         return done(null, false, { message: 'Email ya registrado' })
                     }
                     password = createHash(password)
-                    const newUser = await userMan.create({first_name: firstName, last_name: lastName, email, password})
+                    const newUser = await userMan.create({first_name: firstName, last_name: lastName, email, password, age})
                     return done(null, newUser)            
                 } catch (error) {
                     return done(error)

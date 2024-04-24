@@ -17,15 +17,11 @@ class usersManager {
         user.rol = "user"
         console.log("Agregando usuario")
         try {
-            let response = [];
-            const mongores = await usersModel.create(user)
-            if (mongores.insertedId) {
-                response.push(await this.getUserById(user._id))
-            }
-            response.push(mongores)
-            return {status: 201, json: {...response}}
+            let mongores = await usersModel.create(user)
+            return  mongores.toJSON()
         } catch (error) {
-            return {status: 500, json: {error}}
+            console.log(`Error creando usuario: ${error}`)
+            return error
         }
     }
 
@@ -36,6 +32,7 @@ class usersManager {
         try {
             return await usersModel.findById(uid).lean()
         } catch (error) {
+            console.log(`Error obteniendo usuario: ${error}`)
             return {status: 500, json: [{error: error}]}
         }
     }
@@ -48,6 +45,7 @@ class usersManager {
         try {
             return await usersModel.findOne({email}).lean()
         } catch (error) {
+            console.log(`Error obteniendo usuario: ${error}`)
             return {status: 500, json: [{error: error}]}
         }
     }
