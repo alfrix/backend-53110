@@ -1,4 +1,7 @@
 import { usersModel } from "../../models/users.model.js";
+import CartManager from './CartManager.js'
+
+
 
 const admin = {
     _id: 0,
@@ -17,11 +20,19 @@ class usersManager {
         user.rol = "user"
         console.log("Agregando usuario")
         try {
-            let mongores = await usersModel.create(user)
-            return  mongores.toJSON()
+            let user_db = await usersModel.create(user)
+            user_db = user_db.toJSON()
+
+            console.log("Asignando carrito al usuario")
+            const cman = new CartManager();
+            const cart = await cman.addCart()
+            console.log(cart)
+            await usersModel.updateOne({_id: user_db._id}, { cart })
+            return { ...user_db, cart }
+
         } catch (error) {
             console.log(`Error creando usuario: ${error}`)
-            return error
+            return { error };
         }
     }
 

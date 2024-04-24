@@ -1,6 +1,5 @@
 import ProductManager from './ProductManager.js'
 import { cartsModel } from '../../models/carts.model.js'
-import { ObjectId } from 'mongodb';
 
 class CartManager {
 
@@ -10,11 +9,8 @@ class CartManager {
             cid += 1
             let msg = `Agregando id: ${cid}`
             console.log(msg)
-            let response = [];
             const mongores = await cartsModel.create({id: cid, products: [], totalPrice: 0})
-            response.push(await this.getCartById(cid))
-            response.push(mongores)
-            return {status: 201, json: {...response}}
+            return mongores.toJSON()
         } catch (error) {
             console.error(error)
             return {status: 500, json: {error: "error inesperado"}}

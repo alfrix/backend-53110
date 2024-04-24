@@ -20,8 +20,7 @@ router.use((req, res, next) => {
 
 router.post("/", async(req, res) => {
     try {
-        let response = await cman.addCart()
-        return res.status(response.status).json(response.json)
+        return await cman.addCart()
     } catch (error) {
         console.error(error)
         return {status: 500, json: {error: "error inesperado"}}

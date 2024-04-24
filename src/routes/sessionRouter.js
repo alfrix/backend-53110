@@ -82,8 +82,12 @@ router.post(
     failureMessage: true,
   }),
   async (req, res) => {
-    let { email } = req.body;
-    return res.redirect(`/login?success=Registrado: ${email}&email=${email}`);
+    try {
+      let { email } = req.body;
+      return res.redirect(`/login?success=Registrado: ${email}&email=${email}`);
+    } catch (error) {
+      return res.redirect(`/signup?error=Error al registrarse\n${error}`);
+    }
   }
 );
 
