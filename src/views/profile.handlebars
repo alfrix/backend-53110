@@ -9,6 +9,11 @@
     <div class="row mb-3">
         Email: {{user.email}}
     </div>
+    {{#if user.age}}
+        <div class="row mb-3">
+            Edad: {{user.age}}
+        </div>
+    {{/if}}
     {{#if user.rol}}
         <div class="row mb-3">
             Rol: {{user.rol}}
