@@ -10,7 +10,6 @@ const cartsSchema = new mongoose.Schema(
             productPriceTotal: { type:Number, required: true},
         }],
         totalPrice: { type:Number, required: true},
-        id: { type:Number, required: true},
     },
     {
         timestamps: true

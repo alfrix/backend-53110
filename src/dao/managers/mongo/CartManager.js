@@ -5,11 +5,8 @@ class CartManager {
 
     async addCart() {
         try{
-            let cid = await cartsModel.countDocuments()
-            cid += 1
-            let msg = `Agregando id: ${cid}`
-            console.log(msg)
-            const mongores = await cartsModel.create({id: cid, products: [], totalPrice: 0})
+            console.log("Agregando carrito")
+            const mongores = await cartsModel.create({products: [], totalPrice: 0})
             return mongores.toJSON()
         } catch (error) {
             console.error(error)
@@ -21,7 +18,7 @@ class CartManager {
         console.log(`Agregando producto ${pid} al carrito ${cid}`)
         try {
             const product = await this.validateProductById(pid);
-            const cart = await this.getCartById(Number(cid));
+            const cart = await this.getCartById(cid);
             let msg = ""
             if (!cart || !product) {
                 if (!cart){
@@ -53,7 +50,7 @@ class CartManager {
             let total = 0;
             cart.products.map((product)=>{total += Number(product.productPriceTotal), console.log(total)})
             let response = [];
-            const mongores = await cartsModel.updateOne({id: cid}, {products: cart.products, totalPrice: total})
+            const mongores = await cartsModel.updateOne({_id: cid}, {products: cart.products, totalPrice: total})
             response.push(await this.getCartById(cid))
             response.push(mongores)
             return {status: 200, json: {...response}}
@@ -77,7 +74,7 @@ class CartManager {
     async getCartById(cid) {
         console.log("getCartById")
         try {
-            return await cartsModel.findOne({id: cid}).lean().populate("products.product")
+            return await cartsModel.findOne({_id: cid}).lean().populate("products.product")
         } catch (error) {
             console.error(error)
             return {status: 500, json: {error: "error inesperado"}}
@@ -87,7 +84,7 @@ class CartManager {
     async emptyCart(cid) {
         console.log("emptyCart")
         try {
-            const response = await cartsModel.updateOne({id: cid}, {products: []})
+            const response = await cartsModel.updateOne({_id: cid}, {products: []})
             return {status: 200, json: response}
         } catch (error) {
             console.error(error)
@@ -99,7 +96,7 @@ class CartManager {
         console.log("removeProductfromCart")
         try {
             const product = await this.validateProductById(pid);
-            const cart = await this.getCartById(Number(cid));
+            const cart = await this.getCartById(cid);
             let msg = ""
             if (!cart || !product) {
                 if (!cart){
@@ -129,7 +126,7 @@ class CartManager {
             console.log(msg)
             let total = 0;
             cart.products.map((product)=>{total += Number(product.productPriceTotal), console.log(total)})
-            const mongores = await cartsModel.updateOne({id: cid}, {products: cart.products, totalPrice: total})
+            const mongores = await cartsModel.updateOne({_id: cid}, {products: cart.products, totalPrice: total})
             let response = [];
             response.push(await this.getCartById(cid))
             response.push(mongores)
@@ -144,7 +141,7 @@ class CartManager {
         console.log("updateCartProduct")
         try {
             const product = await this.validateProductById(pid);
-            const cart = await this.getCartById(Number(cid));
+            const cart = await this.getCartById(cid);
             let msg = ""
             if (!cart || !product) {
                 if (!cart){
@@ -171,7 +168,7 @@ class CartManager {
             }
             let total = 0;
             cart.products.map((product)=>{total += Number(product.productPriceTotal), console.log(total)})
-            const mongores = await cartsModel.updateOne({id: cid}, {products: cart.products, totalPrice: total})
+            const mongores = await cartsModel.updateOne({_id: cid}, {products: cart.products, totalPrice: total})
             let response = [];
             response.push(await this.getCartById(cid))
             response.push(mongores)
@@ -185,7 +182,7 @@ class CartManager {
     async updateCart(cid, body) {
         console.log("updateCart")
         try {
-            const cart = await this.getCartById(Number(cid));
+            const cart = await this.getCartById(cid);
             let msg = ""
             if (!cart || !body.products || !Array.isArray(body.products)) {
                 if (!cart){
@@ -209,7 +206,7 @@ class CartManager {
             cart.products = body.products
             let total = 0;
             cart.products.map((product)=>{total += Number(product.productPriceTotal), console.log(total)})
-            const mongores = await cartsModel.updateOne({id: cid}, {products: cart.products, totalPrice: total})
+            const mongores = await cartsModel.updateOne({_id: cid}, {products: cart.products, totalPrice: total})
             let response = [];
             response.push(await this.getCartById(cid))
             response.push(mongores)
