@@ -1,3 +1,4 @@
+import { config } from './config/config.js'
 import express from 'express';
 import session from 'express-session';
 import { engine } from 'express-handlebars';
@@ -14,12 +15,16 @@ import MongoStore from 'connect-mongo'
 import passport from 'passport';
 import { initPassport } from './config/passport.config.js';
 
-const PORT=8080
+const PORT = config.PORT;
+const mongoUrl = config.mongoUrl;
+
+console.log(`Modo: ${config.MODO}`)
+
 const app=express()
 const server = app.listen(PORT, ()=>{console.log(`Server OK en puerto ${PORT}`)})
 const io = new Server(server)
-const mongoUrl = "mongodb://127.0.0.1:27017/test"
-// const mongoUrl = "mongodb+srv://Coder53110:CoderCoder@cluster0.8967ybh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0&dbName=ecommerce"
+
+console.log(PORT)
 
 app.engine('handlebars', engine())
 app.set('view engine', 'handlebars')
