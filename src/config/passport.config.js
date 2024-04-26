@@ -16,8 +16,8 @@ export const initPassport = () => {
       },
       async (req, username, password, done) => {
         try {
-          let { firstName, lastName, age } = req.body;
-          if (!firstName || !lastName || !username || !password) {
+          let { firstName, lastName, email, age } = req.body;
+          if (!firstName || !lastName || !email || !password) {
             return done(null, false, { message: "Faltan Datos" });
           }
           let user = await userMan.getUserByEmail(email);
@@ -34,6 +34,7 @@ export const initPassport = () => {
           });
           return done(null, newUser);
         } catch (error) {
+          console.log("error en el registro")
           return done(error);
         }
       }
