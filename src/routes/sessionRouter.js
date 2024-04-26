@@ -29,7 +29,11 @@ router.get(
     failureMessage: true,
   }),
   (req, res) => {
-    req.session.user = req.user;
+    let user = req.user;
+    user = { ...user };
+    delete user.password;
+    console.log(user.email, "conectado");
+    req.session.user = user;
     return res.redirect(`/?message=Bienvenido\n${req.user.first_name}`);
   }
 );

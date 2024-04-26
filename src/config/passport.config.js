@@ -16,8 +16,8 @@ export const initPassport = () => {
       },
       async (req, username, password, done) => {
         try {
-          let { firstName, lastName, email, password, age } = req.body;
-          if (!firstName || !lastName || !email || !password) {
+          let { firstName, lastName, age } = req.body;
+          if (!firstName || !lastName || !username || !password) {
             return done(null, false, { message: "Faltan Datos" });
           }
           let user = await userMan.getUserByEmail(email);
