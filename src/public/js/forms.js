@@ -32,7 +32,7 @@
                     })
                     .then(response => {
                         if (response.ok) {
-                            location.reload();
+                            window.location.replace(location.pathname);
                         } else {
                             console.error('Error:', response.statusText);
                         }
