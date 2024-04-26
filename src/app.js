@@ -61,7 +61,7 @@ app.use("/", (req, res, next) => {
 
 app.use((error, req, res, next) => {
     if(error) {
-        console.log(`error: ${error}`)
+        console.log(`error: ${JSON.stringify(error)}`)
     }
     next()
 })

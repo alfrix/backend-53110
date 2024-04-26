@@ -4,7 +4,7 @@ import CartManager from './CartManager.js'
 
 
 const admin = {
-    _id: 0,
+    _id: -1,
     first_name: "Admin",
     last_name: "Coder",
     email: "adminCoder@coder.com",
@@ -37,7 +37,7 @@ class usersManager {
     }
 
     async getUserById(uid) {
-        if (uid === 0) {
+        if (uid === -1) {
             return admin
         }
         try {

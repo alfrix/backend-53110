@@ -48,7 +48,7 @@ export const initPassport = () => {
       },
       async (username, password, done) => {
         try {
-          console.log(username);
+          console.log(`login: ${username}`);
           let user = await userMan.getUserByEmail(username);
           if (!user) {
             console.log("not user");
@@ -100,17 +100,19 @@ export const initPassport = () => {
 
   passport.serializeUser((user, done) => {
     if (user.error) {
+      console.log(`serialize-error: ${JSON.stringify(user.error)}`)
       return done(user.error);
     }
     if (!user._id) {
+      console.log(`serialize-error-id: ${JSON.stringify(user._id)}`)
       return done(user);
     }
     return done(null, user._id);
   });
 
   passport.deserializeUser((user, done) => {
-    if (user === 0) {
-      user = userMan.getUserById(0);
+    if (user === -1) {
+      user = userMan.getUserById(-1);
     }
     return done(null, user);
   });

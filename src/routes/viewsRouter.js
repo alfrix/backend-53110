@@ -16,13 +16,15 @@ router.use(async(req, res, next) => {
   if (req.session.user) {
     user = {...req.session.user}
     delete user.password
-    let cart;
-    try {
-      cart = await cman.getCartById(user.cart);
-      cart.products.forEach((product) => {cartItemCount += product.quantity});
-    } catch (error) {
-      res.status(500).render(("500"), {error})
-      return
+    if (user.cart) {
+      let cart;
+      try {
+        cart = await cman.getCartById(user.cart);
+        cart.products.forEach((product) => {cartItemCount += product.quantity});
+      } catch (error) {
+        res.status(500).render(("500"), {error})
+        return
+      }
     }
   } else {
     user = undefined
