@@ -2,9 +2,7 @@ import passport from "passport";
 import local from "passport-local";
 import github from "passport-github2";
 import { createHash, validatePass } from "../utils.js";
-import usersManager from "../dao/managers/mongo/UsersManager.js";
-
-const userMan = new usersManager();
+import usersController from '../controllers/usersController.js';
 
 export const initPassport = () => {
   passport.use(
@@ -20,12 +18,12 @@ export const initPassport = () => {
           if (!firstName || !lastName || !email || !password) {
             return done(null, false, { message: "Faltan Datos" });
           }
-          let user = await userMan.getUserByEmail(email);
+          let user = await usersController.getUserByEmail(email);
           if (user) {
             return done(null, false, { message: "Email ya registrado" });
           }
           password = createHash(password);
-          const newUser = await userMan.create({
+          const newUser = await usersController.create({
             first_name: firstName,
             last_name: lastName,
             email,
@@ -50,7 +48,7 @@ export const initPassport = () => {
       async (username, password, done) => {
         try {
           console.log(`login: ${username}`);
-          let user = await userMan.getUserByEmail(username);
+          let user = await usersController.getUserByEmail(username);
           if (!user) {
             console.log("not user");
             return done(null, false, { message: "Usuario inexistente" });
@@ -85,10 +83,10 @@ export const initPassport = () => {
           if (!email) {
             email = `${profile._json.id}+${profile._json.login}@users.noreply.github.com`;
           }
-          let user = await userMan.getUserByEmail(email);
+          let user = await usersController.getUserByEmail(email);
           if (!user) {
             console.log(`Nuevo usuario ${email}`);
-            user = await userMan.create({ first_name, last_name, email });
+            user = await usersController.create({ first_name, last_name, email });
           }
           return done(null, user);
         } catch (error) {
@@ -113,7 +111,7 @@ export const initPassport = () => {
 
   passport.deserializeUser((user, done) => {
     if (user === -1) {
-      user = userMan.getUserById(-1);
+      user = usersController.getUserById(-1);
     }
     return done(null, user);
   });

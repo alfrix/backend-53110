@@ -1,15 +1,16 @@
 import { Router } from "express";
-import ProductManager from "../dao/managers/mongo/ProductManager.js";
-import CartManager from '../dao/managers/mongo/CartManager.js'
+import productsController from '../controllers/productsController.js';
+import cartsController from '../controllers/cartsController.js';
+
 import { auth } from "../middlewares/auth.js";
 
 const router = Router();
-const pman = new ProductManager();
-const cman = new CartManager();
 let cartItemCount = 0
 let user;
 
 router.use(async(req, res, next) => {
+  req.views = true
+
   let timestamp = new Date().toUTCString();
   console.log(`Acceso a views: ${timestamp}`);
   cartItemCount = 0;
@@ -19,7 +20,8 @@ router.use(async(req, res, next) => {
     if (user.cart) {
       let cart;
       try {
-        cart = await cman.getCartById(user.cart);
+        req.params.cid = user.cart
+        cart = await cartsController.getCartById(req, res);
         cart.products.forEach((product) => {cartItemCount += product.quantity});
       } catch (error) {
         res.status(500).render(("500"), {error})
@@ -42,16 +44,15 @@ router.get("/realTimeProducts", async (req, res) => {
 });
 
 router.get("/", async (req, res) => {
-  let {limit, page, query, sort} = req.query
   let products;
   try {
-    products = await pman.getProducts(limit, page, query, sort);
+    products = await productsController.getProducts(req, res);
     if (products.status == "error") {
       throw products.error
     }
   } catch (error) {
-    res.status(500).render(("500"), {error})
-    return
+    console.error("views /", error)
+    return res.status(500).render(("500"), {error})
   }
   let pageTitle = "Home";
   res.status(200).render("home", {
@@ -72,10 +73,9 @@ router.get("/chat", (req, res) => {
 });
 
 router.get("/cart/:cid", async(req, res) => {
-  let {cid} = req.params
   let cart;
   try {
-    cart = await cman.getCartById(cid);
+    cart = await cartsController.getCartById(req, res);
   } catch (error) {
     let pageTitle = "500";
     res.status(500).render("500", {
