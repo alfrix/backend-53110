@@ -1,19 +1,11 @@
 import { Router } from "express"
 import cartsController from '../controllers/cartsController.js';
+import { log } from "../middlewares/log.js";
 
 const router = Router()
 
-router.use((req, res, next) => {
-    let timestamp = new Date().toUTCString();
-    console.log(`Acceso a cart: ${timestamp}`)
-    if (req.query) {
-        console.log(`cart query: ${JSON.stringify(req.query)}`)
-    }
-    if (req.body) {
-        console.log(`cart body: ${JSON.stringify(req.body)}`)
-    }
-    next()
-})
+router.use(log("Acceso a carts"))
+
 
 router.get("/:cid", cartsController.getCartById)
 

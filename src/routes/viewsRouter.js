@@ -3,20 +3,20 @@ import productsController from '../controllers/productsController.js';
 import cartsController from '../controllers/cartsController.js';
 
 import { auth } from "../middlewares/auth.js";
+import { log } from "../middlewares/log.js";
 
 const router = Router();
 let cartItemCount = 0
 let user;
 
+router.use(log("Acceso a views"))
+
+
 router.use(async(req, res, next) => {
   req.views = true
-
-  let timestamp = new Date().toUTCString();
-  console.log(`Acceso a views: ${timestamp}`);
   cartItemCount = 0;
   if (req.session.user) {
     user = {...req.session.user}
-    delete user.password
     if (user.cart) {
       let cart;
       try {

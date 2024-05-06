@@ -1,7 +1,11 @@
 import { Router } from "express";
 import passport from "passport";
+import { log } from "../middlewares/log.js";
 
-const router = Router();
+const router = Router()
+
+router.use(log("Acceso a session"))
+
 
 router.get("/errorSignup", (req, res) => {
   console.error("errorSignup", req.session.messages);
