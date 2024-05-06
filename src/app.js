@@ -10,7 +10,7 @@ import { router as cartRouter } from './routes/cartRouter.js';
 import { router as viewsRouter } from './routes/viewsRouter.js';
 import { router as sessionRouter } from './routes/sessionRouter.js';
 import mongoose from 'mongoose';
-import ProductManager from "./dao/managers/mongo/ProductManager.js";
+import productsController from './controllers/productsController.js';
 import MongoStore from 'connect-mongo'
 import passport from 'passport';
 import { initPassport } from './config/passport.config.js';
@@ -84,13 +84,18 @@ io.on("connection", (socket) => {
     console.log(`Conectado id: ${socket.id}`);
 
     socket.on("getProducts", async() => {
-        const pman = new ProductManager();
         try {
-            const products = await pman.getProducts();
+            let req = {
+                views: true,
+                query: {
+                    limit: 20,
+                    page: 1,
+                }
+            }
+            const products = await productsController.getProducts(req);
             io.emit('showProducts', products);
         } catch (error) {
             console.error('Error getting products:', error);
-            res.status(500).json({ error: 'Internal server error' });
         }
     });
 
