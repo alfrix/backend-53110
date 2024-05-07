@@ -21,23 +21,75 @@ function createCard(product) {
   price.innerHTML = " $ " + product.price;
   cardBody.appendChild(price);
 
-  let button = document.createElement("div")
-  button.classList.add("my-2")
-  let form = document.createElement("form")
-  form.classList.add("ajax-form")
-  form.action = `/api/carts/1/product/${product._id}`
-  form.method = "post"
-  form.innerHTML = '<button type="submit" class="btn btn-primary mx-4">Agregar al Carrito</button>'
+  let button = document.createElement("div");
+  button.classList.add("my-2");
+  let form = createForm(product); // Create form synchronously
   button.appendChild(form);
   cardBody.appendChild(button);
 
   let card = document.createElement("div");
-  let classes = ["card", "p-1", "m-3", "col-sm-12", "col-md-4", "col-lg-4", "col-xl-3", "col-xxl-2"]
-  classes.forEach((cls) => {card.classList.add(cls)})
-  card.id  = `card${product.id}`
+  let classes = [
+    "card",
+    "p-1",
+    "m-3",
+    "col-sm-12",
+    "col-md-4",
+    "col-lg-4",
+    "col-xl-3",
+    "col-xxl-2",
+  ];
+  classes.forEach((cls) => {
+    card.classList.add(cls);
+  });
+  card.id = `card${product.id}`;
   card.appendChild(cardBody);
 
-  return card
+  return card;
+}
+
+function createForm(product) {
+  let form = document.createElement("form");
+  form.classList.add("ajax-form");
+  form.method = "post";
+
+  const cartId = fetch("/api/session/current")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Unable to retrieve cart ID");
+      }
+      return response.json();
+    })
+    .then((data) => data.user.cart)
+    .catch((error) => {
+      console.error("Error retrieving session information:", error);
+      window.location.replace("/login");
+    });
+
+  cartId.then((cartId) => {
+    form.action = `/api/carts/${cartId}/product/${product._id}`;
+
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      const url = this.action;
+      const method = this.getAttribute("method").toUpperCase();
+      const formData = new FormData(this);
+      fetch(url, {
+        method: method,
+        body: formData,
+      })
+        .then((response) => {
+          window.location.replace(location.pathname);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    });
+  });
+
+  form.innerHTML =
+    '<button type="submit" class="btn btn-primary mx-4">Agregar al Carrito</button>';
+
+  return form;
 }
 
 socket.on("newProduct", (response) => {
@@ -52,24 +104,24 @@ socket.on("newProduct", (response) => {
 });
 
 socket.on("deleteProduct", (product) => {
-    console.log(`Borrado Producto: ${JSON.stringify(product[1])}`);
-    let card = document.getElementById(`card${product[1].id}`);
-    card.remove();
+  console.log(`Borrado Producto: ${JSON.stringify(product[1])}`);
+  let card = document.getElementById(`card${product[1].id}`);
+  card.remove();
 });
 
 socket.on("updateProduct", (product) => {
-    console.log(`Actualizado Producto: ${JSON.stringify(product[1])}`);
-    let card = document.getElementById(`card${product[1].id}`);
-    card.insertAdjacentElement('beforebegin', createCard(product[1]))
-    card.remove()
+  console.log(`Actualizado Producto: ${JSON.stringify(product[1])}`);
+  let card = document.getElementById(`card${product[1].id}`);
+  card.insertAdjacentElement("beforebegin", createCard(product[1]));
+  card.remove();
 });
 
 socket.on("showProducts", (products) => {
-    console.log("showingProducts")
-    products = products.payload
-    let productsContainer = document.getElementById("productsContainer");
-    productsContainer.innerHTML = ""
-    products.forEach(product => {
-        productsContainer.appendChild(createCard(product));
-    })
-})
+  console.log("showingProducts");
+  products = products.payload;
+  let productsContainer = document.getElementById("productsContainer");
+  productsContainer.innerHTML = "";
+  products.forEach((product) => {
+    productsContainer.appendChild(createCard(product));
+  });
+});

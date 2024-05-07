@@ -1,21 +1,47 @@
-import { Router } from "express"
-import cartsController from '../controllers/cartsController.js';
+import { Router } from "express";
+import cartsController from "../controllers/cartsController.js";
 import { log } from "../middlewares/log.js";
+import { setJsonResponse } from "../middlewares/jsonResponse.js";
 
-const router = Router()
+const router = Router();
 
-router.use(log("Acceso a carts"))
+router.use(log("Acceso a carts"));
 
+router.use(setJsonResponse);
 
-router.get("/:cid", cartsController.getCartById)
+router.get("/:cid", async (req, res, next) => {
+  const cart = await cartsController.getCartById(req, res, next);
+  res.status(200).json(cart);
+});
 
-router.post("/", cartsController.addCart)
-router.post('/:cid/product/:pid', cartsController.addProduct)
+router.post("/", async (req, res, next) => {
+  const cart = await cartsController.addCart(req, res, next);
+  res.status(200).json(cart);
+});
 
-router.delete('/:cid/product/:pid', cartsController.removeProductfromCart)
-router.delete('/:cid', cartsController.emptyCart)
+router.post("/:cid/product/:pid", async (req, res, next) => {
+  const cart = await cartsController.addProduct(req, res, next);
+  res.status(200).json(cart);
+});
 
-router.put('/:cid', cartsController.updateCart)
-router.put('/:cid/product/:pid', cartsController.updateCartProduct)
+router.delete("/:cid/product/:pid", async (req, res, next) => {
+  const cart = await cartsController.removeProductfromCart(req, res, next);
+  res.status(200).json(cart);
+});
 
-export { router }
+router.delete("/:cid", async (req, res, next) => {
+  const cart = await cartsController.emptyCart(req, res, next);
+  res.status(200).json(cart);
+});
+
+router.put("/:cid", async (req, res, next) => {
+  const cart = await cartsController.updateCart(req, res, next);
+  res.status(200).json(cart);
+});
+
+router.put("/:cid/product/:pid", async (req, res, next) => {
+  const cart = await cartsController.updateCartProduct(req, res, next);
+  res.status(200).json(cart);
+});
+
+export { router };
