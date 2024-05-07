@@ -59,10 +59,7 @@ export default class cartsController {
         cart.products.push(p);
       }
       console.log(msg);
-      let total = 0;
-      cart.products.map((product) => {
-        total += Number(product.productPriceTotal);
-      });
+      const total = calculateTotalPrice(cart.products);
       let response = [];
       const mongores = await cartsDAO.updateOne(cid, {
         products: cart.products,
@@ -138,10 +135,7 @@ export default class cartsController {
         }
       }
       console.log(msg);
-      let total = 0;
-      cart.products.map((product) => {
-        total += Number(product.productPriceTotal);
-      });
+      const total = calculateTotalPrice(cart.products);
       const mongores = await cartsDAO.updateOne(cid, {
         products: cart.products,
         totalPrice: total,
@@ -163,7 +157,6 @@ export default class cartsController {
     try {
       const product = await productsDAO.findById(pid);
       const cart = await cartsDAO.findById(cid);
-      let msg = "";
       if (!cart || !product) {
         if (!cart) {
           throw new Error(`Cart Id no valida: ${cid}`);
@@ -193,10 +186,7 @@ export default class cartsController {
       } else {
         throw new Error("Product not in cart");
       }
-      let total = 0;
-      cart.products.map((product) => {
-        total += Number(product.productPriceTotal);
-      });
+      const total = calculateTotalPrice(cart.products);
       const mongores = await cartsDAO.updateOne(cid, {
         products: cart.products,
         totalPrice: total,
@@ -217,7 +207,6 @@ export default class cartsController {
     console.log("updateCart");
     try {
       const cart = await cartsDAO.findById(cid);
-      let msg = "";
       if (!cart || !products || !Array.isArray(products)) {
         if (!cart) {
           throw new Error(`Cart Id no valida: ${cid}`);
@@ -233,10 +222,7 @@ export default class cartsController {
         }
       });
       cart.products = products;
-      let total = 0;
-      cart.products.map((product) => {
-        total += Number(product.productPriceTotal);
-      });
+      const total = calculateTotalPrice(cart.products);
       const mongores = await cartsDAO.updateOne(cid, {
         products: cart.products,
         totalPrice: total,
@@ -268,4 +254,15 @@ export default class cartsController {
     }
     return cartItemCount;
   };
+
+  static calculateTotalPrice(products) {
+    if (!Array.isArray(products)) {
+      throw new Error("Invalid products array");
+    }
+    let totalPrice = 0;
+    products.forEach((item) => {
+      totalPrice += Number(item.product.price) * item.quantity;
+    });
+    return totalPrice.toFixed(2);
+  }
 }
