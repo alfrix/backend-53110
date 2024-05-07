@@ -39,6 +39,7 @@ export default class cartsController {
           product.product._id.equals(pid)
         );
       }
+      let msg = "";
       let qty = 1;
       if (exists) {
         const index = cart.products.findIndex((product) =>
@@ -59,7 +60,7 @@ export default class cartsController {
         cart.products.push(p);
       }
       console.log(msg);
-      const total = calculateTotalPrice(cart.products);
+      const total = this.calculateTotalPrice(cart.products);
       let response = [];
       const mongores = await cartsDAO.updateOne(cid, {
         products: cart.products,
@@ -135,7 +136,7 @@ export default class cartsController {
         }
       }
       console.log(msg);
-      const total = calculateTotalPrice(cart.products);
+      const total = this.calculateTotalPrice(cart.products);
       const mongores = await cartsDAO.updateOne(cid, {
         products: cart.products,
         totalPrice: total,
@@ -186,7 +187,7 @@ export default class cartsController {
       } else {
         throw new Error("Product not in cart");
       }
-      const total = calculateTotalPrice(cart.products);
+      const total = this.calculateTotalPrice(cart.products);
       const mongores = await cartsDAO.updateOne(cid, {
         products: cart.products,
         totalPrice: total,
@@ -222,7 +223,7 @@ export default class cartsController {
         }
       });
       cart.products = products;
-      const total = calculateTotalPrice(cart.products);
+      const total = this.calculateTotalPrice(cart.products);
       const mongores = await cartsDAO.updateOne(cid, {
         products: cart.products,
         totalPrice: total,

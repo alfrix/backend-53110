@@ -14,6 +14,7 @@ import productsController from "./controllers/productsController.js";
 import MongoStore from "connect-mongo";
 import passport from "passport";
 import { initPassport } from "./config/passport.config.js";
+import "express-async-errors";
 
 const PORT = config.PORT;
 const mongoUrl = config.mongoUrl;
