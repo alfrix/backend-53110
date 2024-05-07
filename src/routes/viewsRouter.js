@@ -33,7 +33,14 @@ router.get("/", async (req, res) => {
     }
   } catch (error) {
     console.error("views /", error)
-    return res.status(500).render(("500"), {error})
+    const status = 500
+    let pageTitle = status
+    res.status(status).render("error", {
+      pageTitle,
+      user: req.session.user,
+      status: status,
+      message: error
+    });
   }
   let pageTitle = "Home";
   res.status(200).render("home", {
@@ -58,10 +65,13 @@ router.get("/cart/:cid", async(req, res) => {
   try {
     cart = await cartsController.getCartById(req, res);
   } catch (error) {
-    let pageTitle = "500";
-    res.status(500).render("500", {
+    const status = 500
+    let pageTitle = status
+    res.status(status).render("error", {
       pageTitle,
       user: req.session.user,
+      status: status,
+      message: error
     });
   }
   let pageTitle = "Carrito";
@@ -108,10 +118,13 @@ router.get("/profile", auth, async(req, res) => {
 })
 
 router.get("*", (req, res) => {
-  let pageTitle = "404";
-  res.status(404).render("404", {
+  const status = 404
+  let pageTitle = status
+  res.status(status).render("error", {
     pageTitle,
     user: req.session.user,
+    status: status,
+    message: "Not Found"
   });
 });
 
