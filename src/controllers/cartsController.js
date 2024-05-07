@@ -222,5 +222,22 @@ export default class cartsController {
             return res.status(500).json({error: "error inesperado"})
         }
     }
+
+    static getCartItemCount=async(req, res)=>{
+        let user = req.session.user;
+        let cartItemCount = 0
+        if (user && user.cart) {
+          try {
+            const cart = await cartsDAO.findById(user.cart)
+            cartItemCount = cart.products.reduce((total, product) => total + product.quantity, 0);
+          } catch (error) {
+            console.error(error)
+          }
+        }
+        if (req.views) {
+            return cartItemCount
+        }
+        return res.status(200).json(cartItemCount)
+    }
 }
 
