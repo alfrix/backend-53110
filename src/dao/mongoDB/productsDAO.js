@@ -2,7 +2,13 @@ import { productsModel } from "../models/products.model.js";
 
 export class productsDAO {
   async getProductById(pid) {
-    return await productsModel.findById(pid).lean();
+    try {
+      return await productsModel.findById(pid).lean();
+    } catch (error) {
+      console.error(error);
+      console.error("Error: productsDAO getProductById");
+      return undefined;
+    }
   }
 
   async create(product) {

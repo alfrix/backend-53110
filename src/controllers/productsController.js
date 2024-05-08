@@ -3,24 +3,30 @@ import { productsDAO as pDAO } from "../dao/mongoDB/productsDAO.js";
 const productsDAO = new pDAO();
 
 export default class productsController {
-  static addProduct = async (req, res) => {
+  static addProduct = async (req, res, next) => {
     let product = req.body;
     if (product._id) {
       delete product._id;
     }
     console.log("Agregando producto");
     try {
-      let response = [];
-      const mongores = await productsDAO.create(product);
-      if (mongores.insertedId) {
-        response.push(await productsDAO.findById(product._id));
+      const res1 = await productsDAO.create(product);
+      if (!res1) {
+        throw new Error(`Error creando producto: ${JSON.stringify(product)}`);
       }
-      response.push(mongores);
+      let res2;
+      if (res1.insertedId) {
+        res2 = await productsDAO.findById(res1.insertedId);
+        if (!res2) {
+          throw new Error(`Error buscando producto: ${res1.insertedId}`);
+        }
+      }
+      const response = [res2, res1];
       req.io.emit("newProduct", response);
       return response;
     } catch (error) {
-      console.error(`addProduct: ${error}`);
-      throw error;
+      console.error(`addProduct`);
+      next(error);
     }
   };
 
@@ -32,7 +38,7 @@ export default class productsController {
    * @param {String} req.sort "asc" || "desc" (by price)
    * @returns
    */
-  static getProducts = async (req, res) => {
+  static getProducts = async (req, res, next) => {
     let { limit, page, query, sort } = req.query;
     if (!query) {
       query = {};
@@ -41,7 +47,7 @@ export default class productsController {
         console.log(query);
         query = JSON.parse(query);
       } catch (error) {
-        console.error(`getProducts: ${error}`);
+        console.error(`getProducts`);
         throw new Error(`Unable to parse JSON query ${query}: ${error}`);
       }
     }
@@ -81,26 +87,27 @@ export default class productsController {
       };
       return response;
     } catch (error) {
-      console.error(`getProducts: ${error}`);
-      throw error;
+      console.error(`getProducts`);
+      next(error);
     }
   };
 
-  static getProductById = async (req, res) => {
+  static getProductById = async (req, res, next) => {
     let { pid } = req.params;
     try {
       let response = await productsDAO.findById(pid);
       if (!response) {
-        throw new Error(`No encontrado ${pid}`);
+        const error = new Error(`getProductById: No encontrado ${pid}`);
+        error.statusCode = 404;
+        throw error;
       }
       return response;
     } catch (error) {
-      console.error(`getProductById: ${error}`);
-      throw error;
+      next(error);
     }
   };
 
-  static updateProduct = async (req, res) => {
+  static updateProduct = async (req, res, next) => {
     let { pid } = req.params;
     let product = req.body;
     if (product._id) {
@@ -109,40 +116,52 @@ export default class productsController {
     try {
       const oldProduct = await productsDAO.findById(pid);
       if (!oldProduct || !product) {
-        throw new Error(
-          `No se puede actualizar id: ${pid} datos: ${oldProduct} ${product}`
+        const error = new Error(
+          `updateProduct: No se puede actualizar id: ${pid} datos: ${oldProduct} ${product}`
         );
+        error.statusCode = 404;
+        throw error;
       }
     } catch (error) {
-      console.error(`updateProduct: ${error}`);
-      return res.status(500).json({ error: "error inesperado" });
+      return next(error);
     }
     console.log(`Actualizando producto id: ${pid}`);
     try {
-      let response = [];
-      const mongores = await productsDAO.updateOne(pid, product);
-      response.push(await productsDAO.findById(pid));
-      response.push(mongores);
+      const res1 = await productsDAO.updateOne(pid, product);
+      if (!res1) {
+        throw new Error(`Error actualizando producto: ${pid}`);
+      }
+      const res2 = await productsDAO.findById(pid);
+      if (!res2) {
+        throw new Error(`Error devolviendo producto: ${pid}`);
+      }
+      const response = [res2, res1];
       req.io.emit("updateProduct", response);
       return response;
     } catch (error) {
-      console.error(`updateProduct: ${error}`);
-      throw error;
+      console.error(`updateProduct`);
+      next(error);
     }
   };
 
-  static deleteProduct = async (req, res) => {
+  static deleteProduct = async (req, res, next) => {
     let { pid } = req.params;
     console.log(`Borrando id: ${pid}`);
     try {
-      let response = [];
-      response.push(await productsDAO.findById(pid));
-      response.push(await productsDAO.deleteOne(pid));
+      const res1 = await productsDAO.findById(pid);
+      if (!res1) {
+        throw new Error(`Error actualizando producto: ${pid}`);
+      }
+      const res2 = await productsDAO.deleteOne(pid);
+      if (!res2) {
+        throw new Error(`Error devolviendo producto: ${pid}`);
+      }
+      const response = [res2, res1];
       req.io.emit("deleteProduct", response);
       return response;
     } catch (error) {
-      console.error(`deleteProduct: ${error}`);
-      throw error;
+      console.error(`deleteProduct`);
+      next(error);
     }
   };
 }

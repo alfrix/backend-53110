@@ -14,7 +14,6 @@ import productsController from "./controllers/productsController.js";
 import MongoStore from "connect-mongo";
 import passport from "passport";
 import { initPassport } from "./config/passport.config.js";
-import "express-async-errors";
 
 const PORT = config.PORT;
 const mongoUrl = config.mongoUrl;
@@ -49,13 +48,6 @@ initPassport();
 app.use(passport.initialize());
 app.use(passport.session());
 
-const handleErrors = async (err, req, res, next) => {
-  res.status(500).json({
-    msg: err.message,
-    success: false,
-  });
-};
-
 app.use(
   "/api/products",
   (req, res, next) => {
@@ -76,6 +68,14 @@ app.use(
   },
   viewsRouter
 );
+
+const handleErrors = (err, req, res, next) => {
+  const statusCode = err.statusCode || 500;
+  res.status(statusCode).json({
+    success: false,
+    error: err.message,
+  });
+};
 
 app.use(handleErrors);
 

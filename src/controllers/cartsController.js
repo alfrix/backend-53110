@@ -5,18 +5,21 @@ const productsDAO = new pDAO();
 const cartsDAO = new cDAO();
 
 export default class cartsController {
-  static addCart = async (req, res) => {
+  static addCart = async (req, res, next) => {
     try {
       console.log("Agregando carrito");
       const response = await cartsDAO.create({ products: [], totalPrice: 0 });
+      if (!response) {
+        throw new Error(`Error creando carrito: ${cid}`);
+      }
       return response;
     } catch (error) {
       console.error(`addCart: ${error}`);
-      throw error;
+      next(error);
     }
   };
 
-  static addProduct = async (req, res) => {
+  static addProduct = async (req, res, next) => {
     let { cid, pid } = req.params;
     console.log(`Agregando producto ${pid} al carrito ${cid}`);
     try {
@@ -61,45 +64,55 @@ export default class cartsController {
       }
       console.log(msg);
       const total = this.calculateTotalPrice(cart.products);
-      let response = [];
       const mongores = await cartsDAO.updateOne(cid, {
         products: cart.products,
         totalPrice: total,
       });
-      response.push(await cartsDAO.findById(cid));
-      response.push(mongores);
-      return response;
+      if (!mongores) {
+        throw new Error(`Error actualizando carrito: ${cid}`);
+      }
+      const daores = await cartsDAO.findById(cid);
+      if (!daores) {
+        throw new Error(`Error devolviendo carrito: ${cid}`);
+      }
+      return [daores, mongores];
     } catch (error) {
       console.error(`addProduct: ${error}`);
-      throw error;
+      next(error);
     }
   };
 
-  static getCartById = async (req, res) => {
+  static getCartById = async (req, res, next) => {
     let { cid } = req.params;
     console.log("getCartById");
     try {
       const response = await cartsDAO.findById(cid);
+      if (!response) {
+        throw new Error(`Cart Id no valida: ${cid}`);
+      }
       return response;
     } catch (error) {
       console.error(`getCartById: ${error}`);
-      throw error;
+      next(error);
     }
   };
 
-  static emptyCart = async (req, res) => {
+  static emptyCart = async (req, res, next) => {
     let { cid } = req.params;
     console.log("emptyCart");
     try {
       const response = await cartsDAO.updateOne(cid);
+      if (!response) {
+        throw new Error(`Error actualizando carrito: ${cid}`);
+      }
       return response;
     } catch (error) {
       console.error(`emptyCart: ${error}`);
-      throw error;
+      next(error);
     }
   };
 
-  static removeProductfromCart = async (req, res) => {
+  static removeProductfromCart = async (req, res, next) => {
     let { cid, pid } = req.params;
     console.log("removeProductfromCart");
     try {
@@ -141,17 +154,21 @@ export default class cartsController {
         products: cart.products,
         totalPrice: total,
       });
-      let response = [];
-      response.push(await cartsDAO.findById(cid));
-      response.push(mongores);
-      return response;
+      if (!mongores) {
+        throw new Error(`Error actualizando carrito: ${cid}`);
+      }
+      const daores = await cartsDAO.findById(cid);
+      if (!daores) {
+        throw new Error(`Error devolviendo carrito: ${cid}`);
+      }
+      return [daores, mongores];
     } catch (error) {
       console.error(`removeProductfromCart: ${error}`);
-      throw error;
+      next(error);
     }
   };
 
-  static updateCartProduct = async (req, res) => {
+  static updateCartProduct = async (req, res, next) => {
     let { cid, pid } = req.params;
     let updatedProduct = req.body;
     console.log("updateCartProduct");
@@ -192,17 +209,21 @@ export default class cartsController {
         products: cart.products,
         totalPrice: total,
       });
-      let response = [];
-      response.push(await cartsDAO.findById(cid));
-      response.push(mongores);
-      return response;
+      if (!mongores) {
+        throw new Error(`Error actualizando carrito: ${cid}`);
+      }
+      const daores = await cartsDAO.findById(cid);
+      if (!daores) {
+        throw new Error(`Error devolviendo carrito: ${cid}`);
+      }
+      return [daores, mongores];
     } catch (error) {
       console.error(`updateCartProduct: ${error}`);
-      throw error;
+      next(error);
     }
   };
 
-  static updateCart = async (req, res) => {
+  static updateCart = async (req, res, next) => {
     let { cid } = req.params;
     let products = req.body;
     console.log("updateCart");
@@ -219,7 +240,7 @@ export default class cartsController {
         try {
           await productsDAO.findById(product);
         } catch (error) {
-          throw new Error(`error inesperado ${error}`);
+          throw new Error(`Error en los productos ${error}`);
         }
       });
       cart.products = products;
@@ -228,17 +249,21 @@ export default class cartsController {
         products: cart.products,
         totalPrice: total,
       });
-      let response = [];
-      response.push(await cartsDAO.findById(cid));
-      response.push(mongores);
-      return response;
+      if (!mongores) {
+        throw new Error(`Error actualizando carrito: ${cid}`);
+      }
+      const daores = await cartsDAO.findById(cid);
+      if (!daores) {
+        throw new Error(`Error devolviendo carrito: ${cid}`);
+      }
+      return [daores, mongores];
     } catch (error) {
       console.error(`updateCart: ${error}`);
-      throw error;
+      next(error);
     }
   };
 
-  static getCartItemCount = async (req, res) => {
+  static getCartItemCount = async (req, res, next) => {
     let user = req.session.user;
     let cartItemCount = 0;
     if (user && user.cart) {
@@ -250,7 +275,7 @@ export default class cartsController {
         );
       } catch (error) {
         console.error(`getCartItemCount: ${error}`);
-        throw error;
+        next(error);
       }
     }
     return cartItemCount;
