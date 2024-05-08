@@ -49,14 +49,12 @@ initPassport();
 app.use(passport.initialize());
 app.use(passport.session());
 
-const handleErrors = async (req, res, next) => {
-  try {
-    await next();
-  } catch (error) {
-    return res.status(500).json({ error: `error inesperado ${error}` });
-  }
+const handleErrors = async (err, req, res, next) => {
+  res.status(500).json({
+    msg: err.message,
+    success: false,
+  });
 };
-app.use(handleErrors);
 
 app.use(
   "/api/products",
@@ -78,6 +76,8 @@ app.use(
   },
   viewsRouter
 );
+
+app.use(handleErrors);
 
 const connectDB = async () => {
   try {

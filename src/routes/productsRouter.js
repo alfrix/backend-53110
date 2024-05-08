@@ -11,27 +11,27 @@ router.use(setJsonResponse);
 
 router.get("/", async (req, res, next) => {
   const products = await productsController.getProducts(req, res, next);
-  res.status(200).json(products);
+  return res.status(200).json(products);
 });
 
 router.get("/:pid", async (req, res, next) => {
   const products = await productsController.getProductById(req, res, next);
-  res.status(200).json(products);
+  return res.status(200).json(products);
 });
 
 router.post("/", async (req, res, next) => {
   const products = await productsController.addProduct(req, res, next);
-  res.status(200).json(products);
+  return res.status(200).json(products);
 });
 
 router.put("/:pid", async (req, res, next) => {
   const products = await productsController.updateProduct(req, res, next);
-  res.status(200).json(products);
+  return res.status(200).json(products);
 });
 
 router.delete("/:pid", async (req, res, next) => {
   const products = await productsController.deleteProduct(req, res, next);
-  res.status(200).json(products);
+  return res.status(200).json(products);
 });
 
 export { router };

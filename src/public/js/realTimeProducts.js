@@ -62,7 +62,7 @@ function createForm(product) {
     .then((data) => data.user.cart)
     .catch((error) => {
       console.error("Error retrieving session information:", error);
-      window.location.replace("/login");
+      window.location.assign("/login");
     });
 
   cartId.then((cartId) => {

@@ -11,37 +11,37 @@ router.use(setJsonResponse);
 
 router.get("/:cid", async (req, res, next) => {
   const cart = await cartsController.getCartById(req, res, next);
-  res.status(200).json(cart);
+  return res.status(200).json(cart);
 });
 
 router.post("/", async (req, res, next) => {
   const cart = await cartsController.addCart(req, res, next);
-  res.status(200).json(cart);
+  return res.status(200).json(cart);
 });
 
 router.post("/:cid/product/:pid", async (req, res, next) => {
   const cart = await cartsController.addProduct(req, res, next);
-  res.status(200).json(cart);
+  return res.status(200).json(cart);
 });
 
 router.delete("/:cid/product/:pid", async (req, res, next) => {
   const cart = await cartsController.removeProductfromCart(req, res, next);
-  res.status(200).json(cart);
+  return res.status(200).json(cart);
 });
 
 router.delete("/:cid", async (req, res, next) => {
   const cart = await cartsController.emptyCart(req, res, next);
-  res.status(200).json(cart);
+  return res.status(200).json(cart);
 });
 
 router.put("/:cid", async (req, res, next) => {
   const cart = await cartsController.updateCart(req, res, next);
-  res.status(200).json(cart);
+  return res.status(200).json(cart);
 });
 
 router.put("/:cid/product/:pid", async (req, res, next) => {
   const cart = await cartsController.updateCartProduct(req, res, next);
-  res.status(200).json(cart);
+  return res.status(200).json(cart);
 });
 
 export { router };

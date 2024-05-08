@@ -90,7 +90,7 @@ export default class productsController {
     let { pid } = req.params;
     try {
       let response = await productsDAO.findById(pid);
-      if (!product) {
+      if (!response) {
         throw new Error(`No encontrado ${pid}`);
       }
       return response;
