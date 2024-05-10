@@ -60,6 +60,16 @@ app.use(
 app.use("/api/carts", cartRouter);
 app.use("/api/session", sessionRouter);
 
+const apiErrorHandler = (err, req, res, next) => {
+  const statusCode = err.statusCode || 500;
+  res.status(statusCode).json({
+    success: false,
+    error: err.message,
+  });
+};
+
+app.use(apiErrorHandler);
+
 app.use(
   "/",
   (req, res, next) => {
@@ -69,19 +79,39 @@ app.use(
   viewsRouter
 );
 
-const handleErrors = (err, req, res, next) => {
+const viewsErrorHandler = (err, req, res, next) => {
+  console.error("views /", err);
+
   const statusCode = err.statusCode || 500;
-  res.status(statusCode).json({
-    success: false,
-    error: err.message,
+  let message = "Error interno del servidor";
+  switch (statusCode) {
+    case 404:
+      message = "No encontrado";
+      break;
+    case 401:
+      message = "No autorizado";
+      break;
+    case 400:
+      message = "Petición no valida";
+      break;
+  }
+
+  let pageTitle = statusCode;
+  res.status(statusCode).render("error", {
+    pageTitle,
+    user: req.session.user,
+    status: statusCode,
+    message: message,
+    error: err,
   });
 };
 
-app.use(handleErrors);
+app.use(viewsErrorHandler);
 
 const connectDB = async () => {
   try {
     await mongoose.connect(mongoUrl);
+    // `DB ${DB_NAME} conectada`;
     console.log("DB Conectada");
   } catch (error) {
     console.log("ERROR al conectar:", error.message);

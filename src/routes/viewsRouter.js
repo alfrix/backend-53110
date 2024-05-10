@@ -9,11 +9,15 @@ const router = Router();
 
 router.use(log("Acceso a views"));
 router.use(async (req, res, next) => {
-  res.locals.cartItemCount = await cartsController.getCartItemCount(req, res);
+  res.locals.cartItemCount = await cartsController.getCartItemCount(
+    req,
+    res,
+    next
+  );
   next();
 });
 
-router.get("/realTimeProducts", async (req, res) => {
+router.get("/realTimeProducts", async (req, res, next) => {
   let pageTitle = "realTimeProducts";
   res.status(200).render("realTimeProducts", {
     pageTitle,
@@ -22,21 +26,9 @@ router.get("/realTimeProducts", async (req, res) => {
   });
 });
 
-router.get("/", async (req, res) => {
+router.get("/", async (req, res, next) => {
   let products;
-  try {
-    products = await productsController.getProducts(req, res);
-  } catch (error) {
-    console.error("views /", error);
-    const status = 500;
-    let pageTitle = status;
-    res.status(status).render("error", {
-      pageTitle,
-      user: req.session.user,
-      status: status,
-      message: error,
-    });
-  }
+  products = await productsController.getProducts(req, res, next);
   let pageTitle = "Home";
   res.status(200).render("home", {
     pageTitle,
@@ -46,7 +38,7 @@ router.get("/", async (req, res) => {
   });
 });
 
-router.get("/chat", (req, res) => {
+router.get("/chat", (req, res, next) => {
   let pageTitle = "Chat";
   res.status(200).render("chat", {
     pageTitle,
@@ -55,20 +47,8 @@ router.get("/chat", (req, res) => {
   });
 });
 
-router.get("/cart/:cid", async (req, res) => {
-  let cart;
-  try {
-    cart = await cartsController.getCartById(req, res);
-  } catch (error) {
-    const status = 500;
-    let pageTitle = status;
-    res.status(status).render("error", {
-      pageTitle,
-      user: req.session.user,
-      status: status,
-      message: error,
-    });
-  }
+router.get("/cart/:cid", async (req, res, next) => {
+  let cart = await cartsController.getCartById(req, res, next);
   let pageTitle = "Carrito";
   res.status(200).render("cart", {
     pageTitle,
@@ -78,7 +58,7 @@ router.get("/cart/:cid", async (req, res) => {
   });
 });
 
-router.get("/login", async (req, res) => {
+router.get("/login", async (req, res, next) => {
   let { email } = req.query;
   if (req.session.user) {
     return res.redirect("/");
@@ -91,7 +71,7 @@ router.get("/login", async (req, res) => {
   });
 });
 
-router.get("/signup", async (req, res) => {
+router.get("/signup", async (req, res, next) => {
   if (req.session.user) {
     return res.redirect("/");
   }
@@ -103,7 +83,7 @@ router.get("/signup", async (req, res) => {
   });
 });
 
-router.get("/profile", auth, async (req, res) => {
+router.get("/profile", auth, async (req, res, next) => {
   let pageTitle = "Perfil";
   res.status(200).render("profile", {
     pageTitle,
@@ -112,15 +92,10 @@ router.get("/profile", auth, async (req, res) => {
   });
 });
 
-router.get("*", (req, res) => {
-  const status = 404;
-  let pageTitle = status;
-  res.status(status).render("error", {
-    pageTitle,
-    user: req.session.user,
-    status: status,
-    message: "Not Found",
-  });
+router.get("*", (req, res, next) => {
+  const err = new Error(`La página solicitada no existe`);
+  err.statusCode = 404;
+  next(err);
 });
 
 export { router };

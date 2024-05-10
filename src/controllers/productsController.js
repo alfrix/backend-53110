@@ -39,32 +39,37 @@ export default class productsController {
    * @returns
    */
   static getProducts = async (req, res, next) => {
-    let { limit, page, query, sort } = req.query;
-    if (!query) {
-      query = {};
-    } else {
-      try {
-        console.log(query);
-        query = JSON.parse(query);
-      } catch (error) {
-        console.error(`getProducts`);
-        throw new Error(`Unable to parse JSON query ${query}: ${error}`);
-      }
-    }
-    if (!sort || !["asc", "desc"].includes(sort)) {
-      console.log(`sort not valid ${sort}`);
-      sort = "asc";
-    }
-    !limit || isNaN(limit) || limit < 1
-      ? (limit = 10)
-      : (limit = Math.floor(limit));
-    !page || isNaN(page) || page < 1 ? (page = 1) : (page = Math.floor(page));
     try {
+      let { limit, page, query, sort = "" } = req.query;
+      if (!query) {
+        query = {};
+      } else {
+        try {
+          console.log(query);
+          query = JSON.parse(query);
+        } catch (error) {
+          const err = new Error(`Unable to parse JSON query ${query} ${error}`);
+          error.statusCode = 400;
+          throw err;
+        }
+      }
+
+      if (["asc", "desc"].includes(sort)) {
+        sort = { price: sort };
+      } else {
+        if (sort) console.error(`sort not valid ${sort}`);
+        sort = {};
+      }
+
+      !limit || isNaN(limit) || limit < 1
+        ? (limit = 10)
+        : (limit = Math.floor(limit));
+      !page || isNaN(page) || page < 1 ? (page = 1) : (page = Math.floor(page));
       let options = {
-        page: page,
-        limit: limit,
+        page,
+        limit,
         lean: true,
-        sort: { price: sort },
+        sort,
       };
 
       let {
@@ -122,11 +127,7 @@ export default class productsController {
         error.statusCode = 404;
         throw error;
       }
-    } catch (error) {
-      return next(error);
-    }
-    console.log(`Actualizando producto id: ${pid}`);
-    try {
+      console.log(`Actualizando producto id: ${pid}`);
       const res1 = await productsDAO.updateOne(pid, product);
       if (!res1) {
         throw new Error(`Error actualizando producto: ${pid}`);
