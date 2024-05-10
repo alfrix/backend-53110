@@ -17,6 +17,7 @@ import { initPassport } from "./config/passport.config.js";
 
 const PORT = config.PORT;
 const mongoUrl = config.mongoUrl;
+const dbName = config.dbName;
 
 console.log(`Modo: ${config.MODO}`);
 
@@ -110,9 +111,9 @@ app.use(viewsErrorHandler);
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(mongoUrl);
-    // `DB ${DB_NAME} conectada`;
-    console.log("DB Conectada");
+    console.log(`Conectando a ${mongoUrl}`);
+    await mongoose.connect(mongoUrl, { dbName });
+    console.log(`DB ${dbName} Conectada`);
   } catch (error) {
     console.log("ERROR al conectar:", error.message);
   }
