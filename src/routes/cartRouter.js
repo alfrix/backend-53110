@@ -21,7 +21,7 @@ router.post("/", async (req, res, next) => {
 
 router.post("/:cid/product/:pid", async (req, res, next) => {
   const cart = await cartsController.addProduct(req, res, next);
-  return res.status(200).json(cart);
+  return res.status(201).json(cart);
 });
 
 router.delete("/:cid/product/:pid", async (req, res, next) => {

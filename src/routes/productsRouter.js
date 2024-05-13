@@ -15,23 +15,23 @@ router.get("/", async (req, res, next) => {
 });
 
 router.get("/:pid", async (req, res, next) => {
-  const products = await productsController.getProductById(req, res, next);
-  return res.status(200).json(products);
+  const product = await productsController.getProductById(req, res, next);
+  return res.status(200).json(product);
 });
 
 router.post("/", async (req, res, next) => {
-  const products = await productsController.addProduct(req, res, next);
-  return res.status(200).json(products);
+  const product = await productsController.addProduct(req, res, next);
+  return res.status(201).json(product);
 });
 
 router.put("/:pid", async (req, res, next) => {
-  const products = await productsController.updateProduct(req, res, next);
-  return res.status(200).json(products);
+  const product = await productsController.updateProduct(req, res, next);
+  return res.status(200).json(product);
 });
 
 router.delete("/:pid", async (req, res, next) => {
-  const products = await productsController.deleteProduct(req, res, next);
-  return res.status(200).json(products);
+  const product = await productsController.deleteProduct(req, res, next);
+  return res.status(200).json(product);
 });
 
 export { router };
