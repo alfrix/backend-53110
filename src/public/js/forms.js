@@ -30,7 +30,12 @@ document.addEventListener("DOMContentLoaded", function () {
           body: formData,
         })
           .then((response) => {
-            window.location.replace(location.pathname);
+            if (response.status != 200) {
+              console.error(response.status, response.statusText);
+              window.location.replace("/login");
+            } else {
+              window.location.replace(location.pathname);
+            }
           })
           .catch((error) => {
             console.error("Error:", error);

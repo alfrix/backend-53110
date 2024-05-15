@@ -59,13 +59,20 @@ function createForm(product) {
       }
       return response.json();
     })
-    .then((data) => data.user.cart)
+    .then((data) => {
+      if (data.user && data.user.cart) {
+        return data.user.cart;
+      }
+      return null;
+    })
     .catch((error) => {
       console.error("Error retrieving session information:", error);
-      window.location.assign("/login");
     });
 
   cartId.then((cartId) => {
+    if (!cartId) {
+      return window.location.assign("/login");
+    }
     form.action = `/api/carts/${cartId}/product/${product._id}`;
 
     form.addEventListener("submit", function (event) {
@@ -78,7 +85,12 @@ function createForm(product) {
         body: formData,
       })
         .then((response) => {
-          window.location.replace(location.pathname);
+          if (response.ok) {
+            window.location.replace(location.pathname);
+          } else {
+            console.error(response.status, response.statusText);
+            window.location.assign("/login");
+          }
         })
         .catch((error) => {
           console.error("Error:", error);

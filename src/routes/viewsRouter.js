@@ -17,7 +17,7 @@ router.use(async (req, res, next) => {
   next();
 });
 
-router.get("/realTimeProducts", async (req, res, next) => {
+router.get("/realTimeProducts", auth("public"), async (req, res, next) => {
   let pageTitle = "realTimeProducts";
   res.status(200).render("realTimeProducts", {
     pageTitle,
@@ -26,7 +26,7 @@ router.get("/realTimeProducts", async (req, res, next) => {
   });
 });
 
-router.get("/", async (req, res, next) => {
+router.get("/", auth("public"), async (req, res, next) => {
   let products;
   products = await productsController.getProducts(req, res, next);
   let pageTitle = "Home";
@@ -38,7 +38,7 @@ router.get("/", async (req, res, next) => {
   });
 });
 
-router.get("/chat", (req, res, next) => {
+router.get("/chat", auth("user"), (req, res, next) => {
   let pageTitle = "Chat";
   res.status(200).render("chat", {
     pageTitle,
@@ -47,7 +47,7 @@ router.get("/chat", (req, res, next) => {
   });
 });
 
-router.get("/cart/:cid", async (req, res, next) => {
+router.get("/cart/:cid", auth("user"), async (req, res, next) => {
   let cart = await cartsController.getCartById(req, res, next);
   let pageTitle = "Carrito";
   res.status(200).render("cart", {
@@ -58,7 +58,7 @@ router.get("/cart/:cid", async (req, res, next) => {
   });
 });
 
-router.get("/login", async (req, res, next) => {
+router.get("/login", auth("public"), async (req, res, next) => {
   let { email } = req.query;
   if (req.session.user) {
     return res.redirect("/");
@@ -71,7 +71,7 @@ router.get("/login", async (req, res, next) => {
   });
 });
 
-router.get("/signup", async (req, res, next) => {
+router.get("/signup", auth("public"), async (req, res, next) => {
   if (req.session.user) {
     return res.redirect("/");
   }
@@ -83,7 +83,7 @@ router.get("/signup", async (req, res, next) => {
   });
 });
 
-router.get("/profile", auth, async (req, res, next) => {
+router.get("/profile", auth("user"), async (req, res, next) => {
   let pageTitle = "Perfil";
   res.status(200).render("profile", {
     pageTitle,
@@ -92,7 +92,7 @@ router.get("/profile", auth, async (req, res, next) => {
   });
 });
 
-router.get("*", (req, res, next) => {
+router.get("*", auth("public"), (req, res, next) => {
   const err = new Error(`La página solicitada no existe`);
   err.statusCode = 404;
   next(err);
