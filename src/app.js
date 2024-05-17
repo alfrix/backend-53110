@@ -14,6 +14,7 @@ import productsController from "./controllers/productsController.js";
 import MongoStore from "connect-mongo";
 import passport from "passport";
 import { initPassport } from "./config/passport.config.js";
+import { apiErrorHandler } from "./middlewares/apiErrorHandler.js";
 
 const PORT = config.PORT;
 const mongoUrl = config.mongoUrl;
@@ -60,14 +61,6 @@ app.use(
 
 app.use("/api/carts", cartRouter);
 app.use("/api/session", sessionRouter);
-
-const apiErrorHandler = (err, req, res, next) => {
-  const statusCode = err.statusCode || 500;
-  res.status(statusCode).json({
-    success: false,
-    error: err.message,
-  });
-};
 
 app.use(apiErrorHandler);
 
