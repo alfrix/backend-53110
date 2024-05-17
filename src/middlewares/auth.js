@@ -3,10 +3,9 @@ export const auth = (level) => {
     if (req.session.user) {
       delete req.session.user.password;
     }
-    if (level === "public") {
-      return next();
-    }
     switch (level) {
+      case "public":
+        return next();
       case "user":
         if (req.session.user) {
           return next();
