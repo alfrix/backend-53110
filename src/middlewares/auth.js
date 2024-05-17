@@ -1,27 +1,28 @@
-export const auth = (level) => {
+export const auth = (accesos) => {
   return (req, res, next) => {
-    if (req.session.user) {
-      delete req.session.user.password;
+    if (!accesos || !Array.isArray(accesos)) {
+      const error = new Error(`Accesos no definidos`);
+      error.statusCode = 500;
+      return next(error);
     }
-    switch (level) {
-      case "public":
-        return next();
-      case "user":
-        if (req.session.user) {
-          return next();
-        } else {
-          console.log(`No autorizado`);
-          return res.redirect("/login?error=Debe iniciar sesión");
-        }
-      case "admin":
-        if (req.session.user && req.session.rol === "admin") {
-          return next();
-        } else {
-          console.log(`No autorizado - Solo admin`);
-          const error = new Error(`No autorizado`);
-          error.statusCode = 401;
-          return next(error);
-        }
+
+    if (accesos.includes("public")) {
+      return next();
+    } else if (!req.session.user) {
+      console.log(`No autenticado`);
+      const error = new Error(`No autenticado`);
+      error.statusCode = 401;
+      return next(error);
+    } else if (req.session.user.rol === "admin") {
+      console.log(`Acceso admin`);
+      return next();
+    } else if (accesos.includes(req.session.user.rol)) {
+      console.log(`Usuario autorizado rol: ${req.session.user.rol}`);
+      return next();
     }
+    console.log(`No autorizado: ${req.session.user.rol}`);
+    const error = new Error(`No autorizado`);
+    error.statusCode = 403;
+    return next(error);
   };
 };
