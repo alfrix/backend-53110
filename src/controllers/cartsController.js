@@ -1,5 +1,7 @@
 import { cartsDAO as cDAO } from "../dao/mongoDB/cartsDAO.js";
 import { productsDAO as pDAO } from "../dao/mongoDB/productsDAO.js";
+import { ticketsDAO } from "../dao/mongoDB/ticketsDAO.js";
+import productsController from "./productsController.js";
 
 const productsDAO = new pDAO();
 const cartsDAO = new cDAO();
@@ -302,10 +304,80 @@ export default class cartsController {
       const error = new Error("Not authenticated");
       error.statusCode = 401;
       throw error;
+    } else if (user.rol === "admin") {
+      console.log(`Acceso de admin a carrito: ${cart}`);
+      return;
     } else if (user.cart !== cart) {
       const error = new Error("Not autorized");
       error.statusCode = 403;
       throw error;
     }
   }
+
+  static purchase = async (req, res, next) => {
+    let { cid } = req.params;
+    console.log("purchase");
+    try {
+      this.validateCartFromUser(req.session.user, cid);
+      const cart = await cartsDAO.findById(cid);
+      if (!cart) {
+        throw new Error(`Obteniendo carrito: ${cid}`);
+      }
+
+      let withStock = [];
+      let noStock = [];
+      let total = 0;
+      cart.products.forEach(async (cartProduct) => {
+        product = await productsController.getProductById(product._id);
+        if (cartProduct.quantity > product.stock) {
+          noStock.push(product._id);
+        } else {
+          product.stock -= cartProduct.quantity;
+          await productsController.updateProduct(product);
+          total += cartProduct.quantity * product.price;
+          withStock.push(product._id);
+        }
+      });
+
+      withStock.forEach(async (removeProduct) => {
+        const index = cart.products.findIndex((products) =>
+          products.product._id.equals(removeProduct)
+        );
+        cart.products.splice(index, 1);
+      });
+      const mongores = await cartsDAO.updateOne(cid, {
+        products: cart.products,
+        totalPrice: cart.totalPrice - total,
+      });
+      if (!mongores) {
+        throw new Error(`Error actualizando carrito: ${cid}`);
+      }
+
+      if (noStock.length > 0) {
+        console.log(`Sin stock: ${JSON.stringify(noStock)}`);
+      }
+
+      let ticket = {
+        code: Date.now(),
+        purchase_datetime: new Date().toUTCString(),
+        amount: total,
+        purchaser: req.session.user.email,
+      };
+      const res1 = await ticketsDAO.create(ticket);
+      if (!res1) {
+        throw new Error(`Error creando ticket: ${JSON.stringify(ticket)}`);
+      }
+      let res2;
+      if (res1.insertedId) {
+        res2 = await ticketsDAO.findById(res1.insertedId);
+        if (!res2) {
+          throw new Error(`Error buscando ticket: ${res1.insertedId}`);
+        }
+      }
+      const response = [res2, res1];
+    } catch (error) {
+      console.error(`purchase: ${error}`);
+      next(error);
+    }
+  };
 }

@@ -45,4 +45,9 @@ router.put("/:cid/product/:pid", auth(["user"]), async (req, res, next) => {
   return res.status(200).json(cart);
 });
 
+router.get("/:cid/purchase", auth(["user"]), async (req, res, next) => {
+  const cart = await cartsController.purchase(req, res, next);
+  return res.status(200).json(cart);
+});
+
 export { router };
