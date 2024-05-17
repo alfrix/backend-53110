@@ -23,6 +23,7 @@ export default class cartsController {
     let { cid, pid } = req.params;
     console.log(`Agregando producto ${pid} al carrito ${cid}`);
     try {
+      this.validateCartFromUser(req.session.user, cid);
       const product = await productsDAO.findById(pid);
       const cart = await cartsDAO.findById(cid);
       if (!cart || !product) {
@@ -86,6 +87,7 @@ export default class cartsController {
     let { cid } = req.params;
     console.log("getCartById");
     try {
+      this.validateCartFromUser(req.session.user, cid);
       const response = await cartsDAO.findById(cid);
       if (!response) {
         throw new Error(`Cart Id no valida: ${cid}`);
@@ -116,6 +118,7 @@ export default class cartsController {
     let { cid, pid } = req.params;
     console.log("removeProductfromCart");
     try {
+      this.validateCartFromUser(req.session.user, cid);
       const product = await productsDAO.findById(pid);
       const cart = await cartsDAO.findById(cid);
       let msg = "";
@@ -173,6 +176,7 @@ export default class cartsController {
     let updatedProduct = req.body;
     console.log("updateCartProduct");
     try {
+      this.validateCartFromUser(req.session.user, cid);
       const product = await productsDAO.findById(pid);
       const cart = await cartsDAO.findById(cid);
       if (!cart || !product) {
@@ -228,6 +232,7 @@ export default class cartsController {
     let products = req.body;
     console.log("updateCart");
     try {
+      this.validateCartFromUser(req.session.user, cid);
       const cart = await cartsDAO.findById(cid);
       if (!cart || !products || !Array.isArray(products)) {
         if (!cart) {
@@ -290,5 +295,17 @@ export default class cartsController {
       totalPrice += Number(item.product.price) * item.quantity;
     });
     return totalPrice.toFixed(2);
+  }
+
+  static validateCartFromUser(user, cart) {
+    if (!user) {
+      const error = new Error("Not authenticated");
+      error.statusCode = 401;
+      throw error;
+    } else if (user.cart !== cart) {
+      const error = new Error("Not autorized");
+      error.statusCode = 403;
+      throw error;
+    }
   }
 }
