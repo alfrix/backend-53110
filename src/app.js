@@ -20,15 +20,11 @@ const PORT = config.PORT;
 const mongoUrl = config.mongoUrl;
 const dbName = config.dbName;
 
-console.log(`Modo: ${config.MODO}`);
-
 const app = express();
 const server = app.listen(PORT, () => {
   console.log(`Server OK en puerto ${PORT}`);
 });
 const io = new Server(server);
-
-console.log(PORT);
 
 app.engine("handlebars", engine());
 app.set("view engine", "handlebars");
