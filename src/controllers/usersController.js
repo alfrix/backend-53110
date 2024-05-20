@@ -8,9 +8,8 @@ const admin = {
 };
 
 import { cartsDAO as cDAO } from "../dao/mongoDB/cartsDAO.js";
-import { usersDAO as uDAO } from "../dao/mongoDB/usersDAO.js";
+import { userService } from "../services/Users.service.js";
 
-const usersDAO = new uDAO();
 const cartsDAO = new cDAO();
 
 export default class usersController {
@@ -21,13 +20,13 @@ export default class usersController {
     user.rol = "user";
     console.log("Agregando usuario");
     try {
-      let user_db = await usersDAO.create(user);
+      let user_db = await userService.create(user);
       user_db = user_db.toJSON();
 
       console.log("Asignando carrito al usuario");
       const cart = await cartsDAO.create();
       console.log(cart);
-      await usersDAO.updateOne({ _id: user_db._id }, { cart });
+      await userService.updateOne({ _id: user_db._id }, { cart });
       return { ...user_db, cart };
     } catch (error) {
       console.log(`Error creando usuario: ${error}`);
@@ -40,7 +39,7 @@ export default class usersController {
       return admin;
     }
     try {
-      return await usersDAO.findById(uid);
+      return await userService.findById(uid);
     } catch (error) {
       console.error(`Error obteniendo usuario: ${error}`);
       return error;
@@ -53,7 +52,7 @@ export default class usersController {
       return admin;
     }
     try {
-      return await usersDAO.getUserByEmail(email);
+      return await userService.getByEmail(email);
     } catch (error) {
       console.error(`Error obteniendo usuario: ${error}`);
       return error;
