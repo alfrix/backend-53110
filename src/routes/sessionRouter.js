@@ -1,11 +1,11 @@
 import { Router } from "express";
 import passport from "passport";
 import { log } from "../middlewares/log.js";
+import { UserDTO } from "../dao/UserDTO.js";
 
-const router = Router()
+const router = Router();
 
-router.use(log("Acceso a session"))
-
+router.use(log("Acceso a session"));
 
 router.get("/errorSignup", (req, res) => {
   console.error("errorSignup", req.session.messages);
@@ -42,19 +42,15 @@ router.get(
   }
 );
 
-router.get(
-  "/current",
-  (req, res) => {
-    try{
-      console.log(`Current User: ${req.session.user}`)
-      const user = req.session.user
-      return res.status(200).json({user})
-    } catch (error) {
-      console.error(error)
-      return res.status(500).json({error: "error inesperado"})
-    }
+router.get("/current", (req, res) => {
+  try {
+    const user = req.session.user ? new UserDTO(req.session.user) : {};
+    return res.status(200).json({ user });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "error inesperado" });
   }
-);
+});
 
 router.post(
   "/login",
