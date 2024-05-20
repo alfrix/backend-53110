@@ -1,51 +1,30 @@
 import { cartsModel } from "../models/carts.model.js";
 
 export class cartsDAO {
-  /**
-   * [create a new cart]
-   * @param {Array} products
-   * @param {Number} totalPrice
-   * @returns {Object}
-   */
   async create(products = [], totalPrice = 0) {
     try {
       return await cartsModel.create({ products, totalPrice });
     } catch (error) {
-      console.error(error);
-      console.error("Error: cartsDAO create");
-      return undefined;
+      console.error(`Error creando carrito`, error);
+      throw new Error("Fallo al crear carrito");
     }
   }
 
-  /**
-   * [Updates one cart with the provided info]
-   * @param {String} cid ObjectID
-   * @param {Array} products
-   * @param {Number} totalPrice
-   * @returns {Object}
-   */
-  async updateOne(cid, { products = [], totalPrice = 0 }) {
+  async updateOne(_id, products = [], totalPrice = 0) {
     try {
-      return await cartsModel.updateOne({ _id: cid }, { products, totalPrice });
+      return await cartsModel.updateOne({ _id }, { products, totalPrice });
     } catch (error) {
-      console.error(error);
-      console.error("Error: cartsDAO updateOne");
-      return undefined;
+      console.error(`Error actualizando carrito ID ${_id}`, error);
+      throw new Error("Fallo al actualizar carrito");
     }
   }
 
-  /**
-   * [find and returns cart with id]
-   * @param {String} cid ObjectID
-   * @returns {Object}
-   */
-  async findById(cid) {
+  async getById(_id) {
     try {
-      return await cartsModel.findById(cid).lean().populate("products.product");
+      return await cartsModel.findById(_id).lean().populate("products.product");
     } catch (error) {
-      console.error(error);
-      console.error("Error: cartsDAO findById");
-      return undefined;
+      console.error(`Error obteniendo carrito ID ${_id}`, error);
+      throw new Error("Fallo al obtener carrito");
     }
   }
 }

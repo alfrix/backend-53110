@@ -7,10 +7,8 @@ const admin = {
   rol: "admin",
 };
 
-import { cartsDAO as cDAO } from "../dao/mongoDB/cartsDAO.js";
+import { cartService } from "../services/Carts.service.js";
 import { userService } from "../services/Users.service.js";
-
-const cartsDAO = new cDAO();
 
 export default class usersController {
   static create = async (user) => {
@@ -24,9 +22,9 @@ export default class usersController {
       user_db = user_db.toJSON();
 
       console.log("Asignando carrito al usuario");
-      const cart = await cartsDAO.create();
+      const cart = await cartService.create();
       console.log(cart);
-      await userService.updateOne({ _id: user_db._id }, { cart });
+      await userService.update({ _id: user_db._id }, { cart });
       return { ...user_db, cart };
     } catch (error) {
       console.log(`Error creando usuario: ${error}`);

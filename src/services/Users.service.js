@@ -8,7 +8,7 @@ class UserService {
     return await this.usersDAO.create(user);
   }
 
-  async updateOne(_id, cart) {
+  async update(_id, cart) {
     return await this.usersDAO.updateOne(_id, cart);
   }
   async getByEmail(email) {

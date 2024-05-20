@@ -1,13 +1,12 @@
 import { productsModel } from "../models/products.model.js";
 
 export class productsDAO {
-  async getProductById(pid) {
+  async getById(_id) {
     try {
-      return await productsModel.findById(pid).lean();
+      return await productsModel.findById(_id).lean();
     } catch (error) {
-      console.error(error);
-      console.error("Error: productsDAO getProductById");
-      return undefined;
+      console.error(`Error obteniendo producto con ID ${_id}:`, error);
+      throw new Error("Fallo al obtener producto");
     }
   }
 
@@ -15,29 +14,26 @@ export class productsDAO {
     try {
       return await productsModel.create(product);
     } catch (error) {
-      console.error(error);
-      console.error("Error: productsDAO create");
-      return undefined;
+      console.error("Error creando producto:", error);
+      throw new Error("Fallo al crear producto");
     }
   }
 
-  async updateOne(pid, product) {
+  async updateOne(_id, product) {
     try {
-      return await productsModel.updateOne({ _id: pid }, product);
+      return await productsModel.updateOne({ _id }, product);
     } catch (error) {
-      console.error(error);
-      console.error("Error: productsDAO updateOne");
-      return undefined;
+      console.error(`Error actualizando producto con ID ${_id}:`, error);
+      throw new Error("Fallo al actualizar producto");
     }
   }
 
-  async deleteOne(pid) {
+  async deleteOne(_id) {
     try {
-      return await productsModel.deleteOne({ _id: pid });
+      return await productsModel.deleteOne({ _id });
     } catch (error) {
-      console.error(error);
-      console.error("Error: productsDAO deleteOne");
-      return undefined;
+      console.error(`Error borrando producto con ID ${_id}:`, error);
+      throw new Error("Fallo al borrar producto");
     }
   }
 
@@ -45,19 +41,8 @@ export class productsDAO {
     try {
       return await productsModel.paginate(query, options);
     } catch (error) {
-      console.error(error);
-      console.error("Error: productsDAO paginate");
-      return undefined;
-    }
-  }
-
-  async findById(pid) {
-    try {
-      return await productsModel.findById(pid).lean();
-    } catch (error) {
-      console.error(error);
-      console.error("Error: productsDAO findById");
-      return undefined;
+      console.error("Error paginating products:", error);
+      throw new Error("Failed to paginate products");
     }
   }
 }

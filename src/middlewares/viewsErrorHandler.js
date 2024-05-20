@@ -18,7 +18,7 @@ export const viewsErrorHandler = (err, req, res, next) => {
   }
 
   let pageTitle = statusCode;
-  res.status(statusCode).render("error", {
+  return res.status(statusCode).render("error", {
     pageTitle,
     user: req.session.user,
     status: statusCode,

@@ -1,20 +1,16 @@
-import { cartsDAO as cDAO } from "../dao/mongoDB/cartsDAO.js";
-import { productsDAO as pDAO } from "../dao/mongoDB/productsDAO.js";
-import { ticketsDAO } from "../dao/mongoDB/ticketsDAO.js";
+import { cartService } from "../services/Carts.service.js";
+import { productService } from "../services/Products.service.js";
+import { ticketService } from "../services/Ticket.service.js";
 import productsController from "./productsController.js";
-
-const productsDAO = new pDAO();
-const cartsDAO = new cDAO();
 
 export default class cartsController {
   static addCart = async (req, res, next) => {
     try {
       console.log("Agregando carrito");
-      const response = await cartsDAO.create({ products: [], totalPrice: 0 });
-      if (!response) {
-        throw new Error(`Error creando carrito: ${cid}`);
-      }
-      return response;
+      return await cartService.create({
+        products: [],
+        totalPrice: 0,
+      });
     } catch (error) {
       console.error(`addCart: ${error}`);
       next(error);
@@ -26,15 +22,8 @@ export default class cartsController {
     console.log(`Agregando producto ${pid} al carrito ${cid}`);
     try {
       this.validateCartFromUser(req.session.user, cid);
-      const product = await productsDAO.findById(pid);
-      const cart = await cartsDAO.findById(cid);
-      if (!cart || !product) {
-        if (!cart) {
-          throw new Error(`Cart Id no valida: ${cid}`);
-        } else {
-          throw new Error(`Product Id no valida: ${pid}`);
-        }
-      }
+      const product = await productService.getById(pid);
+      const cart = await cartService.getById(cid);
       console.log(cart);
       console.log(`Producto es ${JSON.stringify(product)}`);
       let exists = undefined;
@@ -67,18 +56,10 @@ export default class cartsController {
       }
       console.log(msg);
       const total = this.calculateTotalPrice(cart.products);
-      const mongores = await cartsDAO.updateOne(cid, {
-        products: cart.products,
-        totalPrice: total,
-      });
-      if (!mongores) {
-        throw new Error(`Error actualizando carrito: ${cid}`);
+      if (isNaN(total)) {
+        throw new Error("Total is nan");
       }
-      const daores = await cartsDAO.findById(cid);
-      if (!daores) {
-        throw new Error(`Error devolviendo carrito: ${cid}`);
-      }
-      return [daores, mongores];
+      return await cartService.update(cid, cart.products, total);
     } catch (error) {
       console.error(`addProduct: ${error}`);
       next(error);
@@ -90,11 +71,7 @@ export default class cartsController {
     console.log("getCartById");
     try {
       this.validateCartFromUser(req.session.user, cid);
-      const response = await cartsDAO.findById(cid);
-      if (!response) {
-        throw new Error(`Cart Id no valida: ${cid}`);
-      }
-      return response;
+      return await cartService.getById(cid);
     } catch (error) {
       console.error(`getCartById: ${error}`);
       next(error);
@@ -105,11 +82,7 @@ export default class cartsController {
     let { cid } = req.params;
     console.log("emptyCart");
     try {
-      const response = await cartsDAO.updateOne(cid);
-      if (!response) {
-        throw new Error(`Error actualizando carrito: ${cid}`);
-      }
-      return response;
+      return await cartService.update(cid);
     } catch (error) {
       console.error(`emptyCart: ${error}`);
       next(error);
@@ -121,16 +94,9 @@ export default class cartsController {
     console.log("removeProductfromCart");
     try {
       this.validateCartFromUser(req.session.user, cid);
-      const product = await productsDAO.findById(pid);
-      const cart = await cartsDAO.findById(cid);
+      const product = await productService.getById(pid);
+      const cart = await cartService.getById(cid);
       let msg = "";
-      if (!cart || !product) {
-        if (!cart) {
-          throw new Error(`Cart Id no valida: ${cid}`);
-        } else {
-          throw new Error(`Product Id no valida: ${pid}`);
-        }
-      }
       let exists = undefined;
       let qty = 1;
       if (cart.products.length > 0) {
@@ -155,18 +121,7 @@ export default class cartsController {
       }
       console.log(msg);
       const total = this.calculateTotalPrice(cart.products);
-      const mongores = await cartsDAO.updateOne(cid, {
-        products: cart.products,
-        totalPrice: total,
-      });
-      if (!mongores) {
-        throw new Error(`Error actualizando carrito: ${cid}`);
-      }
-      const daores = await cartsDAO.findById(cid);
-      if (!daores) {
-        throw new Error(`Error devolviendo carrito: ${cid}`);
-      }
-      return [daores, mongores];
+      return await cartService.update(cid, cart.products, total);
     } catch (error) {
       console.error(`removeProductfromCart: ${error}`);
       next(error);
@@ -179,15 +134,8 @@ export default class cartsController {
     console.log("updateCartProduct");
     try {
       this.validateCartFromUser(req.session.user, cid);
-      const product = await productsDAO.findById(pid);
-      const cart = await cartsDAO.findById(cid);
-      if (!cart || !product) {
-        if (!cart) {
-          throw new Error(`Cart Id no valida: ${cid}`);
-        } else {
-          throw new Error(`Product Id no valida: ${pid}`);
-        }
-      }
+      const product = await productService.getById(pid);
+      const cart = await cartService.getById(cid);
       let exists = undefined;
       if (cart.products.length > 0) {
         exists = cart.products.find((product) =>
@@ -211,18 +159,7 @@ export default class cartsController {
         throw new Error("Product not in cart");
       }
       const total = this.calculateTotalPrice(cart.products);
-      const mongores = await cartsDAO.updateOne(cid, {
-        products: cart.products,
-        totalPrice: total,
-      });
-      if (!mongores) {
-        throw new Error(`Error actualizando carrito: ${cid}`);
-      }
-      const daores = await cartsDAO.findById(cid);
-      if (!daores) {
-        throw new Error(`Error devolviendo carrito: ${cid}`);
-      }
-      return [daores, mongores];
+      return await cartService.update(cid, cart.products, total);
     } catch (error) {
       console.error(`updateCartProduct: ${error}`);
       next(error);
@@ -235,35 +172,17 @@ export default class cartsController {
     console.log("updateCart");
     try {
       this.validateCartFromUser(req.session.user, cid);
-      const cart = await cartsDAO.findById(cid);
-      if (!cart || !products || !Array.isArray(products)) {
-        if (!cart) {
-          throw new Error(`Cart Id no valida: ${cid}`);
-        } else {
-          throw new Error(`Products no validos: ${JSON.stringify(products)}`);
-        }
+      const cart = await cartService.getById(cid);
+      if (!products || !Array.isArray(products)) {
+        throw new Error(`Products no validos: ${JSON.stringify(products)}`);
       }
+      console.log("Verificando productos validos");
       products.forEach(async (product) => {
-        try {
-          await productsDAO.findById(product);
-        } catch (error) {
-          throw new Error(`Error en los productos ${error}`);
-        }
+        await productService.getById(product);
       });
       cart.products = products;
       const total = this.calculateTotalPrice(cart.products);
-      const mongores = await cartsDAO.updateOne(cid, {
-        products: cart.products,
-        totalPrice: total,
-      });
-      if (!mongores) {
-        throw new Error(`Error actualizando carrito: ${cid}`);
-      }
-      const daores = await cartsDAO.findById(cid);
-      if (!daores) {
-        throw new Error(`Error devolviendo carrito: ${cid}`);
-      }
-      return [daores, mongores];
+      return await cartService.update(cid, cart.products, total);
     } catch (error) {
       console.error(`updateCart: ${error}`);
       next(error);
@@ -275,7 +194,7 @@ export default class cartsController {
     let cartItemCount = 0;
     if (user && user.cart) {
       try {
-        const cart = await cartsDAO.findById(user.cart);
+        const cart = await cartService.getById(user.cart);
         cartItemCount = cart.products.reduce(
           (total, product) => total + product.quantity,
           0
@@ -292,10 +211,12 @@ export default class cartsController {
     if (!Array.isArray(products)) {
       throw new Error("Invalid products array");
     }
-    let totalPrice = 0;
-    products.forEach((item) => {
-      totalPrice += Number(item.product.price) * item.quantity;
-    });
+    console.log(products);
+    const totalPrice = products.reduce(
+      (total, item) => total + Number(item.product.price) * item.quantity,
+      0
+    );
+    console.log(`total es ${totalPrice} > ${totalPrice.toFixed(2)}`);
     return totalPrice.toFixed(2);
   }
 
@@ -319,7 +240,7 @@ export default class cartsController {
     console.log("purchase");
     try {
       this.validateCartFromUser(req.session.user, cid);
-      const cart = await cartsDAO.findById(cid);
+      const cart = await cartService.getById(cid);
       if (!cart) {
         throw new Error(`Obteniendo carrito: ${cid}`);
       }
@@ -345,13 +266,7 @@ export default class cartsController {
         );
         cart.products.splice(index, 1);
       });
-      const mongores = await cartsDAO.updateOne(cid, {
-        products: cart.products,
-        totalPrice: cart.totalPrice - total,
-      });
-      if (!mongores) {
-        throw new Error(`Error actualizando carrito: ${cid}`);
-      }
+      await cartService.update(cid, cart.products, cart.totalPrice - total);
 
       if (noStock.length > 0) {
         console.log(`Sin stock: ${JSON.stringify(noStock)}`);
@@ -363,18 +278,15 @@ export default class cartsController {
         amount: total,
         purchaser: req.session.user.email,
       };
-      const res1 = await ticketsDAO.create(ticket);
-      if (!res1) {
-        throw new Error(`Error creando ticket: ${JSON.stringify(ticket)}`);
-      }
-      let res2;
-      if (res1.insertedId) {
-        res2 = await ticketsDAO.findById(res1.insertedId);
-        if (!res2) {
-          throw new Error(`Error buscando ticket: ${res1.insertedId}`);
+      const response = await ticketService.create(ticket);
+      let newTicket;
+      if (response.insertedId) {
+        newTicket = await ticketService.getById(response.insertedId);
+        if (!newTicket) {
+          throw new Error(`Error buscando ticket: ${response.insertedId}`);
         }
       }
-      const response = [res2, res1];
+      return [(newTicket, response)];
     } catch (error) {
       console.error(`purchase: ${error}`);
       next(error);
