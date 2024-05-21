@@ -6,7 +6,7 @@ export class usersDAO {
       return await usersModel.create(user);
     } catch (error) {
       console.error(`Error creando usuario`, error);
-      throw new Error("Fallo al crear usuario");
+      throw new Error(`Fallo al crear usuario: ${error._message}`);
     }
   }
 
@@ -15,7 +15,7 @@ export class usersDAO {
       return await usersModel.updateOne(_id, cart);
     } catch (error) {
       console.error(`Error actualizando usuario`, error);
-      throw new Error("Fallo al actualizar usuario");
+      throw new Error(`Fallo al actualizar usuario: ${error._message}`);
     }
   }
 
@@ -27,7 +27,7 @@ export class usersDAO {
       return await usersModel.findOne(filter).lean();
     } catch (error) {
       console.error(`Error obteniendo usuario`, error);
-      throw new Error("Fallo al obtener usuario");
+      throw new Error(`Fallo al obtener usuario: ${error._message}`);
     }
   }
 }

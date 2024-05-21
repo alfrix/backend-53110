@@ -6,7 +6,7 @@ export class ticketsDAO {
       return await ticketsModel.create(ticket);
     } catch (error) {
       console.error(`Error creando ticket`, error);
-      throw new Error("Fallo al crear ticket");
+      throw new Error(`Fallo al crear ticket: ${error._message}`);
     }
   }
   async getById(_id) {
@@ -14,7 +14,7 @@ export class ticketsDAO {
       return await ticketsModel.findById(_id).lean();
     } catch (error) {
       console.error(`Error obteneniendo ticket`, error);
-      throw new Error("Fallo al obtener ticket");
+      throw new Error(`Fallo al obtener ticket: ${error._message}`);
     }
   }
 }
