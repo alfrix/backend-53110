@@ -19,8 +19,11 @@ export class usersDAO {
     }
   }
 
-  async getBy({ filter = {} }) {
+  async getBy(filter) {
     try {
+      if (!filter) {
+        throw new Error("Filtro no especificado");
+      }
       return await usersModel.findOne(filter).lean();
     } catch (error) {
       console.error(`Error obteniendo usuario`, error);

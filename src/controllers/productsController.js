@@ -8,7 +8,7 @@ export default class productsController {
     }
     console.log("Agregando producto");
     try {
-      newProduct = await productService.create(product);
+      const newProduct = await productService.create(product);
       req.io.emit("newProduct", newProduct);
       return newProduct;
     } catch (error) {

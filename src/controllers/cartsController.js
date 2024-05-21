@@ -213,7 +213,7 @@ export default class cartsController {
     }
     console.log(products);
     const totalPrice = products.reduce(
-      (total, item) => total + Number(item.product.price) * item.quantity,
+      (total, item) => total + parseFloat(item.productPriceTotal),
       0
     );
     console.log(`total es ${totalPrice} > ${totalPrice.toFixed(2)}`);
@@ -222,14 +222,14 @@ export default class cartsController {
 
   static validateCartFromUser(user, cart) {
     if (!user) {
-      const error = new Error("Not authenticated");
+      const error = new Error("No autenticado");
       error.statusCode = 401;
       throw error;
     } else if (user.rol === "admin") {
       console.log(`Acceso de admin a carrito: ${cart}`);
       return;
     } else if (user.cart !== cart) {
-      const error = new Error("Not autorized");
+      const error = new Error("No autorizado");
       error.statusCode = 403;
       throw error;
     }
