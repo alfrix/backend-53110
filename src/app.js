@@ -1,5 +1,6 @@
 import { config } from "./config/config.js";
 import express from "express";
+import "express-async-errors";
 import session from "express-session";
 import { engine } from "express-handlebars";
 import { Server } from "socket.io";
@@ -68,6 +69,14 @@ app.use(
   },
   viewsRouter
 );
+
+process.on("unhandledRejection", (reason, promise) => {
+  console.log("Unhandled Rejection at:", promise, "reason:", reason);
+});
+
+process.on("uncaughtException", (err, origin) => {
+  console.log("Unhandled Exception at:", err, "reason:", origin);
+});
 
 const connectDB = async () => {
   try {

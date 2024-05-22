@@ -3,7 +3,7 @@ export const auth = (accesos) => {
     if (!accesos || !Array.isArray(accesos)) {
       const error = new Error(`Accesos no definidos`);
       error.statusCode = 500;
-      return next(error);
+      throw error;
     }
 
     if (accesos.includes("public")) {
@@ -12,7 +12,7 @@ export const auth = (accesos) => {
       console.log(`No autenticado`);
       const error = new Error(`No autenticado`);
       error.statusCode = 401;
-      return next(error);
+      throw error;
     } else if (req.session.user.rol === "admin") {
       console.log(`Acceso admin`);
       return next();
@@ -23,6 +23,6 @@ export const auth = (accesos) => {
     console.log(`No autorizado: ${req.session.user.rol}`);
     const error = new Error(`No autorizado`);
     error.statusCode = 403;
-    return next(error);
+    throw error;
   };
 };

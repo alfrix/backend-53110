@@ -24,7 +24,7 @@ class CartService {
       if (!response) {
         throw new Error("Sin respuesta");
       }
-      const product = this.getById(_id);
+      const product = await this.getById(_id);
       return [product, response];
     } catch (error) {
       console.error(`Error actualizando carrito ID ${_id}`, error);
