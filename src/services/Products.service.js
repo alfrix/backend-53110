@@ -38,9 +38,8 @@ class ProductService {
   }
 
   async delete(_id) {
-    const deletedProduct = await this.getById(_id);
-    const response = await this.productsDAO.deleteOne(_id);
-    return [response, deletedProduct];
+    console.log(`Borrando producto id: ${_id}`);
+    return await this.productsDAO.deleteOne(_id);
   }
 
   async paginate(query, options) {

@@ -108,7 +108,7 @@ export default class productsController {
         error.statusCode = 404;
         throw error;
       }
-      const response = await productService.update(pid);
+      const response = await productService.update(pid, product);
       req.io.emit("updateProduct", response);
       return response;
     } catch (error) {
@@ -121,6 +121,12 @@ export default class productsController {
     let { pid } = req.params;
     console.log(`Borrando id: ${pid}`);
     try {
+      const oldProduct = await productService.getById(pid);
+      if (!oldProduct) {
+        const error = new Error(`deleteProduct: No se puede borrar id: ${pid}`);
+        error.statusCode = 404;
+        throw error;
+      }
       const response = await productService.delete(pid);
       req.io.emit("deleteProduct", response);
       return response;
