@@ -5,10 +5,29 @@ class TicketService {
     this.ticketsDAO = dao;
   }
   async create(ticket) {
-    return await this.ticketsDAO.create(ticket);
+    try {
+      const response = await this.ticketsDAO.create(ticket);
+      if (!response) {
+        throw new Error("Sin respuesta");
+      }
+      return response;
+    } catch (error) {
+      console.error(`Error creando ticket`, error);
+      throw new Error(`Fallo al crear ticket: ${error}`);
+    }
   }
+
   async getById(_id) {
-    return await this.ticketsDAO.getBy(_id);
+    try {
+      const response = await this.ticketsDAO.getBy(_id);
+      if (!response) {
+        throw new Error(`No encontrado ${_id}`);
+      }
+      return response;
+    } catch (error) {
+      console.error(`Error obteneniendo ticket`, error);
+      throw new Error(`Fallo al obtener ticket: ${error}`);
+    }
   }
 }
 export const ticketService = new TicketService(new ticketsDAO());

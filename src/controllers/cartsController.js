@@ -241,9 +241,6 @@ export default class cartsController {
     try {
       this.validateCartFromUser(req.session.user, cid);
       const cart = await cartService.getById(cid);
-      if (!cart) {
-        throw new Error(`Obteniendo carrito: ${cid}`);
-      }
 
       let withStock = [];
       let noStock = [];
@@ -282,9 +279,6 @@ export default class cartsController {
       let newTicket;
       if (response.insertedId) {
         newTicket = await ticketService.getById(response.insertedId);
-        if (!newTicket) {
-          throw new Error(`Error buscando ticket: ${response.insertedId}`);
-        }
       }
       return [(newTicket, response)];
     } catch (error) {

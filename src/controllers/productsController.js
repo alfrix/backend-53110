@@ -13,7 +13,7 @@ export default class productsController {
       return newProduct;
     } catch (error) {
       console.error(`addProduct`);
-      next(error);
+      return next(error);
     }
   };
 
@@ -80,7 +80,7 @@ export default class productsController {
       return response;
     } catch (error) {
       console.error(`getProducts`);
-      next(error);
+      return next(error);
     }
   };
 
@@ -89,7 +89,7 @@ export default class productsController {
     try {
       return await productService.getById(pid);
     } catch (error) {
-      next(error);
+      return next(error);
     }
   };
 
@@ -113,7 +113,7 @@ export default class productsController {
       return response;
     } catch (error) {
       console.error(`updateProduct`);
-      next(error);
+      return next(error);
     }
   };
 
@@ -123,16 +123,21 @@ export default class productsController {
     try {
       const oldProduct = await productService.getById(pid);
       if (!oldProduct) {
-        const error = new Error(`deleteProduct: No se puede borrar id: ${pid}`);
+        let error = new Error(`deleteProduct: No se puede borrar id: ${pid}`);
         error.statusCode = 404;
         throw error;
       }
       const response = await productService.delete(pid);
+      if (!response) {
+        let error = new Error(`deleteProduct: No se puede borrar id: ${pid}`);
+        error.statusCode = 500;
+        throw error;
+      }
       req.io.emit("deleteProduct", response);
       return response;
     } catch (error) {
       console.error(`deleteProduct`);
-      next(error);
+      return next(error);
     }
   };
 }

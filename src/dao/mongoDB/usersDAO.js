@@ -2,41 +2,18 @@ import { usersModel } from "../models/users.model.js";
 
 export class usersDAO {
   async create(user) {
-    try {
-      return await usersModel.create(user);
-    } catch (error) {
-      console.error(`Error creando usuario`, error);
-      throw new Error(`Fallo al crear usuario: ${error}`);
-    }
+    return await usersModel.create(user);
   }
 
   async updateOne(_id, cart) {
-    try {
-      return await usersModel.updateOne(_id, cart);
-    } catch (error) {
-      console.error(`Error actualizando usuario`, error);
-      throw new Error(`Fallo al actualizar usuario: ${error}`);
-    }
+    return await usersModel.updateOne(_id, cart);
   }
 
   async getByEmail(email) {
-    if (!email) {
-      throw new Error("email no especificado");
-    }
-    try {
-      return await usersModel.findOne({ email }).lean();
-    } catch (error) {
-      console.error(`Error obteniendo usuario`, error);
-      throw new Error(`Fallo al obtener usuario: ${error}`);
-    }
+    return await usersModel.findOne({ email }).lean();
   }
 
   async getById(_id) {
-    try {
-      return await usersModel.findById(_id).lean();
-    } catch (error) {
-      console.error(`Error obteniendo usuario`, error);
-      throw new Error(`Fallo al obtener usuario: ${error}`);
-    }
+    return await usersModel.findById(_id).lean();
   }
 }
