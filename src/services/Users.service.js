@@ -12,11 +12,11 @@ class UserService {
     return await this.usersDAO.updateOne(_id, cart);
   }
   async getByEmail(email) {
-    return await this.usersDAO.getBy({ email });
+    return await this.usersDAO.getByEmail(email);
   }
 
   async getById(_id) {
-    return await this.usersDAO.getBy({ _id });
+    return await this.usersDAO.getById(_id);
   }
 }
 

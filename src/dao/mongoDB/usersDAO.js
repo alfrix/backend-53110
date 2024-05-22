@@ -19,12 +19,21 @@ export class usersDAO {
     }
   }
 
-  async getBy(filter) {
+  async getByEmail(email) {
+    if (!email) {
+      throw new Error("email no especificado");
+    }
     try {
-      if (!filter) {
-        throw new Error("Filtro no especificado");
-      }
-      return await usersModel.findOne(filter).lean();
+      return await usersModel.findOne({ email }).lean();
+    } catch (error) {
+      console.error(`Error obteniendo usuario`, error);
+      throw new Error(`Fallo al obtener usuario: ${error}`);
+    }
+  }
+
+  async getById(_id) {
+    try {
+      return await usersModel.findById(_id).lean();
     } catch (error) {
       console.error(`Error obteniendo usuario`, error);
       throw new Error(`Fallo al obtener usuario: ${error}`);
