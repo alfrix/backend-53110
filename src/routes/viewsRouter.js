@@ -119,6 +119,7 @@ router.get(
 );
 
 router.get("*", auth(["public"]), (req, res, next) => {
+  console.log("Requested URL:", req.url);
   const err = new Error(`La página solicitada no existe`);
   err.statusCode = 404;
   next(err);
