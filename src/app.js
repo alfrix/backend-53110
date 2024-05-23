@@ -10,18 +10,21 @@ import { router as productsRouter } from "./routes/productsRouter.js";
 import { router as cartRouter } from "./routes/cartRouter.js";
 import { router as viewsRouter } from "./routes/viewsRouter.js";
 import { router as sessionRouter } from "./routes/sessionRouter.js";
+import { router as mockRouter } from "./routes/mockRouter.js";
 import mongoose from "mongoose";
 import productsController from "./controllers/productsController.js";
 import MongoStore from "connect-mongo";
 import passport from "passport";
 import { initPassport } from "./config/passport.config.js";
 import { apiErrorHandler } from "./middlewares/apiErrorHandler.js";
+import favicon from "serve-favicon";
 
 const PORT = config.PORT;
 const mongoUrl = config.mongoUrl;
 const dbName = config.dbName;
 
 const app = express();
+app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
 const server = app.listen(PORT, () => {
   console.log(`Server OK en puerto ${PORT}`);
 });
@@ -58,6 +61,7 @@ app.use(
 
 app.use("/api/carts", cartRouter);
 app.use("/api/session", sessionRouter);
+app.use("/api/mockingproducts", mockRouter);
 
 app.use(apiErrorHandler);
 
