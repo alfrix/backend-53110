@@ -47,8 +47,8 @@ router.get("/current", (req, res) => {
     const user = req.session.user ? new UserDTO(req.session.user) : {};
     return res.status(200).json({ user });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: "error inesperado" });
+    console.error(`Error obteniendo usuario /current`, error);
+    throw new Error(`Fallo al obtener usuario: ${error}`);
   }
 });
 
