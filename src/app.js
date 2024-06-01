@@ -11,6 +11,7 @@ import { router as cartRouter } from "./routes/cartRouter.js";
 import { router as viewsRouter } from "./routes/viewsRouter.js";
 import { router as sessionRouter } from "./routes/sessionRouter.js";
 import { router as mockRouter } from "./routes/mockRouter.js";
+import { router as loggerRouter } from "./routes/loggerRouter.js";
 import mongoose from "mongoose";
 import productsController from "./controllers/productsController.js";
 import MongoStore from "connect-mongo";
@@ -18,15 +19,18 @@ import passport from "passport";
 import { initPassport } from "./config/passport.config.js";
 import { apiErrorHandler } from "./middlewares/apiErrorHandler.js";
 import favicon from "serve-favicon";
+import { logger, middlewareLogger } from "./middlewares/log.js";
 
 const PORT = config.PORT;
 const mongoUrl = config.mongoUrl;
 const dbName = config.dbName;
 
+logger.info(`Modo de operación ${config.MODO} con db ${config.MODO_DB}`);
+
 const app = express();
 app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
 const server = app.listen(PORT, () => {
-  console.log(`Server OK en puerto ${PORT}`);
+  logger.info(`Server OK en puerto ${PORT}`);
 });
 const io = new Server(server);
 
@@ -36,6 +40,9 @@ app.set("views", path.join(__dirname, "views"));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(middlewareLogger);
+
 app.use(express.static(path.join(__dirname, "/public")));
 app.use(
   session({
@@ -45,7 +52,6 @@ app.use(
     store: MongoStore.create({ mongoUrl, ttl: 60 }),
   })
 );
-
 initPassport();
 app.use(passport.initialize());
 app.use(passport.session());
@@ -62,7 +68,7 @@ app.use(
 app.use("/api/carts", cartRouter);
 app.use("/api/session", sessionRouter);
 app.use("/api/mockingproducts", mockRouter);
-
+app.use("/api/loggerTest", loggerRouter);
 app.use(apiErrorHandler);
 
 app.use(
@@ -75,20 +81,20 @@ app.use(
 );
 
 process.on("unhandledRejection", (reason, promise) => {
-  console.log("Unhandled Rejection at:", promise, "reason:", reason);
+  logger.debug("Unhandled Rejection at:", promise, "reason:", reason);
 });
 
 process.on("uncaughtException", (err, origin) => {
-  console.log("Unhandled Exception at:", err, "reason:", origin);
+  logger.debug("Unhandled Exception at:", err, "reason:", origin);
 });
 
 const connectDB = async () => {
   try {
-    console.log(`Conectando a ${mongoUrl}`);
+    logger.debug(`Conectando a ${mongoUrl}`);
     await mongoose.connect(mongoUrl, { dbName });
-    console.log(`DB ${dbName} Conectada`);
+    logger.debug(`DB ${dbName} Conectada`);
   } catch (error) {
-    console.log("ERROR al conectar:", error.message);
+    logger.debug("ERROR al conectar:", error.message);
   }
 };
 
@@ -98,7 +104,7 @@ let messages = [];
 let users = [];
 
 io.on("connection", (socket) => {
-  console.log(`Conectado id: ${socket.id}`);
+  logger.debug(`Conectado id: ${socket.id}`);
 
   socket.on("getProducts", async () => {
     try {
@@ -129,7 +135,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    console.log(`Desconectado id: ${socket.id}`);
+    logger.debug(`Desconectado id: ${socket.id}`);
     const user = users.find((u) => u.id === socket.id);
     if (user) {
       const timestamp = new Date().toUTCString();

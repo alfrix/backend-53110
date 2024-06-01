@@ -1,11 +1,12 @@
 import { Router } from "express";
 import passport from "passport";
-import { log } from "../middlewares/log.js";
 import { UserDTO } from "../dao/UserDTO.js";
 
 const router = Router();
 
-router.use(log("Acceso a session"));
+router.use((req, res) => {
+  req.logger.info("Acceso a session");
+});
 
 router.get("/errorSignup", (req, res) => {
   console.error("errorSignup", req.session.messages);
@@ -36,7 +37,7 @@ router.get(
     let user = req.user;
     user = { ...user };
     delete user.password;
-    console.log(user.email, "conectado");
+    req.logger.debug(user.email, "conectado");
     req.session.user = user;
     return res.redirect(`/?message=Bienvenido\n${req.user.first_name}`);
   }
@@ -62,17 +63,17 @@ router.post(
     let user = req.user;
     user = { ...user };
     delete user.password;
-    console.log(user.email, "conectado");
+    req.logger.debug(user.email, "conectado");
     req.session.user = user;
     return res.redirect(`/?message=Bienvenido ${user.first_name}`);
   }
 );
 
 router.get("/logout", (req, res) => {
-  console.log("logout");
+  req.logger.debug("logout");
   req.session.destroy((error) => {
     if (error) {
-      console.log("logout", error);
+      req.logger.debug("logout", error);
       return res.redirect("/signup?error=Error inesperado");
     }
   });

@@ -2,7 +2,7 @@ import passport from "passport";
 import local from "passport-local";
 import github from "passport-github2";
 import { createHash, validatePass } from "../utils.js";
-import usersController from '../controllers/usersController.js';
+import usersController from "../controllers/usersController.js";
 
 export const initPassport = () => {
   passport.use(
@@ -32,7 +32,7 @@ export const initPassport = () => {
           });
           return done(null, newUser);
         } catch (error) {
-          console.log("error en el registro")
+          req.logger.debug("error en el registro");
           return done(error);
         }
       }
@@ -47,14 +47,14 @@ export const initPassport = () => {
       },
       async (username, password, done) => {
         try {
-          console.log(`login: ${username}`);
+          req.logger.debug(`login: ${username}`);
           let user = await usersController.getUserByEmail(username);
           if (!user) {
-            console.log("not user");
+            req.logger.debug("not user");
             return done(null, false, { message: "Usuario inexistente" });
           }
           if (!validatePass(user, password)) {
-            console.log("invalid pass");
+            req.logger.debug("invalid pass");
             return done(null, false, { message: "Constraseña incorrecta" });
           }
           return done(null, user);
@@ -85,8 +85,12 @@ export const initPassport = () => {
           }
           let user = await usersController.getUserByEmail(email);
           if (!user) {
-            console.log(`Nuevo usuario ${email}`);
-            user = await usersController.create({ first_name, last_name, email });
+            req.logger.debug(`Nuevo usuario ${email}`);
+            user = await usersController.create({
+              first_name,
+              last_name,
+              email,
+            });
           }
           return done(null, user);
         } catch (error) {
@@ -99,11 +103,11 @@ export const initPassport = () => {
 
   passport.serializeUser((user, done) => {
     if (user.error) {
-      console.log(`serialize-error: ${JSON.stringify(user.error)}`)
+      req.logger.debug(`serialize-error: ${JSON.stringify(user.error)}`);
       return done(user.error);
     }
     if (!user._id) {
-      console.log(`serialize-error-id: ${JSON.stringify(user._id)}`)
+      req.logger.debug(`serialize-error-id: ${JSON.stringify(user._id)}`);
       return done(user);
     }
     return done(null, user._id);

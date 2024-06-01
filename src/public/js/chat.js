@@ -1,7 +1,7 @@
 let userName;
 
 function setUser(name) {
-  console.log(name, new Date().toUTCString())
+  req.logger.debug(name, new Date().toUTCString());
   userName = name;
 }
 
@@ -10,8 +10,7 @@ function addMsg(name, msg, timestamp) {
   let card = '<li class="d-flex justify-content-between mb-4">';
   let avatar =
     '<i class="bi bi-person-circle m-3" style="font-size: 60px;"></i>';
-  let message = 
-    `<div class="card w-100">
+  let message = `<div class="card w-100">
         <div class="card-header d-flex justify-content-between p-3">
             <p class="fw-bold mb-0">${name}</p>
             <p class="text-muted small mb-0"><i class="far fa-clock"></i> ${timestamp}</p>
@@ -37,7 +36,7 @@ Swal.fire({
   },
   allowOutsideClick: false,
 }).then((datos) => {
-  console.log(datos);
+  req.logger.debug(datos);
   let name = datos.value;
   setUser(name);
   document.title = name;
@@ -64,9 +63,9 @@ Swal.fire({
       timer: 3000,
       timerProgressBar: true,
       didOpen: (toast) => {
-        toast.addEventListener('mouseenter', Swal.stopTimer)
-        toast.addEventListener('mouseleave', Swal.resumeTimer)
-      }
+        toast.addEventListener("mouseenter", Swal.stopTimer);
+        toast.addEventListener("mouseleave", Swal.resumeTimer);
+      },
     });
   });
 
@@ -83,9 +82,9 @@ Swal.fire({
       timer: 3000,
       timerProgressBar: true,
       didOpen: (toast) => {
-        toast.addEventListener('mouseenter', Swal.stopTimer)
-        toast.addEventListener('mouseleave', Swal.resumeTimer)
-      }
+        toast.addEventListener("mouseenter", Swal.stopTimer);
+        toast.addEventListener("mouseleave", Swal.resumeTimer);
+      },
     });
   });
 

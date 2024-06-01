@@ -16,13 +16,12 @@ export default class usersController {
       delete user._id;
     }
     user.rol = "user";
-    console.log("Agregando usuario");
+    req.logger.debug("Agregando usuario");
     let user_db = await userService.create(user);
     user_db = user_db.toJSON();
 
-    console.log("Asignando carrito al usuario");
+    req.logger.debug("Asignando carrito al usuario");
     const cart = await cartService.create();
-    console.log(cart);
     await userService.update({ _id: user_db._id }, { cart });
     return { ...user_db, cart };
   };
@@ -35,7 +34,7 @@ export default class usersController {
   };
 
   static getUserByEmail = async (email) => {
-    console.log("getUserByEmail", email);
+    req.logger.debug("getUserByEmail", email);
     if (email === "adminCoder@coder.com") {
       return admin;
     }

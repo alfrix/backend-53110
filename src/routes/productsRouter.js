@@ -1,12 +1,13 @@
 import { Router } from "express";
 import productsController from "../controllers/productsController.js";
 import { auth } from "../middlewares/auth.js";
-import { log } from "../middlewares/log.js";
 import { setJsonResponse } from "../middlewares/jsonResponse.js";
 
 const router = Router();
 
-router.use(log("Acceso a products"));
+router.use((req, res) => {
+  req.logger.info("Acceso a products");
+});
 
 router.use(setJsonResponse);
 

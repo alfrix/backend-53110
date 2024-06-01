@@ -6,7 +6,7 @@ export default class productsController {
     if (product._id) {
       delete product._id;
     }
-    console.log("Agregando producto");
+    req.logger.debug("Agregando producto");
     const newProduct = await productService.create(product);
     req.io.emit("newProduct", newProduct);
     return newProduct;
@@ -26,7 +26,7 @@ export default class productsController {
       query = {};
     } else {
       try {
-        console.log(query);
+        req.logger.debug(query);
         query = JSON.parse(query);
       } catch (error) {
         const err = new Error(`Unable to parse JSON query ${query} ${error}`);
@@ -100,7 +100,7 @@ export default class productsController {
 
   static deleteProduct = async (req, res, next) => {
     let { pid } = req.params;
-    console.log(`Borrando id: ${pid}`);
+    req.logger.debug(`Borrando id: ${pid}`);
     const oldProduct = await productService.getById(pid);
     if (!oldProduct) {
       let error = new Error(`deleteProduct: No se puede borrar id: ${pid}`);

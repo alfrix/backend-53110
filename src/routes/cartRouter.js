@@ -1,12 +1,13 @@
 import { Router } from "express";
 import cartsController from "../controllers/cartsController.js";
 import { auth } from "../middlewares/auth.js";
-import { log } from "../middlewares/log.js";
 import { setJsonResponse } from "../middlewares/jsonResponse.js";
 
 const router = Router();
 
-router.use(log("Acceso a carts"));
+router.use((req, res) => {
+  req.logger.info("Acceso a carts");
+});
 
 router.use(setJsonResponse);
 

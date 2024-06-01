@@ -1,5 +1,5 @@
 const socket = io();
-console.log("Script start");
+req.logger.debug("Script start");
 socket.emit("getProducts");
 
 function createCard(product) {
@@ -109,27 +109,27 @@ socket.on("newProduct", (response) => {
     console.error(`Error: ${response[0].error}`);
     return;
   }
-  console.log(`Nuevo Producto: ${JSON.stringify(response[1])}`);
+  req.logger.debug(`Nuevo Producto: ${JSON.stringify(response[1])}`);
   let card = createCard(response[1]);
   let productsContainer = document.getElementById("productsContainer");
   productsContainer.appendChild(card);
 });
 
 socket.on("deleteProduct", (product) => {
-  console.log(`Borrado Producto: ${JSON.stringify(product[1])}`);
+  req.logger.debug(`Borrado Producto: ${JSON.stringify(product[1])}`);
   let card = document.getElementById(`card${product[1].id}`);
   card.remove();
 });
 
 socket.on("updateProduct", (product) => {
-  console.log(`Actualizado Producto: ${JSON.stringify(product[1])}`);
+  req.logger.debug(`Actualizado Producto: ${JSON.stringify(product[1])}`);
   let card = document.getElementById(`card${product[1].id}`);
   card.insertAdjacentElement("beforebegin", createCard(product[1]));
   card.remove();
 });
 
 socket.on("showProducts", (products) => {
-  console.log("showingProducts");
+  req.logger.debug("showingProducts");
   products = products.payload;
   let productsContainer = document.getElementById("productsContainer");
   productsContainer.innerHTML = "";

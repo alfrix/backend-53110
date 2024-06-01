@@ -41,7 +41,7 @@ class ProductService {
   }
 
   async update(_id, product) {
-    console.log(`Actualizando producto id: ${_id}`);
+    req.logger.debug(`Actualizando producto id: ${_id}`);
     try {
       const response = await this.productsDAO.updateOne(_id, product);
       if (!response) {
@@ -56,7 +56,7 @@ class ProductService {
   }
 
   async delete(_id) {
-    console.log(`Borrando producto id: ${_id}`);
+    req.logger.debug(`Borrando producto id: ${_id}`);
     try {
       const response = await this.productsDAO.deleteOne(_id);
       if (!response) {

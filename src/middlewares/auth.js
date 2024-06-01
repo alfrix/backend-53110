@@ -9,18 +9,18 @@ export const auth = (accesos) => {
     if (accesos.includes("public")) {
       return next();
     } else if (!req.session.user) {
-      console.log(`No autenticado`);
+      req.logger.debug(`No autenticado`);
       const error = new Error(`No autenticado`);
       error.statusCode = 401;
       throw error;
     } else if (req.session.user.rol === "admin") {
-      console.log(`Acceso admin`);
+      req.logger.debug(`Acceso admin`);
       return next();
     } else if (accesos.includes(req.session.user.rol)) {
-      console.log(`Usuario autorizado rol: ${req.session.user.rol}`);
+      req.logger.debug(`Usuario autorizado rol: ${req.session.user.rol}`);
       return next();
     }
-    console.log(`No autorizado: ${req.session.user.rol}`);
+    req.logger.debug(`No autorizado: ${req.session.user.rol}`);
     const error = new Error(`No autorizado`);
     error.statusCode = 403;
     throw error;
