@@ -38,7 +38,7 @@ export default class productsController {
     if (["asc", "desc"].includes(sort)) {
       sort = { price: sort };
     } else {
-      if (sort) console.error(`sort not valid ${sort}`);
+      if (sort) req.logger.error(`sort not valid ${sort}`);
       sort = {};
     }
 

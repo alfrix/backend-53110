@@ -4,12 +4,12 @@ import { config } from "../config/config.js";
 
 const customLevels = {
   levels: {
-    debug: 0,
-    http: 1,
-    info: 2,
-    warning: 3,
-    error: 4,
-    fatal: 5,
+    fatal: 0,
+    error: 1,
+    warning: 2,
+    info: 3,
+    http: 4,
+    debug: 5,
   },
   colors: {
     debug: "cyan",
@@ -36,7 +36,7 @@ export const logger = winston.createLogger({
   levels: customLevels.levels,
   transports: [
     new winston.transports.File({
-      level: "warn",
+      level: "warning",
       filename: "./logs/error.log",
       format: winston.format.combine(
         winston.format.timestamp(),
@@ -51,15 +51,17 @@ const production = new winston.transports.Console({
   format: winston.format.combine(winston.format.timestamp(), customFormat),
 });
 
-const desarrollo = new winston.transports.Console({
+const dev = new winston.transports.Console({
   level: "debug",
   format: winston.format.combine(winston.format.timestamp(), customFormat),
 });
 
-if (config.MODE === "dev") {
-  logger.add(desarrollo);
+if (config.MODE == "dev") {
+  logger.add(dev);
+  logger.info("Logger de desarrollo");
 } else {
   logger.add(production);
+  logger.info("Logger de produccion");
 }
 
 export const middlewareLogger = (req, res, next) => {

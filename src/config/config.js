@@ -32,12 +32,12 @@ dotenv.config({
 });
 
 export const config = {
-  MODO: opts.mode,
-  MODO_DB: opts.mode_db,
+  MODE: opts.mode,
+  DB_MODE: opts.db_mode,
   PORT: process.env.PORT || 8080,
   dbName: process.env.DB_NAME,
   mongoUrl:
-    opts.mode_db === "local"
+    opts.db_mode === "local"
       ? process.env.MONGO_URL_LOCAL
       : process.env.MONGO_URL_ATLAS,
 };

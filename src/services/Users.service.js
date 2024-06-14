@@ -12,7 +12,7 @@ class UserService {
       }
       return response;
     } catch (error) {
-      console.error(`Error creando usuario`, error);
+      req.logger.error(`Error creando usuario`, error);
       throw new Error(`Fallo al crear usuario: ${error}`);
     }
   }
@@ -25,7 +25,7 @@ class UserService {
       }
       return response;
     } catch (error) {
-      console.error(`Error actualizando usuario`, error);
+      req.logger.error(`Error actualizando usuario`, error);
       throw new Error(`Fallo al actualizar usuario: ${error}`);
     }
   }
@@ -40,7 +40,7 @@ class UserService {
       }
       return response;
     } catch (error) {
-      console.error(`Error obteniendo usuario`, error);
+      req.logger.error(`Error obteniendo usuario`, error);
       throw new Error(`Fallo al obtener usuario: ${error}`);
     }
   }
@@ -53,7 +53,7 @@ class UserService {
       }
       return response;
     } catch (error) {
-      console.error(`Error obteniendo usuario`, error);
+      req.logger.error(`Error obteniendo usuario`, error);
       throw new Error(`Fallo al obtener usuario: ${error}`);
     }
   }

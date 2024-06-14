@@ -12,7 +12,7 @@ class TicketService {
       }
       return response;
     } catch (error) {
-      console.error(`Error creando ticket`, error);
+      req.logger.error(`Error creando ticket`, error);
       throw new Error(`Fallo al crear ticket: ${error}`);
     }
   }
@@ -25,7 +25,7 @@ class TicketService {
       }
       return response;
     } catch (error) {
-      console.error(`Error obteneniendo ticket`, error);
+      req.logger.error(`Error obteneniendo ticket`, error);
       throw new Error(`Fallo al obtener ticket: ${error}`);
     }
   }

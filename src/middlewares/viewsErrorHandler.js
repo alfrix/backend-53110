@@ -1,5 +1,5 @@
 export const viewsErrorHandler = (err, req, res, next) => {
-  console.error("views /", err);
+  req.logger.error("views /", err);
 
   const statusCode = err.statusCode || 500;
   let message = "Error interno del servidor";

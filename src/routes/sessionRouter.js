@@ -5,18 +5,18 @@ import { UserDTO } from "../dao/UserDTO.js";
 const router = Router();
 
 router.use((req, res) => {
-  req.logger.info("Acceso a session");
+  req.logger.debug("Acceso a session");
 });
 
 router.get("/errorSignup", (req, res) => {
-  console.error("errorSignup", req.session.messages);
+  req.logger.error("errorSignup", req.session.messages);
   const messages = req.session.messages.join("\n");
   req.session.messages = [];
   return res.redirect(`/signup?error=Error al registrarse\n${messages}`);
 });
 
 router.get("/errorLogin", (req, res) => {
-  console.error("errorLogin", req.session.messages);
+  req.logger.error("errorLogin", req.session.messages);
   const messages = req.session.messages.join("\n");
   req.session.messages = [];
   return res.redirect(`/login?error=Error al iniciar sesion\n${messages}`);
@@ -48,7 +48,7 @@ router.get("/current", (req, res) => {
     const user = req.session.user ? new UserDTO(req.session.user) : {};
     return res.status(200).json({ user });
   } catch (error) {
-    console.error(`Error obteniendo usuario /current`, error);
+    req.logger.error(`Error obteniendo usuario /current`, error);
     throw new Error(`Fallo al obtener usuario: ${error}`);
   }
 });
@@ -73,7 +73,7 @@ router.get("/logout", (req, res) => {
   req.logger.debug("logout");
   req.session.destroy((error) => {
     if (error) {
-      req.logger.debug("logout", error);
+      req.logger.error("logout", error);
       return res.redirect("/signup?error=Error inesperado");
     }
   });

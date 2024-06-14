@@ -66,7 +66,7 @@ function createForm(product) {
       return null;
     })
     .catch((error) => {
-      console.error("Error retrieving session information:", error);
+      req.logger.error("Error retrieving session information:", error);
     });
 
   cartId.then((cartId) => {
@@ -88,12 +88,12 @@ function createForm(product) {
           if (response.ok) {
             window.location.replace(location.pathname);
           } else {
-            console.error(response.status, response.statusText);
+            req.logger.error(response.status, response.statusText);
             window.location.assign("/login");
           }
         })
         .catch((error) => {
-          console.error("Error:", error);
+          req.logger.error("Error:", error);
         });
     });
   });
@@ -106,7 +106,7 @@ function createForm(product) {
 
 socket.on("newProduct", (response) => {
   if (response[0].error) {
-    console.error(`Error: ${response[0].error}`);
+    req.logger.error(`Error: ${response[0].error}`);
     return;
   }
   req.logger.debug(`Nuevo Producto: ${JSON.stringify(response[1])}`);

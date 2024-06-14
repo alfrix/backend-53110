@@ -25,7 +25,7 @@ const PORT = config.PORT;
 const mongoUrl = config.mongoUrl;
 const dbName = config.dbName;
 
-logger.info(`Modo de operación ${config.MODO} con db ${config.MODO_DB}`);
+logger.info(`Modo de operación ${config.MODE} con db ${config.DB_MODE}`);
 
 const app = express();
 app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
@@ -81,11 +81,11 @@ app.use(
 );
 
 process.on("unhandledRejection", (reason, promise) => {
-  logger.debug("Unhandled Rejection at:", promise, "reason:", reason);
+  logger.fatal("Unhandled Rejection at:", promise, "reason:", reason);
 });
 
 process.on("uncaughtException", (err, origin) => {
-  logger.debug("Unhandled Exception at:", err, "reason:", origin);
+  logger.fatal("Unhandled Exception at:", err, "reason:", origin);
 });
 
 const connectDB = async () => {
@@ -94,7 +94,7 @@ const connectDB = async () => {
     await mongoose.connect(mongoUrl, { dbName });
     logger.debug(`DB ${dbName} Conectada`);
   } catch (error) {
-    logger.debug("ERROR al conectar:", error.message);
+    logger.fatal("ERROR al conectar:", error.message);
   }
 };
 
@@ -118,7 +118,7 @@ io.on("connection", (socket) => {
       const products = await productsController.getProducts(req);
       io.emit("showProducts", products);
     } catch (error) {
-      console.error("Error getting products:", error);
+      req.logger.error("Error getting products:", error);
     }
   });
 

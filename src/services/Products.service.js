@@ -20,7 +20,7 @@ class ProductService {
       }
       return [createdProduct, response];
     } catch (error) {
-      console.error("Error creando producto:", error);
+      req.logger.error("Error creando producto:", error);
       throw new Error(`Fallo al crear producto: ${error}`);
     }
   }
@@ -35,7 +35,7 @@ class ProductService {
       }
       return response;
     } catch (error) {
-      console.error(`Error obteniendo producto con ID ${_id}:`, error);
+      req.logger.error(`Error obteniendo producto con ID ${_id}:`, error);
       throw new Error(`Fallo al obtener producto: ${error}`);
     }
   }
@@ -50,7 +50,7 @@ class ProductService {
       const updatedProduct = await this.getById(_id);
       return [updatedProduct, response];
     } catch (error) {
-      console.error(`Error actualizando producto con ID ${_id}:`, error);
+      req.logger.error(`Error actualizando producto con ID ${_id}:`, error);
       throw new Error(`Fallo al actualizar producto: ${error}`);
     }
   }
@@ -64,7 +64,7 @@ class ProductService {
       }
       return response;
     } catch (error) {
-      console.error(`Error borrando producto con ID ${_id}:`, error);
+      req.logger.error(`Error borrando producto con ID ${_id}:`, error);
       throw new Error(`Fallo al borrar producto : ${error}`);
     }
   }
@@ -77,7 +77,7 @@ class ProductService {
       }
       return response;
     } catch (error) {
-      console.error("Error paginating products:", error);
+      req.logger.error("Error paginating products:", error);
       throw new Error(`Failed to paginate products: ${error}`);
     }
   }

@@ -20,7 +20,7 @@ export const auth = (accesos) => {
       req.logger.debug(`Usuario autorizado rol: ${req.session.user.rol}`);
       return next();
     }
-    req.logger.debug(`No autorizado: ${req.session.user.rol}`);
+    req.logger.warning(`No autorizado: ${req.session.user.rol}`);
     const error = new Error(`No autorizado`);
     error.statusCode = 403;
     throw error;

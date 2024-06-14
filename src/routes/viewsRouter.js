@@ -8,7 +8,7 @@ import { viewsErrorHandler } from "../middlewares/viewsErrorHandler.js";
 const router = Router();
 
 router.use((req, res) => {
-  req.logger.info("Acceso a views");
+  req.logger.debug("Acceso a views");
 });
 
 router.use(async (req, res, next) => {

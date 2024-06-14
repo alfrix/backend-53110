@@ -13,7 +13,7 @@ class CartService {
       }
       return;
     } catch (error) {
-      console.error(`Error creando carrito`, error);
+      req.logger.error(`Error creando carrito`, error);
       throw new Error(`Fallo al crear carrito: ${error}`);
     }
   }
@@ -27,7 +27,7 @@ class CartService {
       const product = await this.getById(_id);
       return [product, response];
     } catch (error) {
-      console.error(`Error actualizando carrito ID ${_id}`, error);
+      req.logger.error(`Error actualizando carrito ID ${_id}`, error);
       throw new Error(`Fallo al actualizar carrito: ${error}`);
     }
   }
@@ -40,7 +40,7 @@ class CartService {
       }
       return response;
     } catch (error) {
-      console.error(`Error obteniendo carrito ID ${_id}`, error);
+      req.logger.error(`Error obteniendo carrito ID ${_id}`, error);
       throw new Error(`Fallo al obtener carrito: ${error}`);
     }
   }

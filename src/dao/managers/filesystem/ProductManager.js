@@ -32,7 +32,7 @@ class ProductManager {
     for (let field of requiredFields) {
       if (!product[field]) {
         let msg = `Falta el campo: ${field}`;
-        console.error(msg);
+        req.logger.error(msg);
         return { status: 400, json: [{ error: msg }] };
       }
     }
@@ -40,7 +40,7 @@ class ProductManager {
     const exists = this.products.find((p) => p.code === product.code);
     if (exists) {
       let msg = `El codigo de producto ${product.code} ya existe id: ${exists.id}`;
-      console.error(msg);
+      req.logger.error(msg);
       return { status: 409, json: [{ error: msg }] };
     }
 
@@ -63,7 +63,7 @@ class ProductManager {
   getProductById(id) {
     const product = this.products.find((p) => p.id === id);
     if (!product) {
-      console.error(`id: ${id} no encontrado`);
+      req.logger.error(`id: ${id} no encontrado`);
       return;
     }
 
@@ -75,14 +75,14 @@ class ProductManager {
     req.logger.debug(oldProduct);
     if (!oldProduct || !product || product.id) {
       let msg = `No se puede actualizar id: ${id}`;
-      console.error(msg);
+      req.logger.error(msg);
       return { status: 400, json: [{ error: msg }] };
     }
     const index = this.products.indexOf(oldProduct);
     this.products[index] = { ...this.products[index], ...product };
     fs.writeFileSync(this.path, JSON.stringify(this.products, null, 4));
     let msg = `Actualizado producto id: ${id}`;
-    console.error(msg);
+    req.logger.error(msg);
     return { status: 200, json: [{ error: "" }, this.products[index]] };
   }
 
@@ -90,7 +90,7 @@ class ProductManager {
     let product = this.getProductById(id);
     if (!product) {
       let msg = `No se puede borrar id: ${id} no encontrado`;
-      console.error(msg);
+      req.logger.error(msg);
       return { status: 404, json: [{ error: msg }] };
     }
     const index = this.products.indexOf(product);

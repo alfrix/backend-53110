@@ -32,7 +32,7 @@ export const initPassport = () => {
           });
           return done(null, newUser);
         } catch (error) {
-          req.logger.debug("error en el registro");
+          req.logger.error("error en el registro");
           return done(error);
         }
       }
@@ -59,7 +59,7 @@ export const initPassport = () => {
           }
           return done(null, user);
         } catch (error) {
-          console.error("local-login", error);
+          req.logger.error("local-login", error);
           return done(error);
         }
       }
@@ -94,7 +94,7 @@ export const initPassport = () => {
           }
           return done(null, user);
         } catch (error) {
-          console.error("github", error);
+          req.logger.error("github", error);
           return done(error);
         }
       }
@@ -103,11 +103,11 @@ export const initPassport = () => {
 
   passport.serializeUser((user, done) => {
     if (user.error) {
-      req.logger.debug(`serialize-error: ${JSON.stringify(user.error)}`);
+      req.logger.error(`serialize-error: ${JSON.stringify(user.error)}`);
       return done(user.error);
     }
     if (!user._id) {
-      req.logger.debug(`serialize-error-id: ${JSON.stringify(user._id)}`);
+      req.logger.error(`serialize-error-id: ${JSON.stringify(user._id)}`);
       return done(user);
     }
     return done(null, user._id);

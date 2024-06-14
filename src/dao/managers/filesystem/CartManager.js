@@ -38,7 +38,7 @@ class CartManager {
       } else {
         msg = `Product Id no valida: ${pid}`;
       }
-      console.error(msg);
+      req.logger.error(msg);
       return { status: 400, json: [{ error: msg }] };
     }
     let exists = undefined;
@@ -68,7 +68,7 @@ class CartManager {
   getCartById(id) {
     const cart = this.carts.find((c) => c.id === id);
     if (!cart) {
-      console.error(`id: ${id} no encontrado`);
+      req.logger.error(`id: ${id} no encontrado`);
       return;
     }
     return cart;

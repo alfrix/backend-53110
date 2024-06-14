@@ -18,11 +18,11 @@ document.addEventListener("DOMContentLoaded", function () {
             if (response.ok) {
               location.reload();
             } else {
-              console.error("Error:", response.statusText);
+              req.logger.error("Error:", response.statusText);
             }
           })
           .catch((error) => {
-            console.error("Error:", error);
+            req.logger.error("Error:", error);
           });
       } else {
         fetch(url, {
@@ -31,14 +31,14 @@ document.addEventListener("DOMContentLoaded", function () {
         })
           .then((response) => {
             if (response.status != 200) {
-              console.error(response.status, response.statusText);
+              req.logger.error(response.status, response.statusText);
               window.location.replace("/login");
             } else {
               window.location.replace(location.pathname);
             }
           })
           .catch((error) => {
-            console.error("Error:", error);
+            req.logger.error("Error:", error);
           });
       }
     });
