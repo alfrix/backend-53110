@@ -17,9 +17,9 @@ class UserService {
     }
   }
 
-  async update(_id, cart) {
+  async update(_id, data) {
     try {
-      const response = await this.usersDAO.updateOne(_id, cart);
+      const response = await this.usersDAO.updateOne(_id, data);
       if (!response) {
         throw new Error("Sin respuesta");
       }

@@ -1,10 +1,22 @@
 import { productService } from "../services/Products.service.js";
+import { userService } from "../services/Users.service.js"
 
 export default class productsController {
   static addProduct = async (req, res, next) => {
     let product = req.body;
     if (product._id) {
       delete product._id;
+    }
+    if (!product["status"]) {
+      product.status = true;
+    }
+    if (!product["thumbnails"]) {
+      product.thumbnails = [];
+    }
+    if (!product["owner"]) {
+      product.owner = "admin"
+    } else {
+      await userService.getByEmail(product.owner);
     }
     req.logger.debug("Agregando producto");
     const newProduct = await productService.create(product);
@@ -76,24 +88,38 @@ export default class productsController {
 
   static getProductById = async (req, res, next) => {
     let { pid } = req.params;
-    return await productService.getById(pid);
+    product = await productService.getById(pid);
+    if (!product.owner) {
+      product.owner = "admin"
+    }
+    return product
   };
 
   static updateProduct = async (req, res, next) => {
     let { pid } = req.params;
-    let product = req.body;
-    if (product._id) {
-      delete product._id;
-    }
+    let updatedProduct = req.body;
     const oldProduct = await productService.getById(pid);
-    if (!oldProduct || !product) {
+    if (!oldProduct || !updatedProduct) {
       const error = new Error(
-        `updateProduct: No se puede actualizar id: ${pid} datos: ${oldProduct} ${product}`
+        `updateProduct: No se puede actualizar id: ${pid} datos: ${oldProduct} ${updatedProduct}`
       );
       error.statusCode = 404;
       throw error;
     }
-    const response = await productService.update(pid, product);
+    if (updatedProduct._id) {
+      delete updatedProduct._id;
+    }
+    if (!updatedProduct.owner) {
+      updatedProduct.owner = req.session.user.email
+    }
+    if (oldProduct.owner !== updatedProduct.owner && req.session.user.rol !== "admin") {
+      const error = new Error(
+        `updateProduct: No se puede actualizar ${pid}`
+      );
+      error.statusCode = 403;
+      throw error;
+    }
+    const response = await productService.update(pid, updatedProduct);
     req.io.emit("updateProduct", response);
     return response;
   };
@@ -105,6 +131,13 @@ export default class productsController {
     if (!oldProduct) {
       let error = new Error(`deleteProduct: No se puede borrar id: ${pid}`);
       error.statusCode = 404;
+      throw error;
+    }
+    if (oldProduct.owner !== req.session.user.email && req.session.user.rol !== "admin") {
+      const error = new Error(
+        `deleteProduct: No se puede borrar ${pid}`
+      );
+      error.statusCode = 403;
       throw error;
     }
     const response = await productService.delete(pid);

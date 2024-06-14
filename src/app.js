@@ -10,6 +10,7 @@ import { router as productsRouter } from "./routes/productsRouter.js";
 import { router as cartRouter } from "./routes/cartRouter.js";
 import { router as viewsRouter } from "./routes/viewsRouter.js";
 import { router as sessionRouter } from "./routes/sessionRouter.js";
+import { router as usersRouter } from "./routes/usersRouter.js";
 import { router as mockRouter } from "./routes/mockRouter.js";
 import { router as loggerRouter } from "./routes/loggerRouter.js";
 import mongoose from "mongoose";
@@ -67,6 +68,7 @@ app.use(
 
 app.use("/api/carts", cartRouter);
 app.use("/api/session", sessionRouter);
+app.use("/api/users", usersRouter);
 app.use("/api/mockingproducts", mockRouter);
 app.use("/api/loggerTest", loggerRouter);
 app.use(apiErrorHandler);

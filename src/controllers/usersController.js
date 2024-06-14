@@ -9,6 +9,7 @@ const admin = {
 
 import { cartService } from "../services/Carts.service.js";
 import { userService } from "../services/Users.service.js";
+import { UserDTO } from "../dao/UserDTO.js";
 
 export default class usersController {
   static create = async (user) => {
@@ -40,4 +41,19 @@ export default class usersController {
     }
     return await userService.getByEmail(email);
   };
+
+  static setAsPremium = async (uid) => {
+    req.logger.debug("setAsPremium", uid);
+    if (uid === -1) {
+      const error = new Error(
+        "Id no valida"
+      );
+      error.statusCode = 400;
+      throw error;
+    }
+    user = await self.getUserById(uid)
+    user.rol == "premium" ? rol = "user" : user.rol = "premium"
+    let response = await userService.update(uid, {rol: user.rol})
+    return new UserDTO(response)
+  }
 }

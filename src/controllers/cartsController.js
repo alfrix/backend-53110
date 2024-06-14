@@ -17,6 +17,9 @@ export default class cartsController {
     req.logger.debug(`Agregando producto ${pid} al carrito ${cid}`);
     this.validateCartFromUser(req.session.user, cid);
     const product = await productService.getById(pid);
+    if (product.owner === req.session.user.email) {
+      throw new Error("No puede agregar sus propios productos al carrito");
+    }
     const cart = await cartService.getById(cid);
     req.logger.debug(`Producto es ${JSON.stringify(product)}`);
     let exists = undefined;
