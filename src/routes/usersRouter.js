@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { setJsonResponse } from "../middlewares/jsonResponse.js";
 import usersController from "../controllers/usersController.js";
+import { auth } from "../middlewares/auth.js";
 
 const router = Router();
 

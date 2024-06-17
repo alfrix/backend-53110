@@ -13,7 +13,7 @@ const productsSchema = new mongoose.Schema(
         category: { type:String, required: true},
         status: { type:Boolean},
         thumbnails: { type:Array, required: false},
-        owner: { type:String, required: False},
+        owner: { type:String, required: false},
     },
     {
         timestamps: true
