@@ -1,6 +1,9 @@
 import { Router } from "express";
 import passport from "passport";
 import { UserDTO } from "../dao/UserDTO.js";
+import { sendEmail } from "../mailer.js";
+import { userService } from "../services/Users.service.js";
+import jwt from "jsonwebtoken";
 
 const router = Router();
 
@@ -95,5 +98,56 @@ router.post(
     }
   }
 );
+
+router.post("/recovery", async (req, res) => {
+  res.logger.debug("password recovery");
+  let { email } = req.body;
+  if (!email) {
+    return res.redirect(`/login?message=Complete el correo electrónico`);
+  }
+
+  try {
+    let user = await userService.getByEmail(email);
+    if (!user) {
+      return res.redirect(`/login?error=Email no válido`);
+    }
+
+    let token = jwt.sign({ _id: user._id, email: user.email }, config.SECRET, {
+      expiresIn: "1h",
+    });
+    let url = `http://localhost:8080/api/session/passwordChange/${token}`;
+    let msg = `Ha solicitado recuperar su contraseña. Si no fue usted, avise al administrador. Para continuar haga click <a href="${url}">aquí</a>.`;
+    await sendEmail(email, "Recuperación de contraseña", msg);
+
+    res.redirect("/login?message=Email de recuperación enviado");
+  } catch (error) {
+    console.error("Error sending recovery email:", error.message);
+    throw new Error(
+      "Error inesperado - Intente más tarde o contacte al administrador"
+    );
+  }
+});
+
+router.post("/passwordChange/:token", async (req, res) => {
+  res.logger.debug("password change");
+  let { InputPassword1, InputPassword2 } = req.body;
+  let { token } = req.params;
+
+  if (!InputPassword1 || !InputPassword2 || InputPassword1 !== InputPassword2) {
+    return res.redirect(
+      `/recovery/${token}?error=Las contraseñas no coinciden`
+    );
+  }
+  try {
+    let decoded = jwt.verify(token, config.SECRET);
+    await userService.update(decoded._id, { password: InputPassword1 });
+    return res.redirect("/login?message=Contraseña cambiada exitosamente");
+  } catch (error) {
+    console.error("Error changing password:", error.message);
+    return res.redirect(
+      `/recovery/${token}?error=Error al cambiar la contraseña`
+    );
+  }
+});
 
 export { router };

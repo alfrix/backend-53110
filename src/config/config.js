@@ -40,4 +40,5 @@ export const config = {
     opts.db_mode === "local"
       ? process.env.MONGO_URL_LOCAL
       : process.env.MONGO_URL_ATLAS,
+  SECRET: process.env.SECRET
 };

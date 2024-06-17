@@ -81,8 +81,17 @@ router.get("/signup", auth(["public"]), async (req, res, next) => {
   let pageTitle = "Sign-Up";
   return res.status(200).render("signup", {
     pageTitle,
-    cartItemCount: res.locals.cartItemCount,
-    user: req.session.user,
+  });
+});
+
+router.get("/recovery/:token", auth(["public"]), async (req, res, next) => {
+  if (req.session.user) {
+    return res.redirect("/");
+  }
+  let pageTitle = "Recovery";
+  return res.status(200).render("recovery", {
+    pageTitle,
+    token,
   });
 });
 

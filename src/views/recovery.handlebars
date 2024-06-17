@@ -1,0 +1,26 @@
+<div class="d-flex flex-column justify-content-center align-items-center" style="height:80vh;">
+    <h1 class="my-4">{{pageTitle}}</h1>
+    <form action="/api/session/passwordChange/{{token}}" method="post" class="login-form">
+        <div class="row mb-3">
+            <div class="col-5">
+                <label for="InputPassword1" class="form-label">Contraseña</label>
+            </div>
+            <div class="col-7">
+                <input type="password" class="form-control" id="InputPassword1" name="InputPassword1">
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-5">
+                <label for="InputPassword2" class="form-label">Repita Contraseña</label>
+            </div>
+            <div class="col-7">
+                <input type="password" class="form-control" id="InputPassword2" name="InputPassword2">
+            </div>
+        </div>
+        <div class="row mb-3 text-center">
+            <button type="submit" class="btn btn-primary py-3 px-4">
+                Aceptar <i class="bi bi-box-arrow-in-right ms-2 h5"></i>
+            </button>
+        </div>
+    </form>
+</div>

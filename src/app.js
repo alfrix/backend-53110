@@ -47,7 +47,7 @@ app.use(middlewareLogger);
 app.use(express.static(path.join(__dirname, "/public")));
 app.use(
   session({
-    secret: "CoderCoder",
+    secret: config.SECRET,
     resave: true,
     saveUninitialized: true,
     store: MongoStore.create({ mongoUrl, ttl: 60 }),
