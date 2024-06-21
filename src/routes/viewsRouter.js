@@ -86,6 +86,7 @@ router.get("/signup", auth(["public"]), async (req, res, next) => {
 });
 
 router.get("/recovery/:token", auth(["public"]), async (req, res, next) => {
+  let { token } = req.params;
   if (req.session.user) {
     return res.redirect("/");
   }
