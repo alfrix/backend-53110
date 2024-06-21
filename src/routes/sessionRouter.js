@@ -7,8 +7,9 @@ import jwt from "jsonwebtoken";
 
 const router = Router();
 
-router.use((req, res) => {
+router.use((req, res, next) => {
   req.logger.debug("Acceso a session");
+  next()
 });
 
 router.get("/errorSignup", (req, res) => {

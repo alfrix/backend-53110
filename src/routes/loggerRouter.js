@@ -13,7 +13,7 @@ router.get("/", (req, res) => {
   req.logger.error("prueba log level error");
   req.logger.fatal("prueba log level fatal");
 
-  res.status(200).json("Ok");
+  return res.status(200).json("Ok");
 });
 
 export { router };

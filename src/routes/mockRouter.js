@@ -5,8 +5,9 @@ import { mockingProducts } from "../middlewares/mockingProducts.js";
 
 const router = Router();
 
-router.use((req, res) => {
+router.use((req, res, next) => {
   req.logger.debug("Acceso a mocks");
+  next()
 });
 
 router.use(setJsonResponse);

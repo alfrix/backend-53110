@@ -150,6 +150,7 @@ export default class cartsController {
   };
 
   static getCartItemCount = async (req, res, next) => {
+    req.logger.debug("getCartItemCount");
     let user = req.session.user;
     let cartItemCount = 0;
     if (user && user.cart) {

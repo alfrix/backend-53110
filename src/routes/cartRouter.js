@@ -5,8 +5,9 @@ import { setJsonResponse } from "../middlewares/jsonResponse.js";
 
 const router = Router();
 
-router.use((req, res) => {
+router.use((req, res, next) => {
   req.logger.debug("Acceso a carts");
+  next()
 });
 
 router.use(setJsonResponse);
