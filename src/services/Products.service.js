@@ -1,4 +1,5 @@
 import { productsDAO } from "../dao/mongoDB/productsDAO.js";
+import { logger } from "../middlewares/log.js";
 
 class ProductService {
   constructor(dao) {
@@ -20,7 +21,7 @@ class ProductService {
       }
       return [createdProduct, response];
     } catch (error) {
-      req.logger.error("Error creando producto:", error);
+      logger.error("Error creando producto:", error);
       throw new Error(`Fallo al crear producto: ${error}`);
     }
   }
@@ -35,13 +36,13 @@ class ProductService {
       }
       return response;
     } catch (error) {
-      req.logger.error(`Error obteniendo producto con ID ${_id}:`, error);
+      logger.error(`Error obteniendo producto con ID ${_id}:`, error);
       throw new Error(`Fallo al obtener producto: ${error}`);
     }
   }
 
   async update(_id, product) {
-    req.logger.debug(`Actualizando producto id: ${_id}`);
+    logger.debug(`Actualizando producto id: ${_id}`);
     try {
       const response = await this.productsDAO.updateOne(_id, product);
       if (!response) {
@@ -50,13 +51,13 @@ class ProductService {
       const updatedProduct = await this.getById(_id);
       return [updatedProduct, response];
     } catch (error) {
-      req.logger.error(`Error actualizando producto con ID ${_id}:`, error);
+      logger.error(`Error actualizando producto con ID ${_id}:`, error);
       throw new Error(`Fallo al actualizar producto: ${error}`);
     }
   }
 
   async delete(_id) {
-    req.logger.debug(`Borrando producto id: ${_id}`);
+    logger.debug(`Borrando producto id: ${_id}`);
     try {
       const response = await this.productsDAO.deleteOne(_id);
       if (!response) {
@@ -64,7 +65,7 @@ class ProductService {
       }
       return response;
     } catch (error) {
-      req.logger.error(`Error borrando producto con ID ${_id}:`, error);
+      logger.error(`Error borrando producto con ID ${_id}:`, error);
       throw new Error(`Fallo al borrar producto : ${error}`);
     }
   }
@@ -77,7 +78,7 @@ class ProductService {
       }
       return response;
     } catch (error) {
-      req.logger.error("Error paginating products:", error);
+      logger.error("Error paginating products:", error);
       throw new Error(`Failed to paginate products: ${error}`);
     }
   }

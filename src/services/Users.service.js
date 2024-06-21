@@ -1,4 +1,5 @@
 import { usersDAO } from "../dao/mongoDB/usersDAO.js";
+import { logger } from "../middlewares/log.js";
 
 class UserService {
   constructor(dao) {
@@ -12,7 +13,7 @@ class UserService {
       }
       return response;
     } catch (error) {
-      req.logger.error(`Error creando usuario`, error);
+      logger.error(`Error creando usuario`, error);
       throw new Error(`Fallo al crear usuario: ${error}`);
     }
   }
@@ -25,7 +26,7 @@ class UserService {
       }
       return response;
     } catch (error) {
-      req.logger.error(`Error actualizando usuario`, error);
+      logger.error(`Error actualizando usuario`, error);
       throw new Error(`Fallo al actualizar usuario: ${error}`);
     }
   }
@@ -40,7 +41,7 @@ class UserService {
       }
       return response;
     } catch (error) {
-      req.logger.error(`Error obteniendo usuario`, error);
+      logger.error(`Error obteniendo usuario`, error);
       throw new Error(`Fallo al obtener usuario: ${error}`);
     }
   }
@@ -53,7 +54,7 @@ class UserService {
       }
       return response;
     } catch (error) {
-      req.logger.error(`Error obteniendo usuario`, error);
+      logger.error(`Error obteniendo usuario`, error);
       throw new Error(`Fallo al obtener usuario: ${error}`);
     }
   }

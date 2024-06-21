@@ -1,4 +1,5 @@
 import { ticketsDAO } from "../dao/mongoDB/ticketsDAO.js";
+import { logger } from "../middlewares/log.js";
 
 class TicketService {
   constructor(dao) {
@@ -12,7 +13,7 @@ class TicketService {
       }
       return response;
     } catch (error) {
-      req.logger.error(`Error creando ticket`, error);
+      logger.error(`Error creando ticket`, error);
       throw new Error(`Fallo al crear ticket: ${error}`);
     }
   }
@@ -25,7 +26,7 @@ class TicketService {
       }
       return response;
     } catch (error) {
-      req.logger.error(`Error obteneniendo ticket`, error);
+      logger.error(`Error obteneniendo ticket`, error);
       throw new Error(`Fallo al obtener ticket: ${error}`);
     }
   }
