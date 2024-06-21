@@ -140,7 +140,7 @@ router.post("/passwordChange/:token", async (req, res, next) => {
   }
   try {
     let decoded = jwt.verify(token, config.SECRET);
-    await userService.update(decoded._id, { password: InputPassword1 });
+    await userService.update({_id: decoded._id}, { password: InputPassword1 });
     return res.redirect("/login?message=Contraseña cambiada exitosamente");
   } catch (error) {
     req.logger.error("Error changing password:", error);
