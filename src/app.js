@@ -21,10 +21,13 @@ import { initPassport } from "./config/passport.config.js";
 import { apiErrorHandler } from "./middlewares/apiErrorHandler.js";
 import favicon from "serve-favicon";
 import { logger, middlewareLogger } from "./middlewares/log.js";
+import swaggerUi from "swagger-ui-express";
+import YAML from "yamljs";
 
 const PORT = config.PORT;
 const mongoUrl = config.mongoUrl;
 const dbName = config.dbName;
+const swaggerDocument = YAML.load(path.join(__dirname, "/swagger.yml"));
 
 logger.info(`Modo de operación ${config.MODE} con db ${config.DB_MODE}`);
 
@@ -32,7 +35,9 @@ const app = express();
 app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
 const server = app.listen(PORT, () => {
   logger.info(`Server OK en puerto ${PORT}`);
+  logger.info(`Swagger docs available at /api-docs`);
 });
+
 const io = new Server(server);
 
 app.engine("handlebars", engine());
@@ -41,6 +46,7 @@ app.set("views", path.join(__dirname, "views"));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use(middlewareLogger);
 

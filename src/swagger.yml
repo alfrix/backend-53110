@@ -1,0 +1,254 @@
+openapi: 3.0.0
+info:
+  title: coderhouse-53110
+  version: 1.0.0
+  description: curso de desarrollo backend
+servers:
+  - url: http://localhost:3000
+tags:
+  - name: Products
+    description: Product management
+  - name: Carts
+    description: Cart management
+components:
+  schemas:
+    Product:
+      type: object
+      required:
+        - title
+        - description
+        - code
+        - price
+        - stock
+        - category
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        code:
+          type: string
+        price:
+          type: number
+        stock:
+          type: number
+        category:
+          type: string
+        status:
+          type: boolean
+        thumbnails:
+          type: array
+          items:
+            type: string
+        owner:
+          type: string
+    Cart:
+      type: object
+      required:
+        - products
+        - totalPrice
+      properties:
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              product:
+                type: string
+                format: uuid
+              quantity:
+                type: number
+              productPriceTotal:
+                type: number
+        totalPrice:
+          type: number
+paths:
+  /products:
+    post:
+      tags:
+        - Products
+      summary: Add a new product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '200':
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+    get:
+      tags:
+        - Products
+      summary: Retrieve a list of products
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: Maximum number of products to return
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+          description: Page number
+        - in: query
+          name: query
+          schema:
+            type: string
+          description: Query filter as JSON string
+        - in: query
+          name: sort
+          schema:
+            type: string
+            enum: [asc, desc]
+          description: Sort order by price
+      responses:
+        '200':
+          description: A list of products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+  /products/{pid}:
+    get:
+      tags:
+        - Products
+      summary: Get a product by ID
+      parameters:
+        - in: path
+          name: pid
+          required: true
+          schema:
+            type: string
+          description: The product ID
+      responses:
+        '200':
+          description: Product retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+    put:
+      tags:
+        - Products
+      summary: Update a product by ID
+      parameters:
+        - in: path
+          name: pid
+          required: true
+          schema:
+            type: string
+          description: The product ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '200':
+          description: Product updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+    delete:
+      tags:
+        - Products
+      summary: Delete a product by ID
+      parameters:
+        - in: path
+          name: pid
+          required: true
+          schema:
+            type: string
+          description: The product ID
+      responses:
+        '200':
+          description: Product deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+  /carts:
+    post:
+      tags:
+        - Carts
+      summary: Create a new cart
+      responses:
+        '200':
+          description: Cart created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+  /carts/{cid}:
+    get:
+      tags:
+        - Carts
+      summary: Get a cart by ID
+      parameters:
+        - in: path
+          name: cid
+          required: true
+          schema:
+            type: string
+          description: The cart ID
+      responses:
+        '200':
+          description: Cart retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+    put:
+      tags:
+        - Carts
+      summary: Update a cart by ID
+      parameters:
+        - in: path
+          name: cid
+          required: true
+          schema:
+            type: string
+          description: The cart ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Cart'
+      responses:
+        '200':
+          description: Cart updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+    delete:
+      tags:
+        - Carts
+      summary: Delete a cart by ID
+      parameters:
+        - in: path
+          name: cid
+          required: true
+          schema:
+            type: string
+          description: The cart ID
+      responses:
+        '200':
+          description: Cart deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
