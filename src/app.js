@@ -27,7 +27,7 @@ import YAML from "yamljs";
 const PORT = config.PORT;
 const mongoUrl = config.mongoUrl;
 const dbName = config.dbName;
-const swaggerDocument = YAML.load(path.join(__dirname, "/swagger.yml"));
+const swaggerDocument = YAML.load(path.join(__dirname, "docs/swagger.yml"));
 
 logger.info(`Modo de operación ${config.MODE} con db ${config.DB_MODE}`);
 
