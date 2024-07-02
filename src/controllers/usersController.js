@@ -10,6 +10,7 @@ const admin = {
 import { cartService } from "../services/Carts.service.js";
 import { userService } from "../services/Users.service.js";
 import { UserDTO } from "../dao/UserDTO.js";
+import { logger } from "../middlewares/log.js";
 
 export default class usersController {
   static create = async (user) => {
@@ -17,11 +18,11 @@ export default class usersController {
       delete user._id;
     }
     user.rol = "user";
-    req.logger.debug("Agregando usuario");
+    logger.debug("Agregando usuario");
     let user_db = await userService.create(user);
     user_db = user_db.toJSON();
 
-    req.logger.debug("Asignando carrito al usuario");
+    logger.debug("Asignando carrito al usuario");
     const cart = await cartService.create();
     await userService.update({ _id: user_db._id }, { cart });
     return { ...user_db, cart };
@@ -35,14 +36,15 @@ export default class usersController {
   };
 
   static getUserByEmail = async (email) => {
-    req.logger.debug("getUserByEmail", email);
+    logger.debug("getUserByEmail", email);
     if (email === "adminCoder@coder.com") {
       return admin;
     }
     return await userService.getByEmail(email);
   };
 
-  static setAsPremium = async (uid) => {
+  static setAsPremium = async (req, res, next) => {
+    let { uid } = req.params;
     req.logger.debug("setAsPremium", uid);
     if (uid === -1) {
       const error = new Error(
