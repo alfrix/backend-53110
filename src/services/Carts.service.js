@@ -6,13 +6,13 @@ class CartService {
     this.cartsDAO = dao;
   }
 
-  async create(cart) {
+  async create() {
     try {
-      const response = await this.cartsDAO.create(cart);
+      const response = await this.cartsDAO.create();
       if (!response) {
         throw new Error("Sin respuesta");
       }
-      return;
+      return response;
     } catch (error) {
       logger.error(`Error creando carrito`, error);
       throw new Error(`Fallo al crear carrito: ${error}`);

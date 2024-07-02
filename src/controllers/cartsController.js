@@ -6,16 +6,13 @@ import productsController from "./productsController.js";
 export default class cartsController {
   static addCart = async (req, res, next) => {
     req.logger.debug("Agregando carrito");
-    return await cartService.create({
-      products: [],
-      totalPrice: 0,
-    });
+    return await cartService.create();
   };
 
   static addProduct = async (req, res, next) => {
     let { cid, pid } = req.params;
     req.logger.debug(`Agregando producto ${pid} al carrito ${cid}`);
-    this.validateCartFromUser(req.session.user, cid);
+    this.validateCartFromUser(req, cid);
     const product = await productService.getById(pid);
     if (product.owner === req.session.user.email) {
       throw new Error("No puede agregar sus propios productos al carrito");
@@ -46,6 +43,7 @@ export default class cartsController {
         quantity: qty,
         productPriceTotal: product.price,
       };
+      req.logger.debug(msg)
       cart.products.push(p);
     }
     const total = this.calculateTotalPrice(cart.products);
@@ -58,7 +56,7 @@ export default class cartsController {
   static getCartById = async (req, res, next) => {
     let { cid } = req.params;
     req.logger.debug("getCartById");
-    this.validateCartFromUser(req.session.user, cid);
+    this.validateCartFromUser(req, cid);
     return await cartService.getById(cid);
   };
 
@@ -71,7 +69,7 @@ export default class cartsController {
   static removeProductfromCart = async (req, res, next) => {
     let { cid, pid } = req.params;
     req.logger.debug("removeProductfromCart");
-    this.validateCartFromUser(req.session.user, cid);
+    this.validateCartFromUser(req, cid);
     const product = await productService.getById(pid);
     const cart = await cartService.getById(cid);
     let msg = "";
@@ -104,7 +102,7 @@ export default class cartsController {
     let { cid, pid } = req.params;
     let updatedProduct = req.body;
     req.logger.debug("updateCartProduct");
-    this.validateCartFromUser(req.session.user, cid);
+    this.validateCartFromUser(req, cid);
     const product = await productService.getById(pid);
     const cart = await cartService.getById(cid);
     let exists = undefined;
@@ -135,7 +133,7 @@ export default class cartsController {
     let { cid } = req.params;
     let products = req.body;
     req.logger.debug("updateCart");
-    this.validateCartFromUser(req.session.user, cid);
+    this.validateCartFromUser(req, cid);
     const cart = await cartService.getById(cid);
     if (!products || !Array.isArray(products)) {
       throw new Error(`Products no validos: ${JSON.stringify(products)}`);
@@ -145,7 +143,9 @@ export default class cartsController {
       await productService.getById(product);
     });
     cart.products = products;
+    req.logger.debug(JSON.stringify(cart.products))
     const total = this.calculateTotalPrice(cart.products);
+    req.logger.debug(`total: ${total}`);
     return await cartService.update(cid, cart.products, total);
   };
 
@@ -167,15 +167,22 @@ export default class cartsController {
     if (!Array.isArray(products)) {
       throw new Error("Invalid products array");
     }
-    const totalPrice = products.reduce(
-      (total, item) => total + parseFloat(item.productPriceTotal),
-      0
-    );
-    req.logger.debug(`total es ${totalPrice} > ${totalPrice.toFixed(2)}`);
+    const totalPrice = products.reduce((total, item) => {
+      if (Array.isArray(item.products)) {
+        const subTotal = item.products.reduce(
+          (subTotal, subItem) => subTotal + parseFloat(subItem.productPriceTotal),
+          0
+        );
+        return total + subTotal;
+      }
+      return total + parseFloat(item.productPriceTotal);
+    }, 0);
     return totalPrice.toFixed(2);
   }
 
-  static validateCartFromUser(user, cart) {
+
+  static validateCartFromUser(req, cart) {
+    const user = req.session.user
     if (!user) {
       const error = new Error("No autenticado");
       error.statusCode = 401;
@@ -193,7 +200,7 @@ export default class cartsController {
   static purchase = async (req, res, next) => {
     let { cid } = req.params;
     req.logger.debug("purchase");
-    this.validateCartFromUser(req.session.user, cid);
+    this.validateCartFromUser(req, cid);
     const cart = await cartService.getById(cid);
 
     let withStock = [];

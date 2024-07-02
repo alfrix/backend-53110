@@ -1,8 +1,8 @@
 import { cartsModel } from "../models/carts.model.js";
 
 export class cartsDAO {
-  async create(products = [], totalPrice = 0) {
-    return await cartsModel.create({ products, totalPrice });
+  async create() {
+    return await cartsModel.create({ products: [], totalPrice: 0 });
   }
 
   async updateOne(_id, products = [], totalPrice = 0) {

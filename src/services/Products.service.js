@@ -36,7 +36,10 @@ class ProductService {
       }
       return response;
     } catch (error) {
-      logger.error(`Error obteniendo producto con ID ${_id}:`, error);
+      logger.error(`Error obteniendo producto con ID ${JSON.stringify(_id)}:`, error);
+      if (error.statusCode) {
+        throw error;
+      }
       throw new Error(`Fallo al obtener producto: ${error}`);
     }
   }

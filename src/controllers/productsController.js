@@ -1,3 +1,4 @@
+import { logger } from "../middlewares/log.js";
 import { productService } from "../services/Products.service.js";
 import { userService } from "../services/Users.service.js"
 
@@ -88,10 +89,11 @@ export default class productsController {
 
   static getProductById = async (req, res, next) => {
     let { pid } = req.params;
-    product = await productService.getById(pid);
+    let product = await productService.getById(pid);
     if (!product.owner) {
       product.owner = "admin"
     }
+    logger.debug(product)
     return product
   };
 
