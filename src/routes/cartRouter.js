@@ -19,7 +19,7 @@ router.get("/:cid", auth(["user"]), async (req, res, next) => {
 
 router.post("/", auth(["public"]), async (req, res, next) => {
   const cart = await cartsController.addCart(req, res, next);
-  return res.status(200).json(cart);
+  return res.status(201).json(cart);
 });
 
 router.post("/:cid/product/:pid", auth(["user"]), async (req, res, next) => {

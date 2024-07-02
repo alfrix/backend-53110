@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import { Command, Option } from "commander";
 
 let program = new Command();
+let opts = {}
 
 program.addOption(
   new Option(
@@ -23,8 +24,11 @@ program.addOption(
     .default("online")
 );
 
-program.parse();
-const opts = program.opts();
+if (process.env.NODE_ENV !== 'testing') {
+  // no parsear o no funcionan las opciones the mocha --bail y --exit
+  program.parse();
+  opts = program.opts();
+}
 
 dotenv.config({
   path: "./src/.env",
@@ -32,8 +36,8 @@ dotenv.config({
 });
 
 export const config = {
-  MODE: opts.mode,
-  DB_MODE: opts.db_mode,
+  MODE: opts.mode || "dev",
+  DB_MODE: opts.db_mode || "online",
   PORT: process.env.PORT || 8080,
   dbName: process.env.DB_NAME,
   mongoUrl:

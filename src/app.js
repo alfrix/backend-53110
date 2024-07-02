@@ -89,11 +89,11 @@ app.use(
 );
 
 process.on("unhandledRejection", (reason, promise) => {
-  logger.fatal("Unhandled Rejection at:", promise, "reason:", reason);
+  logger.fatal(`Unhandled Rejection at: ${JSON.stringify(promise)} reason: ${reason}`);
 });
 
 process.on("uncaughtException", (err, origin) => {
-  logger.fatal("Unhandled Exception at:", err, "reason:", origin);
+  logger.fatal(`Unhandled Exception at: ${err} reason: ${origin}`);
 });
 
 const connectDB = async () => {
@@ -153,3 +153,5 @@ io.on("connection", (socket) => {
     }
   });
 });
+
+export { app, server };
