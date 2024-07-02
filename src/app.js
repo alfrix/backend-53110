@@ -89,12 +89,18 @@ app.use(
 );
 
 process.on("unhandledRejection", (reason, promise) => {
-  logger.fatal(`Unhandled Rejection at: ${JSON.stringify(promise)} reason: ${reason}`);
+  const stack = reason.stack || JSON.stringify(promise);
+  logger.fatal(`Unhandled Rejection at: ${stack}`);
 });
 
 process.on("uncaughtException", (err, origin) => {
-  logger.fatal(`Unhandled Exception at: ${err} reason: ${origin}`);
+  const stack = err.stack || err;
+  logger.fatal(`Unhandled Exception at: ${stack} reason: ${origin}`);
+  server.close(() => {
+    process.exit(1);
+  });
 });
+
 
 const connectDB = async () => {
   try {
