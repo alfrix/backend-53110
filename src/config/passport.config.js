@@ -3,6 +3,7 @@ import local from "passport-local";
 import github from "passport-github2";
 import { createHash, validatePass } from "../utils.js";
 import usersController from "../controllers/usersController.js";
+import { logger } from "../middlewares/log.js";
 
 export const initPassport = () => {
   passport.use(
@@ -47,19 +48,19 @@ export const initPassport = () => {
       },
       async (username, password, done) => {
         try {
-          req.logger.debug(`login: ${username}`);
+          logger.debug(`login: ${username}`);
           let user = await usersController.getUserByEmail(username);
           if (!user) {
-            req.logger.debug("not user");
+            logger.debug("not user");
             return done(null, false, { message: "Usuario inexistente" });
           }
           if (!validatePass(user, password)) {
-            req.logger.debug("invalid pass");
+            logger.debug("invalid pass");
             return done(null, false, { message: "Constraseña incorrecta" });
           }
           return done(null, user);
         } catch (error) {
-          req.logger.error("local-login", error);
+          logger.error("local-login", error);
           return done(error);
         }
       }
@@ -85,7 +86,7 @@ export const initPassport = () => {
           }
           let user = await usersController.getUserByEmail(email);
           if (!user) {
-            req.logger.debug(`Nuevo usuario ${email}`);
+            logger.debug(`Nuevo usuario ${email}`);
             user = await usersController.create({
               first_name,
               last_name,
@@ -94,7 +95,7 @@ export const initPassport = () => {
           }
           return done(null, user);
         } catch (error) {
-          req.logger.error("github", error);
+          logger.error("github", error);
           return done(error);
         }
       }
@@ -103,11 +104,11 @@ export const initPassport = () => {
 
   passport.serializeUser((user, done) => {
     if (user.error) {
-      req.logger.error(`serialize-error: ${JSON.stringify(user.error)}`);
+      logger.error(`serialize-error: ${JSON.stringify(user.error)}`);
       return done(user.error);
     }
     if (!user._id) {
-      req.logger.error(`serialize-error-id: ${JSON.stringify(user._id)}`);
+      logger.error(`serialize-error-id: ${JSON.stringify(user._id)}`);
       return done(user);
     }
     return done(null, user._id);
