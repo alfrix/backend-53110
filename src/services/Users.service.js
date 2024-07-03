@@ -7,11 +7,7 @@ class UserService {
   }
   async create(user) {
     try {
-      const response = await this.usersDAO.create(user);
-      if (!response) {
-        throw new Error("Sin respuesta");
-      }
-      return response;
+      return await this.usersDAO.create(user);
     } catch (error) {
       logger.error(`Error creando usuario`, error);
       throw new Error(`Fallo al crear usuario: ${error}`);
@@ -20,11 +16,7 @@ class UserService {
 
   async update(_id, data) {
     try {
-      const response = await this.usersDAO.updateOne(_id, data);
-      if (!response) {
-        throw new Error("Sin respuesta");
-      }
-      return response;
+      return await this.usersDAO.updateOne(_id, data);
     } catch (error) {
       logger.error(`Error actualizando usuario`, error);
       throw new Error(`Fallo al actualizar usuario: ${error}`);
@@ -35,11 +27,7 @@ class UserService {
       throw new Error("email no especificado");
     }
     try {
-      const response = await this.usersDAO.getByEmail(email);
-      if (!response) {
-        throw new Error(`No encontrado ${email}`);
-      }
-      return response;
+      return await this.usersDAO.getByEmail(email);
     } catch (error) {
       logger.error(`Error obteniendo usuario`, error);
       throw new Error(`Fallo al obtener usuario: ${error}`);
@@ -48,11 +36,7 @@ class UserService {
 
   async getById(_id) {
     try {
-      const response = await this.usersDAO.getById(_id);
-      if (!response) {
-        throw new Error(`No encontrado ${_id}`);
-      }
-      return response;
+      return await this.usersDAO.getById(_id);
     } catch (error) {
       logger.error(`Error obteniendo usuario`, error);
       throw new Error(`Fallo al obtener usuario: ${error}`);

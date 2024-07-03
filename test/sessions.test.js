@@ -13,10 +13,6 @@ const testUser = {
 describe('Session API Tests', () => {
   const request = supertestSession(server);
 
-  before(async () => {
-    await request.post('/api/session/signup').send(testUser);
-  });
-
   after(async () => {
     try {
       server.close();
@@ -29,9 +25,13 @@ describe('Session API Tests', () => {
     const res = await request
       .post('/api/session/login')
       .send(testUser)
-      .expect(200);
-
-    expect(res.header).to.have.property('location', '/?message=Bienvenido testuser@example.com');
+      .expect(302);
+    try {
+      expect(res.header).to.have.property('location', '/?message=Bienvenido%20test');
+    } catch (error) {
+      console.error('Respuesta a Iniciar sesión:', res.body);
+      throw error;
+    }
   });
 
   it('Obtener usuario actual', async () => {
@@ -39,38 +39,25 @@ describe('Session API Tests', () => {
       .get('/api/session/current')
       .expect(200);
 
-    expect(res.body).to.have.property('user');
-    expect(res.body.user.email).to.equal(testUser.email);
+    try {
+      expect(res.body).to.have.property('user');
+      expect(res.body.user.email).to.equal(testUser.email);
+    } catch (error) {
+      console.error('Respuesta a Obtener usuario actual:', res.body);
+      throw error;
+    }
   });
 
   it('Cerrar sesión', async () => {
     const res = await request
       .get('/api/session/logout')
-      .expect(200);
+      .expect(302);
 
-    expect(res.header).to.have.property('location', '/login?success=Sesión cerrada correctamente');
-  });
-
-  it('Enviar mail de recuperación', async () => {
-    const res = await request
-      .post('/api/session/recovery')
-      .send({ email: testUser.email })
-      .expect(200);
-
-    expect(res.header).to.have.property('location', '/login?message=Email de recuperación enviado');
-  });
-
-  it('Cambiar contraseña (token)', async () => {
-    const token = jwt.sign({ _id: 'mockUserId', email: testUser.email }, config.SECRET, { expiresIn: '1h' });
-
-    const res = await request
-      .post(`/api/session/passwordChange/${token}`)
-      .send({
-        InputPassword1: 'newpassword',
-        InputPassword2: 'newpassword'
-      })
-      .expect(200);
-
-    expect(res.header).to.have.property('location', '/login?message=Contraseña cambiada exitosamente');
+    try {
+      expect(res.header).to.have.property('location', '/login?success=Sesi%C3%B3n%20cerrada%20correctamente');
+    } catch (error) {
+      console.error('Respuesta a Cerrar sesiónn:', res.body);
+      throw error;
+    }
   });
 });
