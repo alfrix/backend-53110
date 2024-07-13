@@ -1,5 +1,5 @@
-<div class="d-flex flex-column justify-content-center align-items-center" style="height:80vh;">
-<h1 class="my-4">{{pageTitle}}</h1>
+<div class="d-flex flex-column justify-content-center align-items-center" style="height:80vh; margin-top:15em;">
+    <h1 class="my-4">{{pageTitle}}</h1>
     <div class="row mb-3">
         Nombre: {{user.first_name}}
     </div>
@@ -10,13 +10,72 @@
         Email: {{user.email}}
     </div>
     {{#if user.age}}
-        <div class="row mb-3">
-            Edad: {{user.age}}
-        </div>
+    <div class="row mb-3">
+        Edad: {{user.age}}
+    </div>
     {{/if}}
     {{#if user.rol}}
-        <div class="row mb-3">
-            Rol: {{user.rol}}
-        </div>
+    <div class="row mb-3">
+        Rol: {{user.rol}}
+    </div>
     {{/if}}
+    {{#if user.id}}
+    <div class="row mb-3">
+        Id: {{user.id}}
+    </div>
+    {{/if}}
+    <div class="row mb-3 form-group border p-3 col-5">
+        <form action="/api/users/{{user.id}}/documents" method="POST" enctype="multipart/form-data">
+            <div class="row mb-3">
+                <button type="submit" class="btn btn-primary py-3 px-4">
+                    Cargar imagen de perfil <i class="bi bi-box-arrow-in-up ms-2 h5"></i>
+                </button>
+            </div>
+            <div class="row mb-3">
+                <input type="hidden" name="folderType" value="profiles">
+                <input type="file" class="form-control-file" name="profilePicture" accept="image/*">
+            </div>
+        </form>
+    </div>
+    <div class="row mb-3 form-group border p-3 col-5">
+        <form action="/api/users/{{user.id}}/documents" method="POST" enctype="multipart/form-data">
+
+            <div class="row mb-3">
+                <button type="submit" class="btn btn-primary py-3 px-4">
+                    Cargar identificación <i class="bi bi-box-arrow-in-up ms-2 h5"></i>
+                </button>
+            </div>
+            <div class="row mb-3">
+                <input type="hidden" name="folderType" value="documents">
+                <input type="file" class="form-control-file" name="ident" accept=".pdf,.doc,.docx">
+            </div>
+
+        </form>
+    </div>
+    <div class="row mb-3 form-group border p-3 col-5">
+        <form action="/api/users/{{user.id}}/documents" method="POST" enctype="multipart/form-data">
+            <div class="row mb-3">
+                <button type="submit" class="btn btn-primary py-3 px-4">
+                    Cargar comprobante de domicilio <i class="bi bi-box-arrow-in-up ms-2 h5"></i>
+                </button>
+            </div>
+            <div class="row mb-3">
+                <input type="hidden" name="folderType" value="documents">
+                <input type="file" class="form-control-file" name="comDomicilio" accept=".pdf,.doc,.docx">
+            </div>
+        </form>
+    </div>
+    <div class="row mb-3 form-group border p-3 col-5">
+        <form action="/api/users/{{user.id}}/documents" method="POST" enctype="multipart/form-data">
+            <div class="row mb-3 ">
+                <button type="submit" class="btn btn-primary py-3 px-4">
+                    Cargar comprobante de cuenta <i class="bi bi-box-arrow-in-up ms-2 h5"></i>
+                </button>
+            </div>
+            <div class="row mb-3">
+                <input type="hidden" name="folderType" value="documents">
+                <input type="file" class="form-control-file" name="comCuenta" accept=".pdf,.doc,.docx">
+            </div>
+        </form>
+    </div>
 </div>

@@ -42,6 +42,17 @@ class UserService {
       throw new Error(`Fallo al obtener usuario: ${error}`);
     }
   }
+
+  async logLogin(email) {
+    try {
+      const user = await this.usersDAO.getByEmail(email);
+      const timestamp = new Date().toUTCString()
+      logger.debug(`${timestamp} ${user._id}`)
+      return await this.usersDAO.updateOne({ _id: user._id }, { last_connection: timestamp });
+    } catch (error) {
+      logger.error(`Error actualizando fecha de inicio de sesión`, error);
+    }
+  }
 }
 
 export const userService = new UserService(new usersDAO());

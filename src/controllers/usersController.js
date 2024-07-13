@@ -43,9 +43,9 @@ export default class usersController {
     return await userService.getByEmail(email);
   };
 
-  static setAsPremium = async (req, res, next) => {
+  static togglePremium = async (req, res, next) => {
     let { uid } = req.params;
-    req.logger.debug("setAsPremium", uid);
+    req.logger.debug("togglePremium", uid);
     if (uid === -1) {
       const error = new Error(
         "Id no valida"
@@ -54,8 +54,48 @@ export default class usersController {
       throw error;
     }
     user = await self.getUserById(uid)
-    user.rol == "premium" ? rol = "user" : user.rol = "premium"
-    let response = await userService.update(uid, {rol: user.rol})
+    if (user.rol === "user") {
+      if (!user.documents || user.documents.length === 0) {
+        const error = new Error("Falta documentación");
+        error.statusCode = 400;
+        throw error;
+      }
+      user.rol = "premium";
+    } else if (rol === "premium") {
+      user.rol = "user"
+    } else {
+      const error = new Error(`Rol no valido ${user.rol}`);
+      error.statusCode = 400;
+      throw error;
+    }
+    let response = await userService.update(uid, { rol: user.rol })
     return new UserDTO(response)
+  }
+
+  static addDocument = async (req, res, next) => {
+    const userId = req.params.uid;
+
+    if (req.session.user.id !== userId && req.session.user.rol !== 'admin') {
+      const error = new Error("No autorizado");
+      error.statusCode = 403;
+      throw error;
+    }
+
+    const files = req.files || {};
+    const documents = [];
+
+    for (const [key, value] of Object.entries(files)) {
+      documents.push({
+        name: key,
+        reference: value[0].path
+      });
+    }
+
+    const response = await userService.update(
+      { _id: userId },
+      { $push: { documents: { $each: documents } } }
+    );
+
+    return response;
   }
 }

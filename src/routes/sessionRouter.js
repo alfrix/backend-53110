@@ -29,7 +29,7 @@ router.get("/errorLogin", (req, res) => {
 
 router.get(
   "/github",
-  passport.authenticate("github", {}, (req, res) => {})
+  passport.authenticate("github", {}, (req, res) => { })
 );
 
 router.get(
@@ -68,8 +68,9 @@ router.post(
     let user = req.user;
     user = { ...user };
     delete user.password;
+    req.session.user = new UserDTO(user)
     req.logger.debug(user.email, "conectado");
-    req.session.user = user;
+    await userService.logLogin(user.email);
     return res.redirect(`/?message=Bienvenido ${user.first_name}`);
   }
 );
@@ -140,7 +141,7 @@ router.post("/passwordChange/:token", async (req, res, next) => {
   }
   try {
     let decoded = jwt.verify(token, config.SECRET);
-    await userService.update({_id: decoded._id}, { password: InputPassword1 });
+    await userService.update({ _id: decoded._id }, { password: InputPassword1 });
     return res.redirect("/login?message=Contraseña cambiada exitosamente");
   } catch (error) {
     req.logger.error("Error changing password:", error);
