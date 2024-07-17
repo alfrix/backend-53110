@@ -22,6 +22,17 @@ class UserService {
       throw new Error(`Fallo al actualizar usuario: ${error}`);
     }
   }
+
+  async getAll() {
+    try {
+      return await this.usersDAO.getAll();
+    }
+    catch (error) {
+      logger.error(`Error obteniendo usuarios`, error);
+      throw new Error(`Fallo al obtenier usuarios: ${error}`);
+    }
+  }
+
   async getByEmail(email) {
     if (!email) {
       throw new Error("email no especificado");

@@ -28,6 +28,10 @@ export default class usersController {
     return { ...user_db, cart };
   };
 
+  static getAll = async () => {
+    return await userService.getAll();
+  }
+
   static getUserById = async (uid) => {
     if (uid === -1) {
       return admin;

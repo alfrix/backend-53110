@@ -9,6 +9,10 @@ export class usersDAO {
     return await usersModel.updateOne(_id, cart);
   }
 
+  async getAll() {
+    return await usersModel.find({}).lean();
+  }
+
   async getByEmail(email) {
     return await usersModel.findOne({ email }).lean();
   }
