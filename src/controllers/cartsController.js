@@ -60,6 +60,21 @@ export default class cartsController {
     return await cartService.getById(cid);
   };
 
+
+  static deleteCart = async (req, res, next) => {
+    let { cid } = req.params;
+    let cartIsNotUsed = True
+    // get users
+    // for each user
+    //  if user.cart is equal to cid
+    //    cartIsNotUsed = False
+    //    break
+    // if cartIsNotUsed
+    //  delete
+    // else
+    this.emptyCart(req, res, next)
+  };
+
   static emptyCart = async (req, res, next) => {
     let { cid } = req.params;
     req.logger.debug("emptyCart");

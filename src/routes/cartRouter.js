@@ -33,7 +33,7 @@ router.delete("/:cid/product/:pid", auth(["user"]), async (req, res, next) => {
 });
 
 router.delete("/:cid", auth(["user"]), async (req, res, next) => {
-  const cart = await cartsController.emptyCart(req, res, next);
+  const cart = await cartsController.deleteCart(req, res, next);
   return res.status(200).json(cart);
 });
 
