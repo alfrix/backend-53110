@@ -1,6 +1,7 @@
 import { logger } from "../middlewares/log.js";
 import { productService } from "../services/Products.service.js";
 import { userService } from "../services/Users.service.js"
+import { sendEmail } from "../mailer.js";
 
 export default class productsController {
   static addProduct = async (req, res, next) => {
@@ -149,6 +150,9 @@ export default class productsController {
       throw error;
     }
     req.io.emit("deleteProduct", response);
+    req.logger.info("Enviando correo informativo")
+    let msg = `Atención se borró el producto ${oldProduct.title} (${oldProduct._id})`;
+    await sendEmail(oldProduct.owner, "Producto borrado", msg);
     return response;
   };
 }
