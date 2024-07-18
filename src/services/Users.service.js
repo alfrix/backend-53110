@@ -64,6 +64,15 @@ class UserService {
       logger.error(`Error actualizando fecha de inicio de sesión`, error);
     }
   }
+
+  async delete(user) {
+    try {
+      return await this.usersDAO.delete(user._id);
+    } catch (error) {
+      logger.error(`Error borrando usuario`, error);
+      throw new Error(`Fallo al borrar usuario: ${error}`);
+    }
+  }
 }
 
 export const userService = new UserService(new usersDAO());

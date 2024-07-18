@@ -20,4 +20,8 @@ export class usersDAO {
   async getById(_id) {
     return await usersModel.findById(_id).lean();
   }
+
+  async delete(_id) {
+    return await usersModel.findByIdAndDelete(_id).lean();
+  }
 }

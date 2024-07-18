@@ -102,4 +102,32 @@ export default class usersController {
 
     return response;
   }
+
+  static deleteInactive = async () => {
+    let users = await this.getAll();
+    let now = new Date();
+    let inactiveLimit = 2 * 24 * 60 * 60 * 1000; // 2 dias en ms
+    let deletedUsers = []
+    for (let user of users) {
+      let lastConnection = new Date(user.last_connection);
+      if (isNaN(lastConnection.getTime())) {
+        logger.error(`Ultima conexión invalida: ${user}`)
+        continue;
+      }
+      let timeDiff = now - lastConnection;
+      if (timeDiff > inactiveLimit) {
+        let deleted = await userService.delete(user);
+        if (deleted && deleted.deletedCount > 0) {
+          deletedUsers.push(deleted)
+        }
+      }
+    }
+
+    return {
+      success: true,
+      message: "Inactive users of more than 2 days have been deleted",
+      payload: deletedUsers
+    };
+  };
+
 }
