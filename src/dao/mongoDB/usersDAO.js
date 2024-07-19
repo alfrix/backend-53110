@@ -24,4 +24,9 @@ export class usersDAO {
   async delete(_id) {
     return await usersModel.findByIdAndDelete(_id).lean();
   }
+
+  async paginate(query, options) {
+    return await usersModel.paginate(query, options);
+  }
+
 }

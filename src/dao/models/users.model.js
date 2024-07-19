@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { cartsModel } from "./carts.model.js";
+import paginate from "mongoose-paginate-v2";
 
 const usersColl = "users"
 
@@ -24,5 +25,6 @@ const userSchema = new mongoose.Schema(
         timestamps: true, strict: false
     }
 )
+userSchema.plugin(paginate);
 
 export const usersModel = mongoose.model(usersColl, userSchema)

@@ -73,6 +73,19 @@ class UserService {
       throw new Error(`Fallo al borrar usuario: ${error}`);
     }
   }
+
+  async paginate(query, options) {
+    try {
+      const response = await this.usersDAO.paginate(query, options);
+      if (!response) {
+        throw new Error("Sin respuesta");
+      }
+      return response;
+    } catch (error) {
+      logger.error("Error paginating products:", error);
+      throw new Error(`Failed to paginate products: ${error}`);
+    }
+  }
 }
 
 export const userService = new UserService(new usersDAO());

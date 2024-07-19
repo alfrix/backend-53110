@@ -1,6 +1,7 @@
 import { Router } from "express";
 import productsController from "../controllers/productsController.js";
 import cartsController from "../controllers/cartsController.js";
+import usersController from "../controllers/usersController.js";
 
 import { auth } from "../middlewares/auth.js";
 import { viewsErrorHandler } from "../middlewares/viewsErrorHandler.js";
@@ -102,6 +103,16 @@ router.get("/profile", auth(["user"]), async (req, res, next) => {
   return res.status(200).render("profile", {
     pageTitle,
     cartItemCount: res.locals.cartItemCount,
+    user: req.session.user,
+  });
+});
+
+router.get("/users", auth(["admin"]), async (req, res, next) => {
+  let users = await usersController.getUsers(req, res, next);
+  let pageTitle = "Panel de control de usuarios";
+  return res.status(200).render("users", {
+    pageTitle,
+    users,
     user: req.session.user,
   });
 });
