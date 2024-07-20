@@ -51,6 +51,9 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(middlewareLogger);
 
 app.use(express.static(path.join(__dirname, "/public")));
+app.use(express.static(path.join(__dirname, "/updloas/profiles")));
+app.use(express.static(path.join(__dirname, "/uploads/products")));
+
 app.use(
   session({
     secret: config.SECRET,

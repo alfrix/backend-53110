@@ -12,8 +12,10 @@ export default class productsController {
     if (!product["status"]) {
       product.status = true;
     }
-    if (!product["thumbnails"]) {
+    if (!product.thumbnails) {
       product.thumbnails = [];
+    } else {
+      product.thumbnails = req.files.map(file => `/uploads/products/${file.filename}`);
     }
     if (!product["owner"]) {
       product.owner = "admin"

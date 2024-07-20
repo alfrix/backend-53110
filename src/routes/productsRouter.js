@@ -2,6 +2,7 @@ import { Router } from "express";
 import productsController from "../controllers/productsController.js";
 import { auth } from "../middlewares/auth.js";
 import { setJsonResponse } from "../middlewares/jsonResponse.js";
+import { upload } from "../middlewares/multer.js";
 
 const router = Router();
 
@@ -22,12 +23,12 @@ router.get("/:pid", auth(["public"]), async (req, res, next) => {
   return res.status(200).json(product);
 });
 
-router.post("/", auth(["admin", "premium"]), async (req, res, next) => {
+router.post("/", auth(["admin", "premium"]), upload.array('thumbnails', 2), async (req, res, next) => {
   const product = await productsController.addProduct(req, res, next);
   return res.status(201).json(product);
 });
 
-router.put("/:pid", auth(["admin", "premium"]), async (req, res, next) => {
+router.put("/:pid", auth(["admin", "premium"]), upload.array('thumbnails', 2), async (req, res, next) => {
   const product = await productsController.updateProduct(req, res, next);
   return res.status(200).json(product);
 });
