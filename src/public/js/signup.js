@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
     pass2.value !== "" && pass1.value === pass2.value
       ? is_valid(pass2, true)
       : is_valid(pass2, false);
-    req.logger.debug(`datos validos ${redirect}`);
+    console.log(`datos validos ${redirect}`);
     if (!redirect) {
       event.preventDefault();
       return;
