@@ -1,17 +1,25 @@
 import nodemailer from "nodemailer";
 
+const config = {
+  MAIL_HOST: process.env.MAIL_HOST,
+  MAIL_PORT: process.env.MAIL_PORT,
+  MAIL_USER: process.env.MAIL_USER,
+  MAIL_PASS: process.env.MAIL_PASS,
+  MAIL_FROM: process.env.MAIL_FROM
+}
+
 const transporter = nodemailer.createTransport({
-  host: 'smtp.ethereal.email',
-  port: 587,
+  host: config.MAIL_HOST,
+  port: config.MAIL_PORT,
   auth: {
-      user: 'asa.koss46@ethereal.email',
-      pass: 'yfbjTzwvMjsB5jHRqs'
+    user: config.MAIL_USER,
+    pass: config.MAIL_PASS
   }
 });
 
 export const sendEmail = (to, subject, message) => {
   return transporter.sendMail({
-    from: "Ecommerce 53110",
+    from: config.MAIL_FROM,
     to,
     subject,
     html: message,
