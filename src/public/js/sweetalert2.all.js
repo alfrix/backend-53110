@@ -6,10 +6,10 @@
   typeof exports === "object" && typeof module !== "undefined"
     ? (module.exports = factory())
     : typeof define === "function" && define.amd
-    ? define(factory)
-    : ((global =
+      ? define(factory)
+      : ((global =
         typeof globalThis !== "undefined" ? globalThis : global || self),
-      (global.Sweetalert2 = factory()));
+        (global.Sweetalert2 = factory()));
 })(this, function () {
   "use strict";
 
@@ -46,9 +46,9 @@
   function _isNativeReflectConstruct() {
     try {
       var t = !Boolean.prototype.valueOf.call(
-        Reflect.construct(Boolean, [], function () {})
+        Reflect.construct(Boolean, [], function () { })
       );
-    } catch (t) {}
+    } catch (t) { }
     return (_isNativeReflectConstruct = function () {
       return !!t;
     })();
@@ -58,7 +58,7 @@
       null == r
         ? null
         : ("undefined" != typeof Symbol && r[Symbol.iterator]) ||
-          r["@@iterator"];
+        r["@@iterator"];
     if (null != t) {
       var e,
         n,
@@ -111,16 +111,16 @@
       (_typeof =
         "function" == typeof Symbol && "symbol" == typeof Symbol.iterator
           ? function (o) {
-              return typeof o;
-            }
+            return typeof o;
+          }
           : function (o) {
-              return o &&
-                "function" == typeof Symbol &&
-                o.constructor === Symbol &&
-                o !== Symbol.prototype
-                ? "symbol"
-                : typeof o;
-            }),
+            return o &&
+              "function" == typeof Symbol &&
+              o.constructor === Symbol &&
+              o !== Symbol.prototype
+              ? "symbol"
+              : typeof o;
+          }),
       _typeof(o)
     );
   }
@@ -166,17 +166,17 @@
     _getPrototypeOf = Object.setPrototypeOf
       ? Object.getPrototypeOf.bind()
       : function _getPrototypeOf(o) {
-          return o.__proto__ || Object.getPrototypeOf(o);
-        };
+        return o.__proto__ || Object.getPrototypeOf(o);
+      };
     return _getPrototypeOf(o);
   }
   function _setPrototypeOf(o, p) {
     _setPrototypeOf = Object.setPrototypeOf
       ? Object.setPrototypeOf.bind()
       : function _setPrototypeOf(o, p) {
-          o.__proto__ = p;
-          return o;
-        };
+        o.__proto__ = p;
+        return o;
+      };
     return _setPrototypeOf(o, p);
   }
   function _assertThisInitialized(self) {
@@ -523,7 +523,7 @@
    * @param {string} message
    */
   var error = function error(message) {
-    req.logger.error("".concat(consolePrefix, " ").concat(message));
+    console.error("".concat(consolePrefix, " ").concat(message));
   };
 
   /**
@@ -1571,8 +1571,8 @@
   function renderButton(button, buttonType, params) {
     var buttonName =
       /** @type {'Confirm' | 'Deny' | 'Cancel'} */ capitalizeFirstLetter(
-        buttonType
-      );
+      buttonType
+    );
     toggle(button, params["show".concat(buttonName, "Button")], "inline-block");
     setInnerHtml(button, params["".concat(buttonType, "ButtonText")] || ""); // Set caption text
     button.setAttribute(
@@ -1869,13 +1869,13 @@
     renderInputType.time =
     renderInputType.week =
     renderInputType.month =
-      function (input, params) {
-        checkAndSetInputValue(input, params.inputValue);
-        setInputLabel(input, input, params);
-        setInputPlaceholder(input, params);
-        input.type = params.input;
-        return input;
-      };
+    function (input, params) {
+      checkAndSetInputValue(input, params.inputValue);
+      setInputLabel(input, input, params);
+      setInputPlaceholder(input, params);
+      input.type = params.input;
+      return input;
+    };
 
   /**
    * @param {HTMLInputElement} input
@@ -2180,12 +2180,12 @@
     icon.style.borderColor = params.iconColor;
     for (
       var _i2 = 0,
-        _arr = [
-          ".swal2-success-line-tip",
-          ".swal2-success-line-long",
-          ".swal2-x-mark-line-left",
-          ".swal2-x-mark-line-right",
-        ];
+      _arr = [
+        ".swal2-success-line-tip",
+        ".swal2-success-line-long",
+        ".swal2-x-mark-line-left",
+        ".swal2-x-mark-line-right",
+      ];
       _i2 < _arr.length;
       _i2++
     ) {
@@ -2329,7 +2329,7 @@
     if (currentProgressStep >= progressSteps.length) {
       warn(
         "Invalid currentProgressStep parameter, it should be less than progressSteps.length " +
-          "(currentProgressStep like JS arrays starts from 0)"
+        "(currentProgressStep like JS arrays starts from 0)"
       );
     }
     progressSteps.forEach(function (step, index) {
@@ -3312,13 +3312,13 @@
         input.focus();
         instance.hideLoading();
       })
-      ["catch"](function (err) {
-        error("Error in inputValue promise: ".concat(err));
-        input.value = "";
-        show(input);
-        input.focus();
-        instance.hideLoading();
-      });
+    ["catch"](function (err) {
+      error("Error in inputValue promise: ".concat(err));
+      input.value = "";
+      show(input);
+      input.focus();
+      instance.hideLoading();
+    });
   };
 
   /**
@@ -3573,9 +3573,9 @@
             });
           }
         })
-        ["catch"](function (error) {
-          return rejectWith(instance || _this, error);
-        });
+      ["catch"](function (error) {
+        return rejectWith(instance || _this, error);
+      });
     } else {
       instance.close({
         isDenied: true,
@@ -3637,9 +3637,9 @@
             );
           }
         })
-        ["catch"](function (error) {
-          return rejectWith(instance || _this, error);
-        });
+      ["catch"](function (error) {
+        return rejectWith(instance || _this, error);
+      });
     } else {
       succeedWith(instance, value);
     }
@@ -4252,7 +4252,7 @@
   var handleModalMousedown = function handleModalMousedown(domCache) {
     domCache.popup.onmousedown = function () {
       domCache.container.onmouseup = function (e) {
-        domCache.container.onmouseup = function () {};
+        domCache.container.onmouseup = function () { };
         // We only check if the mouseup target is the container because usually it doesn't
         // have any other direct children aside of the popup
         if (e.target === domCache.container) {
@@ -4268,7 +4268,7 @@
   var handleContainerMousedown = function handleContainerMousedown(domCache) {
     domCache.container.onmousedown = function () {
       domCache.popup.onmouseup = function (e) {
-        domCache.popup.onmouseup = function () {};
+        domCache.popup.onmouseup = function () { };
         // We also need to check if the mouseup target is a child of the popup
         if (
           e.target === domCache.popup ||
@@ -5082,8 +5082,8 @@
     if (params.showLoaderOnConfirm && !params.preConfirm) {
       warn(
         "showLoaderOnConfirm is set to true, but preConfirm is not defined.\n" +
-          "showLoaderOnConfirm should be used together with preConfirm, see usage example:\n" +
-          "https://sweetalert2.github.io/#ajax-request"
+        "showLoaderOnConfirm should be used together with preConfirm, see usage example:\n" +
+        "https://sweetalert2.github.io/#ajax-request"
       );
     }
     validateCustomTargetElement(params);

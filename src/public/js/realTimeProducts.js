@@ -1,5 +1,4 @@
 const socket = io();
-req.logger.debug("Script start");
 socket.emit("getProducts");
 
 function createCard(product) {
@@ -66,7 +65,7 @@ function createForm(product) {
       return null;
     })
     .catch((error) => {
-      req.logger.error("Error retrieving session information:", error);
+      console.error("Error retrieving session information:", error);
     });
 
   cartId.then((cartId) => {
@@ -88,12 +87,12 @@ function createForm(product) {
           if (response.ok) {
             window.location.replace(location.pathname);
           } else {
-            req.logger.error(response.status, response.statusText);
+            console.error(response.status, response.statusText);
             window.location.assign("/login");
           }
         })
         .catch((error) => {
-          req.logger.error("Error:", error);
+          console.error("Error:", error);
         });
     });
   });
@@ -106,30 +105,30 @@ function createForm(product) {
 
 socket.on("newProduct", (response) => {
   if (response[0].error) {
-    req.logger.error(`Error: ${response[0].error}`);
+    console.error(`Error: ${response[0].error}`);
     return;
   }
-  req.logger.debug(`Nuevo Producto: ${JSON.stringify(response[1])}`);
+  console.log(`Nuevo Producto: ${JSON.stringify(response[1])}`);
   let card = createCard(response[1]);
   let productsContainer = document.getElementById("productsContainer");
   productsContainer.appendChild(card);
 });
 
 socket.on("deleteProduct", (product) => {
-  req.logger.debug(`Borrado Producto: ${JSON.stringify(product[1])}`);
+  console.log(`Borrado Producto: ${JSON.stringify(product[1])}`);
   let card = document.getElementById(`card${product[1].id}`);
   card.remove();
 });
 
 socket.on("updateProduct", (product) => {
-  req.logger.debug(`Actualizado Producto: ${JSON.stringify(product[1])}`);
+  console.log(`Actualizado Producto: ${JSON.stringify(product[1])}`);
   let card = document.getElementById(`card${product[1].id}`);
   card.insertAdjacentElement("beforebegin", createCard(product[1]));
   card.remove();
 });
 
 socket.on("showProducts", (products) => {
-  req.logger.debug("showingProducts");
+  console.log("showingProducts");
   products = products.payload;
   let productsContainer = document.getElementById("productsContainer");
   productsContainer.innerHTML = "";

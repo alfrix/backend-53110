@@ -1,7 +1,7 @@
 let userName;
 
 function setUser(name) {
-  req.logger.debug(name, new Date().toUTCString());
+  console.log(name, new Date().toUTCString());
   userName = name;
 }
 
@@ -36,7 +36,7 @@ Swal.fire({
   },
   allowOutsideClick: false,
 }).then((datos) => {
-  req.logger.debug(datos);
+  console.log(datos);
   let name = datos.value;
   setUser(name);
   document.title = name;

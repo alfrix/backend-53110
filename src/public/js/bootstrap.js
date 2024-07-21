@@ -7,10 +7,10 @@
   typeof exports === "object" && typeof module !== "undefined"
     ? (module.exports = factory(require("@popperjs/core")))
     : typeof define === "function" && define.amd
-    ? define(["@popperjs/core"], factory)
-    : ((global =
+      ? define(["@popperjs/core"], factory)
+      : ((global =
         typeof globalThis !== "undefined" ? globalThis : global || self),
-      (global.bootstrap = factory(global.Popper)));
+        (global.bootstrap = factory(global.Popper)));
 })(this, function (Popper) {
   "use strict";
 
@@ -28,9 +28,9 @@
             d.get
               ? d
               : {
-                  enumerable: true,
-                  get: () => e[k],
-                }
+                enumerable: true,
+                get: () => e[k],
+              }
           );
         }
       }
@@ -64,9 +64,8 @@
       // can be removed later when multiple key/instances are fine to be used
       if (!instanceMap.has(key) && instanceMap.size !== 0) {
         // eslint-disable-next-line no-console
-        req.logger.error(
-          `Bootstrap doesn't allow more than one instance per element. Bound instance: ${
-            Array.from(instanceMap.keys())[0]
+        console.error(
+          `Bootstrap doesn't allow more than one instance per element. Bound instance: ${Array.from(instanceMap.keys())[0]
           }.`
         );
         return;
@@ -245,7 +244,7 @@
     }
     return findShadowRoot(element.parentNode);
   };
-  const noop = () => {};
+  const noop = () => { };
 
   /**
    * Trick to restart an element's animation
@@ -923,9 +922,9 @@
     }
     return selector
       ? selector
-          .split(",")
-          .map((sel) => parseSelector(sel))
-          .join(",")
+        .split(",")
+        .map((sel) => parseSelector(sel))
+        .join(",")
       : null;
   };
   const SelectorEngine = {
@@ -1889,9 +1888,8 @@
         return;
       }
       const dimension = this._getDimension();
-      this._element.style[dimension] = `${
-        this._element.getBoundingClientRect()[dimension]
-      }px`;
+      this._element.style[dimension] = `${this._element.getBoundingClientRect()[dimension]
+        }px`;
       reflow(this._element);
       this._element.classList.add(CLASS_NAME_COLLAPSING);
       this._element.classList.remove(CLASS_NAME_COLLAPSE, CLASS_NAME_SHOW$7);
@@ -2394,11 +2392,11 @@
       const getToggleButton = this.matches(SELECTOR_DATA_TOGGLE$3)
         ? this
         : SelectorEngine.prev(this, SELECTOR_DATA_TOGGLE$3)[0] ||
-          SelectorEngine.next(this, SELECTOR_DATA_TOGGLE$3)[0] ||
-          SelectorEngine.findOne(
-            SELECTOR_DATA_TOGGLE$3,
-            event.delegateTarget.parentNode
-          );
+        SelectorEngine.next(this, SELECTOR_DATA_TOGGLE$3)[0] ||
+        SelectorEngine.findOne(
+          SELECTOR_DATA_TOGGLE$3,
+          event.delegateTarget.parentNode
+        );
       const instance = Dropdown.getOrCreateInstance(getToggleButton);
       if (isUpOrDownEvent) {
         event.stopPropagation();
@@ -4692,8 +4690,8 @@
       const active = this._getActiveElem();
       const hideEvent = active
         ? EventHandler.trigger(active, EVENT_HIDE$1, {
-            relatedTarget: innerElem,
-          })
+          relatedTarget: innerElem,
+        })
         : null;
       const showEvent = EventHandler.trigger(innerElem, EVENT_SHOW$1, {
         relatedTarget: active,
