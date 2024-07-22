@@ -11,6 +11,7 @@ import { cartService } from "../services/Carts.service.js";
 import { userService } from "../services/Users.service.js";
 import { UserDTO } from "../dao/UserDTO.js";
 import { logger } from "../middlewares/log.js";
+import { sendEmail } from "../mailer.js";
 
 export default class usersController {
   static create = async (user) => {
@@ -36,7 +37,7 @@ export default class usersController {
     if (uid === -1) {
       return admin;
     }
-    return await userService.findById(uid);
+    return await userService.getById(uid);
   };
 
   static getUserByEmail = async (email) => {
@@ -57,7 +58,7 @@ export default class usersController {
       error.statusCode = 400;
       throw error;
     }
-    user = await self.getUserById(uid)
+    let user = await this.getUserById(uid)
     if (user.rol === "user") {
       if (!user.documents || user.documents.length === 0) {
         const error = new Error("Falta documentación");
@@ -65,7 +66,7 @@ export default class usersController {
         throw error;
       }
       user.rol = "premium";
-    } else if (rol === "premium") {
+    } else if (user.rol === "premium") {
       user.rol = "user"
     } else {
       const error = new Error(`Rol no valido ${user.rol}`);
@@ -104,6 +105,28 @@ export default class usersController {
 
     return response;
   }
+
+  static delete = async (req, res, next) => {
+    let { uid } = req.params;
+    req.logger.debug(`Borrando id: ${uid}`);
+    const user = await userService.getById(uid);
+    if (!user || user.rol === "admin") {
+      let error = new Error(`deleteUser: No se puede borrar id: ${uid}`);
+      error.statusCode = 404;
+      throw error;
+    }
+    let response = await userService.delete(user);
+    if (!response) {
+      let error = new Error(`deleteUser: No se puede borrar id: ${pid}`);
+      error.statusCode = 500;
+      throw error;
+    }
+    req.logger.info("Enviando correo informativo")
+    const message = "Usuario borrado"
+    response = { message, ...response }
+    await sendEmail(user.email, message, "Atención se borró su usuario");
+    return response;
+  };
 
   static deleteInactive = async () => {
     let users = await this.getAll();

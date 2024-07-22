@@ -6,5 +6,6 @@ export class UserDTO {
     this.rol = user.rol;
     this.id = user._id;
     this.last_connection = user.last_connection;
+    this.cart = user.cart;
   }
 }

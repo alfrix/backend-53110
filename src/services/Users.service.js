@@ -16,7 +16,7 @@ class UserService {
 
   async update(_id, data) {
     try {
-      return await this.usersDAO.updateOne(_id, data);
+      return await this.usersDAO.updateOne({ _id }, data);
     } catch (error) {
       logger.error(`Error actualizando usuario`, error);
       throw new Error(`Fallo al actualizar usuario: ${error}`);

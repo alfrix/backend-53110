@@ -43,7 +43,7 @@ router.get("/", auth(["public"]), async (req, res, next) => {
   });
 });
 
-router.get("/chat", auth(["user"]), (req, res, next) => {
+router.get("/chat", auth(["user", "premium"]), (req, res, next) => {
   let pageTitle = "Chat";
   return res.status(200).render("chat", {
     pageTitle,
@@ -52,7 +52,7 @@ router.get("/chat", auth(["user"]), (req, res, next) => {
   });
 });
 
-router.get("/cart/:cid", auth(["user"]), async (req, res, next) => {
+router.get("/cart/:cid", auth(["user", "premium"]), async (req, res, next) => {
   let cart = await cartsController.getCartById(req, res, next);
   let pageTitle = "Carrito";
   return res.status(200).render("cart", {
@@ -98,7 +98,7 @@ router.get("/recovery/:token", auth(["public"]), async (req, res, next) => {
   });
 });
 
-router.get("/profile", auth(["user"]), async (req, res, next) => {
+router.get("/profile", auth(["user", "premium"]), async (req, res, next) => {
   let pageTitle = "Perfil";
   return res.status(200).render("profile", {
     pageTitle,

@@ -18,6 +18,11 @@ router.delete("/", auth(["admin"]), async (req, res, next) => {
   return res.status(200).json(users);
 });
 
+router.delete("/:uid", auth(["admin"]), async (req, res, next) => {
+  const users = await usersController.delete(req, res, next);
+  return res.status(200).json(users);
+});
+
 router.get("/premium/:uid", auth(["admin"]), async (req, res, next) => {
   const user = await usersController.togglePremium(req, res, next);
   return res.status(200).json(user);
@@ -25,7 +30,7 @@ router.get("/premium/:uid", auth(["admin"]), async (req, res, next) => {
 
 router.post(
   "/:uid/documents",
-  auth(["user", "premium", "admin"]),
+  auth(["user", "premium"]),
   upload.fields([
     { name: 'profilePicture', maxCount: 1 },
     { name: 'ident', maxCount: 1 },

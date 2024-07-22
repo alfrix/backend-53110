@@ -119,6 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 is_valid(age, false);
                 valid = false;
             }
+            email = document.getElementById("InputEmail1");
             if (email.value.length > 6) {
                 is_valid(email, true)
             } else {
@@ -268,7 +269,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const response = await fetch('/api/session/recovery', { method: 'POST' });
                 handleResponse(response);
             } catch (error) {
-                console.error('Logout error:', error);
+                console.error('Recovery error:', error);
                 swalConfig.icon = "error";
                 swalConfig.customClass.popup = "bg-danger text-white";
                 swalConfig.html = 'Error inesperado';
@@ -276,4 +277,48 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+
+    document.querySelectorAll(".borrar-usuario").forEach((button) => {
+        button.addEventListener("click", async (event) => {
+            const userId = event.currentTarget.getAttribute("data-id");
+            try {
+                console.log(`Borrando ${userId}`)
+                const response = await fetch(`/api/users/${userId}`, { method: "DELETE" });
+                handleResponse(response);
+                if (response.ok) {
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                }
+            } catch (error) {
+                console.error('Borrar usuario error:', error);
+                swalConfig.icon = "error";
+                swalConfig.customClass.popup = "bg-danger text-white";
+                swalConfig.html = 'Error inesperado';
+                Swal.fire(swalConfig);
+            }
+        });
+    });
+
+    document.querySelectorAll(".usuario-premium").forEach((button) => {
+        button.addEventListener("click", async (event) => {
+            const userId = event.currentTarget.getAttribute("data-id");
+            try {
+                console.log(`Cambiar premium ${userId}`)
+                const response = await fetch(`/api/users/premium/${userId}`, { method: "GET" });
+                handleResponse(response);
+                if (response.ok) {
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                }
+            } catch (error) {
+                console.error('Error al cambiar premium:', error);
+                swalConfig.icon = "error";
+                swalConfig.customClass.popup = "bg-danger text-white";
+                swalConfig.html = 'Error inesperado';
+                Swal.fire(swalConfig);
+            }
+        });
+    });
 });

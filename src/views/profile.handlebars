@@ -24,6 +24,11 @@
         Id: {{user.id}}
     </div>
     {{/if}}
+    {{#if user.cart}}
+    <div class="row mb-3">
+        Cart: {{user.cart}}
+    </div>
+    {{/if}}
     {{#if (isnt user.rol "admin") }}
     <div class="row mb-3 form-group border p-3 col-5">
         <form id="profileUpload" action="/api/users/{{user.id}}/documents" method="POST" enctype="multipart/form-data">
