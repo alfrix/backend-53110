@@ -95,10 +95,12 @@ export default class usersController {
       });
     }
 
-    const response = await userService.update(
+    let response = await userService.update(
       { _id: userId },
       { $push: { documents: { $each: documents } } }
     );
+
+    response = { message: "Carga exitosa", ...response }
 
     return response;
   }

@@ -17,14 +17,14 @@ router.get("/errorSignup", (req, res) => {
   req.logger.error("errorSignup", req.session.messages);
   const messages = req.session.messages.join("\n");
   req.session.messages = [];
-  return res.redirect(`/signup?error=Error al registrarse\n${messages}`);
+  return res.status(400).json({ error: `Error al registrarse: ${messages}` });
 });
 
 router.get("/errorLogin", (req, res) => {
   req.logger.error("errorLogin", req.session.messages);
   const messages = req.session.messages.join("\n");
   req.session.messages = [];
-  return res.redirect(`/login?error=Error al iniciar sesion\n${messages}`);
+  return res.status(400).json({ error: `Error al iniciar sesion: ${messages}` });
 });
 
 router.get(
@@ -44,7 +44,7 @@ router.get(
     delete user.password;
     req.logger.debug(user.email, "conectado");
     req.session.user = user;
-    return res.redirect(`/?message=Bienvenido\n${req.user.first_name}`);
+    return res.redirect("/")
   }
 );
 
@@ -71,7 +71,7 @@ router.post(
     req.session.user = new UserDTO(user)
     req.logger.debug(user.email, "conectado");
     await userService.logLogin(user.email);
-    return res.redirect(`/?message=Bienvenido ${user.first_name}`);
+    return res.json({ message: `Bienvenido ${user.first_name}`, user });
   }
 );
 
@@ -80,10 +80,10 @@ router.get("/logout", (req, res) => {
   req.session.destroy((error) => {
     if (error) {
       req.logger.error("logout", error);
-      return res.redirect("/signup?error=Error inesperado");
+      return res.status(500).json({ error: "Error inesperado" });
     }
   });
-  return res.redirect("/login?success=Sesión cerrada correctamente");
+  return res.json({ message: "Sesión cerrada correctamente" });
 });
 
 router.post(
@@ -95,9 +95,9 @@ router.post(
   async (req, res) => {
     try {
       let { email } = req.body;
-      return res.redirect(`/login?success=Registrado: ${email}&email=${email}`);
+      return res.json({ message: `Registrado: ${email}`, email });
     } catch (error) {
-      return res.redirect(`/signup?error=Error al registrarse\n${error}`);
+      return res.status(400).json({ error: `Error al registrarse: ${error}` });
     }
   }
 );
@@ -106,12 +106,12 @@ router.post("/recovery", async (req, res) => {
   req.logger.debug("password recovery");
   let { email } = req.body;
   if (!email) {
-    return res.redirect(`/login?message=Complete el correo electrónico`);
+    return res.status(400).json({ error: "Complete el correo electrónico" });
   }
   try {
     let user = await userService.getByEmail(email);
     if (!user) {
-      return res.redirect(`/login?error=Email no válido`);
+      return res.status(400).json({ error: "Email no válido" });
     }
     let token = jwt.sign({ _id: user._id, email: user.email }, config.SECRET, {
       expiresIn: "1h",
@@ -120,12 +120,10 @@ router.post("/recovery", async (req, res) => {
     let msg = `Ha solicitado recuperar su contraseña. Si no fue usted, avise al administrador. Para continuar haga click <a href="${url}">aquí</a>.`;
     await sendEmail(email, "Recuperación de contraseña", msg);
 
-    res.redirect("/login?message=Email de recuperación enviado");
+    res.json({ message: "Email de recuperación enviado" });
   } catch (error) {
     req.logger.error("Error sending recovery email:", error.message);
-    throw new Error(
-      "Error inesperado - Intente más tarde o contacte al administrador"
-    );
+    return res.status(500).json({ error: "Error inesperado - Intente más tarde o contacte al administrador" });
   }
 });
 
@@ -135,19 +133,19 @@ router.post("/passwordChange/:token", async (req, res, next) => {
   let { token } = req.params;
 
   if (!InputPassword1 || !InputPassword2 || InputPassword1 !== InputPassword2) {
-    return res.redirect(
-      `/recovery/${token}?error=Las contraseñas no coinciden`
-    );
+    return res
+      .status(400)
+      .json({ error: "Las contraseñas no coinciden" });
   }
   try {
     let decoded = jwt.verify(token, config.SECRET);
     await userService.update({ _id: decoded._id }, { password: InputPassword1 });
-    return res.redirect("/login?message=Contraseña cambiada exitosamente");
+    return res.json({ message: "Contraseña cambiada exitosamente" });
   } catch (error) {
     req.logger.error("Error changing password:", error);
-    return res.redirect(
-      `/recovery/${token}?error=Error al cambiar la contraseña`
-    );
+    return res
+      .status(400)
+      .json({ error: "Error al cambiar la contraseña" });
   }
 });
 

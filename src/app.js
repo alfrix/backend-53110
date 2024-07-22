@@ -3,6 +3,7 @@ import express from "express";
 import "express-async-errors";
 import session from "express-session";
 import { engine } from "express-handlebars";
+import helpers from "handlebars-helpers";
 import { Server } from "socket.io";
 import path from "node:path";
 import { __dirname } from "./utils.js";
@@ -40,7 +41,10 @@ const server = app.listen(PORT, () => {
 
 const io = new Server(server);
 
-app.engine("handlebars", engine());
+const multihelpers = helpers()
+app.engine("handlebars", engine({
+  helpers: multihelpers
+}));
 app.set("view engine", "handlebars");
 app.set("views", path.join(__dirname, "views"));
 

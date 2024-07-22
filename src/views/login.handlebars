@@ -1,6 +1,6 @@
 <div class="d-flex flex-column justify-content-center align-items-center" style="height:80vh;">
     <h1 class="my-4">{{pageTitle}}</h1>
-    <form action="/api/session/login" method="post" class="login-form">
+    <form id="login" action="/api/session/login" method="post" class="login-form">
         <div class="row mb-3">
             <div class="col-5">
                 <label for="InputEmail1" class="form-label">Email</label>
@@ -29,14 +29,12 @@
             </button>
         </div>
         <div class="row mb-3 text-center">
-            <a href="/api/session/github">
-                <button type="button" class="btn btn-secondary py-4 w-100">
-                    Ingreso con GitHub <i class="bi bi-github ms-2 h5"></i>
-                </button>
+            <a href="/api/session/github" id="login-github" class="btn btn-secondary py-4 w-100">
+                Ingreso con GitHub <i class="bi bi-github ms-2 h5"></i>
             </a>
         </div>
         <div class="row mb-3 text-center">
-            <button type="submit" class="btn btn-link py-2 w-100" formaction="/api/session/recovery">
+            <button type="button" id="recovery-password" class="btn btn-link py-2 w-100">
                 Olvide mi Contraseña
             </button>
         </div>
