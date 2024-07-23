@@ -30,7 +30,9 @@ export default class usersController {
   };
 
   static getAll = async () => {
-    return await userService.getAll();
+    let users = await userService.getAll();
+    const payload = users.map(user => new UserDTO(user));
+    return payload
   }
 
   static getUserById = async (uid) => {
@@ -109,7 +111,7 @@ export default class usersController {
   static delete = async (req, res, next) => {
     let { uid } = req.params;
     req.logger.debug(`Borrando id: ${uid}`);
-    const user = await userService.getById(uid);
+    let user = await userService.getById(uid);
     if (!user || user.rol === "admin") {
       let error = new Error(`deleteUser: No se puede borrar id: ${uid}`);
       error.statusCode = 404;
@@ -117,13 +119,14 @@ export default class usersController {
     }
     let response = await userService.delete(user);
     if (!response) {
-      let error = new Error(`deleteUser: No se puede borrar id: ${pid}`);
+      let error = new Error(`deleteUser: Fallo al borrar id: ${pid}`);
       error.statusCode = 500;
       throw error;
     }
     req.logger.info("Enviando correo informativo")
     const message = "Usuario borrado"
-    response = { message, ...response }
+    user = new UserDTO(response)
+    response = { message, user }
     await sendEmail(user.email, message, "Atención se borró su usuario");
     return response;
   };
@@ -143,7 +146,7 @@ export default class usersController {
       if (timeDiff > inactiveLimit) {
         let deleted = await userService.delete(user);
         if (deleted && deleted.deletedCount > 0) {
-          deletedUsers.push(deleted)
+          deletedUsers.push(new UserDTO(deleted))
         }
       }
     }
@@ -196,9 +199,10 @@ export default class usersController {
       hasPrevPage,
       hasNextPage,
     } = await userService.paginate(query, options);
+    const payload = users.map(user => new UserDTO(user));
     const response = {
       status: "success",
-      payload: users,
+      payload: payload,
       totalPages: totalPages,
       prevPage: prevPage,
       nextPage: nextPage,

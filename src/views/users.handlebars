@@ -9,22 +9,22 @@
                     <h5 class="card-title">Email: {{email}}</h5>
                     <p class="card-text">Nombre: {{first_name}}</p>
                     <p class="card-text">Apellido: {{last_name}}</p>
-                    <p class="card-text">ID: {{_id}}</p>
+                    <p class="card-text">ID: {{id}}</p>
                     <p class="card-text">Ultima vez: {{last_connection}}</p>
                     <p class="card-text">Rol: {{rol}}
                         {{#if (is rol "premium") }}
-                        <button type="button" class="usuario-premium btn btn-primary mx-4" data-id="{{_id}}">
+                        <button type="button" class="usuario-premium btn btn-primary mx-4" data-id="{{id}}">
                             <i class="bi bi-toggle-on"></i>
                         </button>
                         {{else}}
-                        <button type="button" class="usuario-premium btn btn-secondary mx-4" data-id="{{_id}}">
+                        <button type="button" class="usuario-premium btn btn-secondary mx-4" data-id="{{id}}">
                             <i class="bi bi-toggle-off"></i>
                         </button>
                         {{/if}}
                     </p>
                 </div>
                 <div class="my-2">
-                    <button type="button" class="borrar-usuario btn btn-danger mx-4" data-id="{{_id}}">
+                    <button type="button" class="borrar-usuario btn btn-danger mx-4" data-id="{{id}}">
                         Borrar
                     </button>
                 </div>
