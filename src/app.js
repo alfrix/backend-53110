@@ -24,6 +24,8 @@ import favicon from "serve-favicon";
 import { logger, middlewareLogger } from "./middlewares/log.js";
 import swaggerUi from "swagger-ui-express";
 import YAML from "yamljs";
+import cors from "cors";
+
 
 const PORT = config.PORT;
 const mongoUrl = config.mongoUrl;
@@ -48,6 +50,7 @@ app.engine("handlebars", engine({
 app.set("view engine", "handlebars");
 app.set("views", path.join(__dirname, "views"));
 
+app.use(cors())
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));

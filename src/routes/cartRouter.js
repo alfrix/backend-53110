@@ -52,4 +52,17 @@ router.get("/:cid/purchase", auth(["user", "premium"]), async (req, res, next) =
   return res.status(200).json(ticket);
 });
 
+router.post('/:cid/pay', auth(["user", "premium"]), async (req, res) => {
+  const response = await cartsController.pay(req, res)
+  return res.status(200).json(response);
+})
+
+router.get('/feedback', function (req, res) {
+  return res.json({
+    Payment: req.query.payment_id,
+    Status: req.query.status,
+    MerchantOrder: req.query.merchant_order_id
+  });
+});
+
 export { router };

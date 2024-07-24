@@ -1,7 +1,13 @@
 import { cartService } from "../services/Carts.service.js";
 import { productService } from "../services/Products.service.js";
 import { ticketService } from "../services/Ticket.service.js";
-import productsController from "./productsController.js";
+import { MercadoPagoConfig, Preference } from 'mercadopago';
+
+const client = new MercadoPagoConfig(
+  {
+    accessToken: process.env.MP_KEY
+  }
+);
 
 export default class cartsController {
   static addCart = async (req, res, next) => {
@@ -215,34 +221,55 @@ export default class cartsController {
   static purchase = async (req, res, next) => {
     let { cid } = req.params;
     req.logger.debug("purchase");
-    this.validateCartFromUser(req, cid);
+    await this.validateCartFromUser(req, cid);
     const cart = await cartService.getById(cid);
 
     let withStock = [];
     let noStock = [];
     let total = 0;
-    cart.products.forEach(async (cartProduct) => {
-      product = await productsController.getProductById(product._id);
+
+    for (const cartProduct of cart.products) {
+      const product = await productService.getById(cartProduct.product._id);
+      if (!product) {
+        const error = new Error(`Product not found: ${cartProduct.product._id}`);
+        error.statusCode = 404;
+        throw error;
+      }
       if (cartProduct.quantity > product.stock) {
         noStock.push(product._id);
       } else {
         product.stock -= cartProduct.quantity;
-        await productsController.updateProduct(product);
+        await productService.update(product._id, product)
         total += cartProduct.quantity * product.price;
-        withStock.push(product._id);
+        withStock.push({
+          product: {
+            _id: product._id,
+            title: product.title,
+            price: product.price
+          },
+          quantity: cartProduct.quantity
+        });
       }
-    });
+    }
 
-    withStock.forEach(async (removeProduct) => {
-      const index = cart.products.findIndex((products) =>
-        products.product._id.equals(removeProduct)
-      );
-      cart.products.splice(index, 1);
-    });
+    if (isNaN(total) || total < 1) {
+      const error = new Error(`Total invalido: ${total}`);
+      error.statusCode = 400;
+      throw error;
+    }
+
+    for (const removeProduct of withStock) {
+      const index = cart.products.findIndex(p => p.product._id.equals(removeProduct.product._id));
+      if (index !== -1) cart.products.splice(index, 1);
+    }
     await cartService.update(cid, cart.products, cart.totalPrice - total);
 
     if (noStock.length > 0) {
-      req.logger.debug(`Sin stock: ${JSON.stringify(noStock)}`);
+      req.logger.debug(`Out of stock: ${JSON.stringify(noStock)}`);
+      const error = new Error("Algunos productos no tienen stock");
+      error.statusCode = 400;
+      error.reload = true
+      throw error;
     }
 
     let ticket = {
@@ -252,10 +279,59 @@ export default class cartsController {
       purchaser: req.session.user.email,
     };
     const response = await ticketService.create(ticket);
-    let newTicket;
-    if (response.insertedId) {
-      newTicket = await ticketService.getById(response.insertedId);
+    req.logger.debug(`Ticket Response: ${response}`);
+    let newTicket = response._id ? response : null;
+    if (!newTicket) {
+      const error = new Error("Fallo al crear el ticket");
+      error.statusCode = 500;
+      throw error;
     }
-    return [(newTicket, response)];
+    if (!cart.products) {
+      const error = new Error("Sin Productos");
+      error.statusCode = 400;
+      throw error;
+    }
+    return { ticket: newTicket, products: withStock };
   };
+
+  static pay = async (req, res) => {
+    let { ticket, products } = req.body
+    req.logger.debug(`Ticket: ${JSON.stringify(ticket)}`)
+    req.logger.debug(`Products: ${JSON.stringify(products)}`)
+
+    if (!ticket) throw new Error("ticket invalido")
+    if (!products) throw new Error("productos invalidos")
+
+    const importe = parseFloat(ticket.amount)
+    if (importe < 1 || isNaN(importe)) {
+      const error = new Error(`Importe inválido: ${importe}`);
+      error.statusCode = 400;
+      throw error;
+    }
+
+    let items = [];
+    products.forEach((item) => {
+      items.push({
+        id: item.product._id,
+        title: item.product.title,
+        quantity: Number(item.quantity),
+        unit_price: Number(item.product.price)
+      });
+    });
+
+    const preference = new Preference(client);
+
+    let resultado = await preference.create({
+      body: {
+        items,
+        back_urls: {
+          "success": "http://localhost:8080/feedback",
+          "failure": "http://localhost:8080/feedback",
+          "pending": "http://localhost:8080/feedback"
+        },
+        auto_return: "approved",
+      }
+    });
+    return { id: resultado.id }
+  }
 }
