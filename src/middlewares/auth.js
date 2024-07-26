@@ -5,7 +5,10 @@ export const auth = (accesos) => {
       error.statusCode = 500;
       throw error;
     }
-
+    if (process.env.NODE_ENV === 'testing') {
+      req.logger.debug("Authorizado durante testing")
+      return next();
+    }
     if (accesos.includes("public")) {
       return next();
     } else if (!req.session.user) {

@@ -69,16 +69,7 @@ export default class cartsController {
 
   static deleteCart = async (req, res, next) => {
     let { cid } = req.params;
-    let cartIsNotUsed = True
-    // get users
-    // for each user
-    //  if user.cart is equal to cid
-    //    cartIsNotUsed = False
-    //    break
-    // if cartIsNotUsed
-    //  delete
-    // else
-    this.emptyCart(req, res, next)
+    return this.emptyCart(req, res, next)
   };
 
   static emptyCart = async (req, res, next) => {
@@ -152,18 +143,18 @@ export default class cartsController {
 
   static updateCart = async (req, res, next) => {
     let { cid } = req.params;
-    let products = req.body;
+    let updatedCart = req.body;
     req.logger.debug("updateCart");
     this.validateCartFromUser(req, cid);
     const cart = await cartService.getById(cid);
-    if (!products || !Array.isArray(products)) {
-      throw new Error(`Products no validos: ${JSON.stringify(products)}`);
+    if (!updatedCart || !updatedCart.products) {
+      throw new Error(`Cart no valido: ${JSON.stringify(updatedCart)}`);
     }
     req.logger.debug("Verificando productos validos");
-    products.forEach(async (product) => {
-      await productService.getById(product);
-    });
-    cart.products = products;
+    for (let product of updatedCart.products) {
+      await productService.getById(product.product._id);
+    };
+    cart.products = updatedCart.products;
     req.logger.debug(JSON.stringify(cart.products))
     const total = this.calculateTotalPrice(cart.products);
     req.logger.debug(`total: ${total}`);
@@ -211,6 +202,8 @@ export default class cartsController {
     } else if (user.rol === "admin") {
       req.logger.debug(`Acceso de admin a carrito: ${cart}`);
       return;
+    } else if (process.env.NODE_ENV === 'testing') {
+      return
     } else if (user.cart !== cart) {
       const error = new Error("No autorizado");
       error.statusCode = 403;

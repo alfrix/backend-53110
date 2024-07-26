@@ -24,10 +24,15 @@ program.addOption(
     .default("online")
 );
 
+let dbName = process.env.DB_NAME;
 if (process.env.NODE_ENV !== 'testing') {
   // no parsear o no funcionan las opciones the mocha --bail y --exit
   program.parse();
   opts = program.opts();
+} else {
+  // testing
+  dbName = "test";
+  console.log("TESTING")
 }
 
 dotenv.config({
@@ -39,7 +44,7 @@ export const config = {
   MODE: opts.mode || "dev",
   DB_MODE: opts.db_mode || "online",
   PORT: process.env.PORT || 8080,
-  dbName: process.env.DB_NAME,
+  dbName: dbName,
   mongoUrl:
     opts.db_mode === "local"
       ? process.env.MONGO_URL_LOCAL

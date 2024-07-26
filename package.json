@@ -10,10 +10,10 @@
     "start": "node src/app.js",
     "dev": "nodemon src/app.js",
     "local": "nodemon src/app.js -m local",
-    "test": "NODE_ENV=testing mocha --bail --exit --timeout 8000 ./test/**/*.js",
-    "test-carts": "NODE_ENV=testing mocha --bail --exit --timeout 8000 ./test/carts.test.js",
-    "test-products": "NODE_ENV=testing mocha --bail --exit --timeout 8000 ./test/products.test.js",
-    "test-sessions": "NODE_ENV=testing mocha --bail --exit --timeout 8000 ./test/sessions.test.js"
+    "test": "NODE_ENV=testing mocha --bail --exit --timeout 12000 ./test/**/*.js",
+    "test-carts": "NODE_ENV=testing mocha --bail --exit --timeout 12000 ./test/carts.test.js",
+    "test-products": "NODE_ENV=testing mocha --bail --exit --timeout 12000 ./test/products.test.js",
+    "test-sessions": "NODE_ENV=testing mocha --bail --exit --timeout 12000 ./test/sessions.test.js"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",

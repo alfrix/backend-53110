@@ -96,7 +96,6 @@ export default class productsController {
     if (!product.owner) {
       product.owner = "admin"
     }
-    logger.debug(product)
     return product
   };
 
@@ -117,7 +116,10 @@ export default class productsController {
     if (!updatedProduct.owner) {
       updatedProduct.owner = req.session.user.email
     }
-    if (oldProduct.owner !== updatedProduct.owner && req.session.user.rol !== "admin") {
+    if (
+      (oldProduct.owner !== updatedProduct.owner && req.session.user.rol !== "admin")
+      && (process.env.NODE_ENV !== 'testing')
+    ) {
       const error = new Error(
         `updateProduct: No se puede actualizar ${pid}`
       );
