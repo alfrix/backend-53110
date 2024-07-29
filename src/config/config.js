@@ -24,6 +24,11 @@ program.addOption(
     .default("online")
 );
 
+dotenv.config({
+  path: "./src/.env",
+  override: true,
+});
+
 let dbName = process.env.DB_NAME;
 if (process.env.NODE_ENV !== 'testing') {
   // no parsear o no funcionan las opciones the mocha --bail y --exit
@@ -35,10 +40,14 @@ if (process.env.NODE_ENV !== 'testing') {
   console.log("TESTING")
 }
 
-dotenv.config({
-  path: "./src/.env",
-  override: true,
-});
+
+
+if (!dbName) {
+  console.error("DB not defined")
+  process.exit(1)
+}
+
+
 
 export const config = {
   MODE: opts.mode || "dev",
