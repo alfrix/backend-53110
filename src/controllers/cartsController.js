@@ -2,6 +2,7 @@ import { cartService } from "../services/Carts.service.js";
 import { productService } from "../services/Products.service.js";
 import { ticketService } from "../services/Ticket.service.js";
 import { MercadoPagoConfig, Preference } from 'mercadopago';
+import { sendEmail } from "../mailer.js";
 
 const client = new MercadoPagoConfig(
   {
@@ -284,6 +285,9 @@ export default class cartsController {
       error.statusCode = 400;
       throw error;
     }
+    req.logger.info("Enviando correo informativo")
+    let msg = "Gracias por comprar en el ecommerce";
+    await sendEmail(ticket.purchaser, "Compra realizada", msg);
     return { ticket: newTicket, products: withStock };
   };
 
